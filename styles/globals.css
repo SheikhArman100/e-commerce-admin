@@ -1,0 +1,194 @@
+/* Tailwind Core */
+@import 'tailwindcss';
+
+@import 'tw-animate-css';
+
+/** Dark Mode Variant **/
+@custom-variant dark (&:is(.dark *));
+
+/** Colors - Direct HSL values for maximum compatibility **/
+:root {
+  /* White and black */
+  --color-white: hsl(0, 0%, 100%);
+  --color-black: hsl(0, 0%, 0%);
+  
+  /* Zinc color scale in HSL */
+  --color-zinc-50: hsl(210, 40%, 98%);
+  --color-zinc-100: hsl(210, 40%, 96%);
+  --color-zinc-200: hsl(213, 27%, 84%);
+  --color-zinc-300: hsl(212, 23%, 69%);
+  --color-zinc-400: hsl(213, 19%, 52%);
+  --color-zinc-500: hsl(214, 13%, 40%);
+  --color-zinc-600: hsl(215, 16%, 29%);
+  --color-zinc-700: hsl(217, 19%, 22%);
+  --color-zinc-800: hsl(215, 28%, 17%);
+  --color-zinc-900: hsl(221, 39%, 11%);
+  --color-zinc-950: hsl(224, 71%, 4%);
+  
+  /* Red scale */
+  --color-red-600: hsl(0, 84%, 60%);
+  
+  /* Chart colors */
+  --color-blue-500: hsl(221, 83%, 53%);
+  --color-green-500: hsl(142, 76%, 36%);
+  --color-yellow-500: hsl(45, 93%, 47%);
+  --color-red-500: hsl(0, 84%, 60%);
+  --color-purple-500: hsl(271, 81%, 56%);
+
+  /* Theme colors using direct HSL */
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(224, 71%, 4%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(224, 71%, 4%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(224, 71%, 4%);
+  --primary: hsl(221, 39%, 11%);
+  --primary-foreground: hsl(0, 0%, 100%);
+  --secondary: hsl(210, 40%, 96%);
+  --secondary-foreground: hsl(221, 39%, 11%);
+  --muted: hsl(210, 40%, 96%);
+  --muted-foreground: hsl(214, 13%, 40%);
+  --accent: hsl(210, 40%, 96%);
+  --accent-foreground: hsl(221, 39%, 11%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --chart-1: hsl(221, 83%, 53%);
+  --chart-2: hsl(142, 76%, 36%);
+  --chart-3: hsl(45, 93%, 47%);
+  --chart-4: hsl(0, 84%, 60%);
+  --chart-5: hsl(271, 81%, 56%);
+  --border: hsl(240, 5.9%, 90%); /* Equivalent to oklch(94% 0.004 286.32) */
+  --input: hsl(213, 27%, 84%);
+  --ring: hsl(213, 19%, 52%);
+  --radius: 0.5rem;
+}
+
+/*
+.dark {
+  --background: hsl(224, 71%, 4%);
+  --foreground: hsl(210, 40%, 98%);
+  --card: hsl(224, 71%, 4%);
+  --card-foreground: hsl(210, 40%, 98%);
+  --popover: hsl(224, 71%, 4%);
+  --popover-foreground: hsl(210, 40%, 98%);
+  --primary: hsl(212, 23%, 69%);
+  --primary-foreground: hsl(224, 71%, 4%);
+  --secondary: hsl(215, 28%, 17%);
+  --secondary-foreground: hsl(210, 40%, 98%);
+  --muted: hsl(221, 39%, 11%);
+  --muted-foreground: hsl(214, 13%, 40%);
+  --accent: hsl(221, 39%, 11%);
+  --accent-foreground: hsl(210, 40%, 98%);
+  --destructive: hsl(0, 84%, 60%);
+  --destructive-foreground: hsl(0, 0%, 100%);
+  --chart-1: hsl(221, 83%, 53%);
+  --chart-2: hsl(142, 76%, 36%);
+  --chart-3: hsl(45, 93%, 47%);
+  --chart-4: hsl(0, 84%, 60%);
+  --chart-5: hsl(271, 81%, 56%);
+  --border: hsl(215, 28%, 17%);
+  --input: hsl(215, 28%, 17%);
+  --ring: hsl(215, 16%, 29%);
+}
+*/
+
+/** Theme Setup **/
+@theme inline {
+  /** Base Colors - Direct HSL Values **/
+  --color-background: hsl(0, 0%, 100%);
+  --color-foreground: hsl(224, 71%, 4%);
+  --color-card: hsl(0, 0%, 100%);
+  --color-card-foreground: hsl(224, 71%, 4%);
+  --color-popover: hsl(0, 0%, 100%);
+  --color-popover-foreground: hsl(224, 71%, 4%);
+  --color-muted: hsl(210, 40%, 96%);
+  --color-muted-foreground: hsl(214, 13%, 40%);
+  --color-accent: hsl(210, 40%, 96%);
+  --color-accent-foreground: hsl(221, 39%, 11%);
+  --color-primary: hsl(221, 39%, 11%);
+  --color-primary-foreground: hsl(0, 0%, 100%);
+  --color-secondary: hsl(210, 40%, 96%);
+  --color-secondary-foreground: hsl(221, 39%, 11%);
+  --color-destructive: hsl(0, 84%, 60%);
+  --color-destructive-foreground: hsl(0, 0%, 100%);
+
+  /** Base Styles **/
+  --color-border: hsl(240, 5.9%, 90%);
+  --color-input: hsl(213, 27%, 84%);
+  --color-ring: hsl(213, 19%, 52%);
+  --radius-xl: calc(0.5rem + 4px);
+  --radius-lg: 0.5rem;
+  --radius-md: calc(0.5rem - 2px);
+  --radius-sm: calc(0.5rem - 4px);
+
+  /** Animations **/
+  --animate-marquee: marquee var(--duration) infinite linear;
+  --animate-marquee-vertical: marquee-vertical var(--duration) linear infinite;
+
+  @keyframes marquee {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(calc(-100% - var(--gap)));
+    }
+  }
+  @keyframes marquee-vertical {
+    from {
+      transform: translateY(0);
+    }
+    to {
+      transform: translateY(calc(-100% - var(--gap)));
+    }
+  }
+}
+
+/** Global Styles **/
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  *:focus-visible {
+    @apply outline-ring rounded-xs shadow-none outline-2 outline-offset-3 transition-none!;
+  }
+}
+
+/** Custom Scrollbar **/
+@layer base {
+  ::-webkit-scrollbar {
+    width: 5px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--input);
+    border-radius: 5px;
+  }
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--input) transparent;
+  }
+}
+
+/** Smooth scroll **/
+html {
+  scroll-behavior: smooth;
+}
+
+/** Custom Containers **/
+@utility container {
+  @apply mx-auto max-w-none px-4 lg:px-5;
+
+  @media (width >= --theme(--breakpoint-xl)) {
+    @apply max-w-(--breakpoint-xl);
+  }
+}
+
+@utility container-fluid {
+  @apply w-full mx-auto px-4 lg:px-5;
+}
+
+/* Metronic Configs */
+@import './config.metronic.css';
