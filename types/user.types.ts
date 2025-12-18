@@ -1,5 +1,42 @@
-// User Types for CRUD operations
+// User Types matching backend interfaces
+import { ENUM_USER_ROLE } from './auth.types';
 
+export interface IUser {
+  id: number;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  role: ENUM_USER_ROLE;
+  isVerified: boolean;
+  createdAt: Date;
+  updatedAt?: Date;
+  createdBy?: number;
+  updatedBy?: number;
+}
+
+export interface ICreateUserPayload {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  role?: ENUM_USER_ROLE;
+}
+
+export interface IUpdateUserPayload {
+  name?: string;
+  phoneNumber?: string;
+  role?: ENUM_USER_ROLE;
+}
+
+export interface IUserFilters {
+  searchTerm?: string;
+  role?: string;
+  email?: string;
+  isVerified?: string;
+}
+
+// Additional types for frontend operations
 export interface User {
   id: string;
   firstName: string;
@@ -113,4 +150,4 @@ export interface UserRolesResponse {
 }
 
 // Export types for backward compatibility
-export type { User as IUser, CreateUserRequest as ICreateUserRequest };
+export type { CreateUserRequest as ICreateUserRequest };

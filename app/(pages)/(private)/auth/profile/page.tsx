@@ -10,9 +10,8 @@ import {
   User as UserIcon,
 } from 'lucide-react';
 import { formatDateTime } from '@/lib/helpers';
-import useUserInfo from '@/hooks/useUserInfo';
-import { useUser } from '@/hooks/useUsers';
-import type { User } from '@/types/user.types';
+import { useUserProfile } from '@/hooks/useUsers';
+import type { IUser } from '@/types/user.types';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -26,13 +25,11 @@ import {
 import { Separator } from '@/components/ui/separator';
 import ProfileImage from '@/components/ProfileImage';
 import { ScreenLoader } from '@/components/screen-loader';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 export default function ProfilePage() {
-  const { data: userInfo } = useUserInfo();
-  const userId = userInfo?.data?.id?.toString() || '';
-
-  const { data: user, isLoading, error } = useUser(userId);
+  const { data: user, isLoading, error } = useUserProfile();
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -119,10 +116,18 @@ export default function ProfilePage() {
         <div className="flex flex-col items-start gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              {user.firstName} {user.lastName}
+              {user.name}
             </h1>
             <p className="text-muted-foreground">My Profile</p>
           </div>
+        </div>
+        <div className="flex items-center gap-4">
+          <Button asChild variant="outline">
+            <Link href="/auth/profile/update-profile">
+              <Edit className="w-4 h-4 mr-2" />
+              Edit Profile
+            </Link>
+          </Button>
         </div>
       </div>
 
@@ -140,7 +145,8 @@ export default function ProfilePage() {
               {/* Profile Image and Basic Info */}
               <div className="flex items-start gap-4">
                 <Avatar className="h-16 w-16">
-                  <ProfileImage image={user.detail?.image ?? null} />
+                  {/* Backend doesn't have image field in current structure */}
+                  <ProfileImage image={null} />
                 </Avatar>
                 <div className="flex-1">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -149,7 +155,7 @@ export default function ProfilePage() {
                         Full Name
                       </label>
                       <p className="text-lg font-semibold">
-                        {user.firstName} {user.lastName}
+                        {user.name}
                       </p>
                     </div>
                     <div>
@@ -165,25 +171,25 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {/* Status and Role */}
+              {/* Role and Verification Status */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Status
-                  </label>
-                  <div className="mt-1">
-                    <Badge className={`${getStatusColor(user.status)} capitalize`}>
-                      {user.status.toLowerCase()}
-                    </Badge>
-                  </div>
-                </div>
                 <div>
                   <label className="text-sm font-medium text-muted-foreground">
                     Role
                   </label>
                   <div className="mt-1">
-                    <Badge className={`${getRoleColor(user.userRole.name)} capitalize`}>
-                      {user.userRole.name.split('_').join(' ')}
+                    <Badge className={`${getRoleColor(user.role)} capitalize`}>
+                      {user.role.split('_').join(' ')}
+                    </Badge>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Email Verified
+                  </label>
+                  <div className="mt-1">
+                    <Badge className={user.isVerified ? 'bg-green-100 text-green-800 border-green-200' : 'bg-yellow-100 text-yellow-800 border-yellow-200'}>
+                      {user.isVerified ? 'Verified' : 'Unverified'}
                     </Badge>
                   </div>
                 </div>
@@ -198,27 +204,7 @@ export default function ProfilePage() {
                     </p>
                   </div>
                 )}
-                <div>
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Email Verified
-                  </label>
-                  <div className="mt-1">
-                    <Badge className={user.isVerified ? 'bg-green-100 text-green-800 border-green-200' : 'bg-yellow-100 text-yellow-800 border-yellow-200'}>
-                      {user.isVerified ? 'Verified' : 'Unverified'}
-                    </Badge>
-                  </div>
-                </div>
               </div>
-
-              {/* Role Description */}
-              {user.userRole.description && (
-                <div className="pt-4 border-t">
-                  <label className="text-sm font-medium text-muted-foreground">
-                    Role Description
-                  </label>
-                  <p className="text-sm mt-1">{user.userRole.description}</p>
-                </div>
-              )}
             </CardContent>
           </Card>
         </div>
