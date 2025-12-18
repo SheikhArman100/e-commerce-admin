@@ -89,14 +89,8 @@ export interface ChangePasswordRequest {
 
 export interface UserFilters {
   searchTerm?: string;
-  isActive?: boolean;
-  isEmailVerified?: boolean;
-  roleId?: string;
-  pointId?: string;
-  regionId?: string;
-  areaId?: string;
-  distributionHouseId?: string;
-  territoryId?: string;
+  isVerified?: string;
+  role?: string;
   page?: number;
   limit?: number;
   sortBy?: string;
@@ -104,12 +98,11 @@ export interface UserFilters {
 }
 
 export interface UserListResponse {
-  data: User[];
+  data: IUser[];
   meta: {
-    total: number;
+    count: number;
     page: number;
     limit: number;
-    totalPages: number;
   };
   message: string;
   statusCode: number;

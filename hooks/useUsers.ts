@@ -22,9 +22,8 @@ export const useUsers = (filters: UserFilters = {}) => {
       const params = new URLSearchParams();
 
       if (filters.searchTerm) params.append('searchTerm', filters.searchTerm);
-      if (filters.isActive !== undefined) params.append('isActive', filters.isActive.toString());
-      if (filters.isEmailVerified !== undefined) params.append('isEmailVerified', filters.isEmailVerified.toString());
-      if (filters.roleId) params.append('roleId', filters.roleId);
+      if (filters.isVerified !== undefined && filters.isVerified !== 'all') params.append('isVerified', filters.isVerified);
+      if (filters.role && filters.role !== 'all') params.append('role', filters.role);
       if (filters.page) params.append('page', filters.page.toString());
       if (filters.limit !== undefined) params.append('limit', filters.limit.toString());
       if (filters.sortBy) params.append('sortBy', filters.sortBy);

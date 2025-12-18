@@ -60,6 +60,17 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
     ],
   },
   {
+    title: 'User Management',
+    children: [
+      {
+        title: 'Users',
+        path: '/users',
+        icon: Users
+      },
+      
+    ],
+  },
+  {
     title: 'Account',
     children: [
       {

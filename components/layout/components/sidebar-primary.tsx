@@ -60,6 +60,12 @@ const menuItems = [
     rootPath: '/'
   },
   {
+    icon: Users,
+    tooltip: 'User Management',
+    path: '/users',
+    rootPath: '/users'
+  },
+  {
     icon: Settings,
     tooltip: 'Account',
     path: '#',
