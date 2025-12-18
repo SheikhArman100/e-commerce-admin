@@ -1,73 +1,82 @@
-'use client';
-
-import { useState } from 'react';
-import { FieldError } from 'react-hook-form';
+import React, { useState } from 'react';
+import Link from 'next/link';
 import { Eye, EyeOff } from 'lucide-react';
-import { Input } from '@/components/ui/input';
+import { UseFormRegister } from 'react-hook-form';
+import { twMerge } from 'tailwind-merge';
+import { Input, InputAddon, InputGroup } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { cn } from '@/lib/utils';
 
-interface TextInputProps {
-  label?: string;
-  placeholder?: string;
+type FormInputProps = {
+  label: string;
+  placeholder: string;
   name: string;
   type?: string;
-  register: any;
-  errors?: string | FieldError;
-  showPasswordToggle?: boolean;
+  register: UseFormRegister<any>;
+  errors?: string;
   className?: string;
+  showPasswordToggle?: boolean;
   disabled?: boolean;
-}
+};
 
-export default function TextInput({
+const TextInput: React.FC<FormInputProps> = ({
   label,
   placeholder,
   name,
   type = 'text',
   register,
   errors,
-  showPasswordToggle = false,
   className,
+  showPasswordToggle = false,
   disabled = false,
-}: TextInputProps) {
-  const [showPassword, setShowPassword] = useState(false);
+}) => {
+  const [passwordHidden, setPasswordHidden] = useState(true);
 
-  const inputType = showPasswordToggle && showPassword ? 'text' : type;
+  const inputType =
+    showPasswordToggle && type === 'password'
+      ? passwordHidden
+        ? 'password'
+        : 'text'
+      : type;
 
   return (
-    <div className={cn('space-y-2', className)}>
-      {label && (
-        <Label htmlFor={name} className="text-sm font-medium">
-          {label}
-        </Label>
-      )}
-      <div className="relative">
-        <Input
-          id={name}
-          type={inputType}
-          placeholder={placeholder}
-          {...register(name)}
-          disabled={disabled}
-          className={cn(
-            'h-10 sm:h-11',
-            errors && 'border-destructive focus-visible:ring-destructive/20'
-          )}
-        />
-        {showPasswordToggle && (
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+    <div className={twMerge('col-span-1 flex flex-col gap-1', className)}>
+      <div className="flex justify-between items-center">
+        <Label htmlFor={name}>{label}</Label>
+        {label === 'Password' && (
+          <Link
+            href="/auth/forget-password"
+            className="text-sm text-blue-600 hover:text-blue-800 hover:underline"
           >
-            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-          </button>
+            Forgot Password?
+          </Link>
         )}
       </div>
-      {errors && (
-        <p className="text-sm text-destructive">
-          {typeof errors === 'string' ? errors : errors.message}
-        </p>
-      )}
+
+      <InputGroup>
+        <Input
+          id={name}
+          {...register(name)}
+          placeholder={placeholder}
+          type={inputType}
+          disabled={disabled}
+        />
+        {showPasswordToggle && type === 'password' && (
+          <InputAddon
+            mode="icon"
+            onClick={() => setPasswordHidden(!passwordHidden)}
+          >
+            {passwordHidden ? (
+              <Eye className="h-4 w-4" />
+            ) : (
+              <EyeOff className="h-4 w-4" />
+            )}
+          </InputAddon>
+        )}
+      </InputGroup>
+
+      {errors && <p className="text-sm text-destructive">{errors}</p>}
     </div>
   );
-}
+};
+
+export default TextInput;

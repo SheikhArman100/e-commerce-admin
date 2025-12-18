@@ -2,7 +2,7 @@
 
 import useUserInfo from '@/hooks/useUserInfo';
 import { usePathname, useRouter } from 'next/navigation';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ScreenLoader } from '../screen-loader';
 import { toast } from 'sonner';
 
@@ -14,21 +14,22 @@ const CookieChecker = ({ children }: { children: React.ReactNode }) => {
   const { data, isPending, error } = useUserInfo();
   const user = data?.data;
 
-   if (isPending) {
+  useEffect(() => {
+    if (error) {
+      router.replace('/auth/signin?next=' + pathname);
+    }
+
+    if (user?.role === 'user') {
+      toast.error("You do not have access to this admin site");
+      router.replace('/auth/signin?next=' + pathname);
+    }
+  }, [error, user, router, pathname]);
+
+  if (isPending) {
     return <ScreenLoader title="Checking authentication..." />
   }
 
-  if (error) {
-     router.replace('/auth/signin?next=' + pathname);
-    return null;
-  }
-
-  if (
-    user?.role === 'user' 
-  ) {
-    // Redirect admins away from /signup
-    toast.error("You do not have access to this admin site");
-    router.replace('/auth/signin?next=' + pathname);
+  if (error || user?.role === 'user') {
     return null;
   }
 

@@ -30,6 +30,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useTheme } from "next-themes";
+import SignOutButton from "@/components/auth/SignoutButton";
 
 export function HeaderToolbar() {
   const { isMobile } = useLayout();
@@ -109,18 +110,15 @@ export function HeaderToolbar() {
           <DropdownMenuSeparator />
 
           {/* Theme Toggle */}
-          <DropdownMenuItem onClick={toggleTheme}>
+          {/* <DropdownMenuItem onClick={toggleTheme}>
             {theme === "light" ? <Moon className="size-4" /> : <Sun className="size-4" />}
             <span>{theme === "light" ? "Dark mode" : "Light mode"}</span>
-          </DropdownMenuItem>
+          </DropdownMenuItem> */}
 
           <DropdownMenuSeparator />
 
           {/* Action Items */}
-          <DropdownMenuItem>
-            <LogOut/>
-            <span>Sign out</span>
-          </DropdownMenuItem>
+          <SignOutButton />
         </DropdownMenuContent>
       </DropdownMenu>
     </nav>
