@@ -177,17 +177,50 @@ html {
   scroll-behavior: smooth;
 }
 
-/** Custom Containers **/
-@utility container {
-  @apply mx-auto max-w-none px-4 lg:px-5;
 
-  @media (width >= --theme(--breakpoint-xl)) {
-    @apply max-w-(--breakpoint-xl);
+@utility container-fluid {
+  max-width: 90vw;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem; 
+  padding-right: 1rem; 
+}
+
+@media (min-width: 1024px) { 
+  .container-fluid {
+    max-width: 700px;
   }
 }
 
-@utility container-fluid {
-  @apply w-full mx-auto px-4 lg:px-5;
+@media (min-width: 1110px) { 
+  .container-fluid {
+    max-width: 800px; 
+  }
+}
+
+@media (min-width: 1210px) { 
+  .container-fluid {
+    max-width: 900px; 
+  }
+}
+
+@media (min-width: 1320px) { 
+  .container-fluid {
+    max-width: 1000px; 
+  }
+}
+
+
+@media (min-width: 1440px) { 
+  .container-fluid {
+    max-width: 1100px; 
+  }
+}
+
+@media (min-width: 1600px) { 
+  .container-fluid {
+    max-width: 1300px; 
+  }
 }
 
 /* Metronic Configs */

@@ -16,12 +16,12 @@ export function Wrapper({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Header />
-      {!isMobile && <Sidebar />}      
+      {!isMobile && <Sidebar />}
 
       {/* CSS Change: Removed toolbar height from padding-top calculation */}
       {/* Before: lg:pt-[calc(var(--header-height)+var(--toolbar-height))] */}
       {/* After: lg:pt-(--header-height) */}
-      <div className="grow overflow-y-auto pt-(--header-height-mobile) lg:pt-(--header-height) lg:ps-(--sidebar-width) lg:in-data-[sidebar-open=false]:ps-(--sidebar-collapsed-width) transition-all duration-300">
+      <div className="grow pt-(--header-height-mobile) lg:pt-(--header-height) lg:ps-(--sidebar-width) lg:in-data-[sidebar-open=false]:ps-(--sidebar-collapsed-width) transition-all duration-300">
         {/* Commented out toolbar */}
         {/*
         <Toolbar>
@@ -37,8 +37,8 @@ export function Wrapper({ children }: { children: React.ReactNode }) {
         </Toolbar>
         */}
 
-        <main className="grow p-5" role="content">
-          {isMobile && <HeaderBreadcrumbs />}
+        <main className="p-5 container-fluid" role="content">
+          {/* {isMobile && <HeaderBreadcrumbs />} */}
           {children}
         </main>
       </div>

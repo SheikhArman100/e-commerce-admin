@@ -1,13 +1,18 @@
 "use client"
 
-
 import { axiosPublic } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
+import { IAuthUser } from "@/types/auth.types";
 
+interface IAuthResponse {
+  statusCode: number;
+  success: boolean;
+  message: string;
+  data: IAuthUser;
+}
 
 const useUserInfo = () => {
-
-  return useQuery({
+  return useQuery<IAuthResponse>({
     queryKey: ["profile"],
     queryFn: async () => {
       const response = await axiosPublic.get("/auth/user", {
@@ -15,7 +20,6 @@ const useUserInfo = () => {
       });
 
       return response.data;
-  
     },
   });
 };
