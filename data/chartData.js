@@ -1,6 +1,5 @@
 export const chartData = [
   {
-    campaign: 'campaign1',
     region: 'dhaka',
     area: 'dhanmondi',
     distributionHouse: 'DH-01',

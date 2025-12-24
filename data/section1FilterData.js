@@ -1,7 +1,4 @@
-export const campaigns = [
-  { value: 'campaign1', label: 'Campaign 1' },
-  { value: 'campaign2', label: 'Campaign 2' },
-];
+
 
 export const regions = [
   { value: 'dhaka', label: 'Dhaka' },
