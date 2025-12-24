@@ -3,11 +3,7 @@ import { z } from 'zod';
 // Reusable field validators
 const passwordValidator = z
   .string({ error: 'Password is required' })
-  .min(8, 'Password must be at least 8 characters')
-  .regex(/[A-Z]/, 'Password must contain at least one uppercase letter')
-  .regex(/[a-z]/, 'Password must contain at least one lowercase letter')
-  .regex(/[0-9]/, 'Password must contain at least one number')
-  .regex(/[^A-Za-z0-9]/, 'Password must contain at least one special character');
+  .min(6, 'Password must be at least 6 characters');
 
 const emailValidator = z
   .string({ error: 'Email is required' })
@@ -16,10 +12,10 @@ const emailValidator = z
   .toLowerCase();
 
 const bangladeshiPhoneValidator = z
-  .string()
-  .optional()
+  .string({ error: 'Phone number is required' })
+  .min(1, 'Phone number is required')
   .refine(
-    (val) => !val || /^(?:\+?88)?01[3-9]\d{8}$/.test(val),
+    (val) => /^(?:\+?88)?01[3-9]\d{8}$/.test(val),
     'Please enter a valid Bangladeshi phone number (e.g., 017******** or +88017********)'
   );
 
@@ -40,7 +36,7 @@ export const createUserSchema = z.object({
   role: z.enum(['admin', 'user'], {
     message: 'Role must be either admin or user',
   }),
-  password: z.string().optional(), // Optional for admin creation
+  password: passwordValidator,
 });
 
 export const updateUserSchema = z.object({

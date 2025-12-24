@@ -64,12 +64,11 @@ export interface User {
 }
 
 export interface CreateUserRequest {
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
-  phoneNumber?: string;
-  roleId: string;
-  password?: string; // Optional for admin creation
+  phoneNumber: string;
+  password: string;
+  role?: 'admin' | 'user';
 }
 
 export interface UpdateUserRequest {

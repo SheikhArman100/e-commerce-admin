@@ -63,7 +63,7 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
     title: 'User Management',
     children: [
       {
-        title: 'Users',
+        title: 'User Management',
         path: '/users',
         icon: Users
       },
