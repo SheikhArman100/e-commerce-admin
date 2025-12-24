@@ -22,6 +22,7 @@ const ProfileImage: React.FC<ImageProps> = ({
   image,
   className
 }) => {
+  
   // Handle different image formats
   const getImageSrc = () => {
     if (!image) return null;
@@ -40,6 +41,7 @@ const ProfileImage: React.FC<ImageProps> = ({
   };
 
   const imageSrc = getImageSrc();
+  
   const altText = typeof image === 'object' && image?.originalName ? image.originalName : 'Profile image';
 
   return (
@@ -48,7 +50,7 @@ const ProfileImage: React.FC<ImageProps> = ({
         <AvatarImage
           src={imageSrc}
           alt={altText}
-          className={className}
+          className={`${className} w-full h-full object-fit rounded-full`}
         />
       )}
       <AvatarFallback>

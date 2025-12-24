@@ -36,6 +36,7 @@ export default function UsersTable() {
   const limit = parseInt(searchParams.get('limit') || '10');
   const searchTerm = searchParams.get('searchTerm') || '';
   const isVerified = searchParams.get('isVerified') || '';
+  const isActive = searchParams.get('isActive') || '';
   const role = searchParams.get('role') || '';
 
   // Build filters object matching API expectations
@@ -44,6 +45,7 @@ export default function UsersTable() {
     limit,
     ...(searchTerm && { searchTerm }),
     ...(isVerified && isVerified !== 'all' && { isVerified }),
+    ...(isActive && isActive !== 'all' && { isActive }),
     ...(role && role !== 'all' && { role }),
     sortBy,
     sortOrder,
@@ -205,6 +207,9 @@ export default function UsersTable() {
                 </div>
               </TableHead>
               <TableHead className="w-[150px]">
+                <span>Status</span>
+              </TableHead>
+              <TableHead className="w-[150px]">
                 <span>Verification</span>
               </TableHead>
               <TableHead
@@ -249,6 +254,12 @@ export default function UsersTable() {
                       </Badge>
                     </TableCell>
                     <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                        <span className="text-sm text-muted-foreground">Active</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
                       <Badge className={user.isVerified ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
                         {user.isVerified ? 'Verified' : 'Unverified'}
                       </Badge>
@@ -271,7 +282,7 @@ export default function UsersTable() {
                 ))
               : (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground h-80">
+                    <TableCell colSpan={8} className="text-center py-8 text-muted-foreground h-80">
                       No users found
                     </TableCell>
                   </TableRow>

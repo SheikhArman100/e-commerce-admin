@@ -39,28 +39,33 @@ export interface IUserFilters {
 // Additional types for frontend operations
 export interface User {
   id: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   email: string;
-  status: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
-  phoneNumber?: string;
+  phoneNumber: string;
+  role: string;
   isVerified: boolean;
   createdAt: string;
   updatedAt: string;
-  userRole: {
-    id: string;
-    name: string;
-    level: number;
-    description: string | null;
-  };
   detail?: {
+    profileImage?: string | null;
+    address?: string;
+    city?: string;
+    road?: string;
     image?: {
-      diskType?: string;
       path: string;
       originalName: string;
-      modifiedName?: string;
+      modifiedName: string;
+      type: string;
     } | null;
   } | null;
+  creator?: {
+    name: string;
+    email: string;
+  };
+  updater?: {
+    name: string;
+    email: string;
+  };
 }
 
 export interface CreateUserRequest {
@@ -69,16 +74,15 @@ export interface CreateUserRequest {
   phoneNumber: string;
   password: string;
   role?: 'admin' | 'user';
+  file?: File;
 }
 
 export interface UpdateUserRequest {
-  firstName?: string;
-  lastName?: string;
-  email?: string;
+  name?: string;
   phoneNumber?: string;
-  password?: string;
-  roleId?: string;
-  status?: 'ACTIVE' | 'INACTIVE' | 'SUSPENDED';
+  role?: 'admin' | 'user';
+  isActive?: boolean;
+  file?: File;
 }
 
 export interface ChangePasswordRequest {
@@ -89,6 +93,7 @@ export interface ChangePasswordRequest {
 export interface UserFilters {
   searchTerm?: string;
   isVerified?: string;
+  isActive?: string;
   role?: string;
   page?: number;
   limit?: number;

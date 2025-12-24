@@ -35,6 +35,7 @@ import {
 import TextInput from '@/components/input/TextInput';
 import PhoneNumberInput from '@/components/input/PhoneNumberInput';
 import RoleSelect from '@/components/input/RoleSelect';
+import FileUpload from '@/components/input/FileUpload';
 
 import { createUserSchema } from '@/validation/user.validation';
 import { useCreateUser } from '@/hooks/useUsers';
@@ -53,6 +54,7 @@ type CreateUserFormData = {
 export default function CreateUserPage() {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const createUserMutation = useCreateUser();
 
@@ -78,6 +80,7 @@ export default function CreateUserPage() {
         phoneNumber: data.phoneNumber,
         password: data.password,
         role: data.role, // Optional, defaults to USER if not provided
+        file: selectedFile || undefined, // Add selected file if any
       };
 
       await createUserMutation.mutateAsync(createData);
@@ -95,7 +98,7 @@ export default function CreateUserPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-4">
+      <div className="flex flex-col items-start gap-4">
         <Link href="/users">
           <Button variant="outline" size="sm">
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -207,6 +210,23 @@ export default function CreateUserPage() {
                 errors={form.formState.errors.password?.message}
                 showPasswordToggle={true}
               />
+
+              {/* Profile Image Upload */}
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-muted-foreground">
+                  Profile Image
+                </label>
+                <FileUpload
+                  value={selectedFile}
+                  onChange={setSelectedFile}
+                  accept="image/*"
+                  maxSize={5}
+                  placeholder="Upload profile image"
+                />
+                <p className="text-xs text-muted-foreground">
+                  Optional: Upload a profile image (JPG, PNG, GIF up to 5MB)
+                </p>
+              </div>
 
               {/* Form Actions */}
               <div className="flex items-center gap-4 pt-6 border-t">

@@ -59,8 +59,8 @@ export const useUserProfile = () => {
 
   return useQuery({
     queryKey: ['user-profile'],
-    queryFn: async (): Promise<IUser> => {
-      const response = await axiosPrivate.get<{ data: IUser; message: string; statusCode: number; success: boolean }>(
+    queryFn: async (): Promise<User> => {
+      const response = await axiosPrivate.get<{ data: User; message: string; statusCode: number; success: boolean }>(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/profile`
       );
       return response.data.data;
@@ -75,9 +75,25 @@ export const useUpdateUserProfile = () => {
 
   return useMutation({
     mutationFn: async (data: Partial<UpdateUserRequest>) => {
+      const formData = new FormData();
+
+      // Add text fields
+      if (data.name) formData.append('name', data.name);
+      if (data.phoneNumber) formData.append('phoneNumber', data.phoneNumber);
+
+      // Add file if provided
+      if (data.file) {
+        formData.append('file', data.file);
+      }
+
       const response = await axiosPrivate.patch<UserSingleResponse>(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/profile`,
-        data
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
       );
       return response.data.data;
     },
@@ -94,9 +110,28 @@ export const useCreateUser = () => {
 
   return useMutation({
     mutationFn: async (data: CreateUserRequest) => {
+      const formData = new FormData();
+
+      // Add text fields
+      formData.append('name', data.name);
+      formData.append('email', data.email);
+      formData.append('phoneNumber', data.phoneNumber);
+      formData.append('password', data.password);
+      if (data.role) formData.append('role', data.role);
+
+      // Add file if provided
+      if (data.file) {
+        formData.append('file', data.file);
+      }
+
       const response = await axiosPrivate.post<UserSingleResponse>(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/user`,
-        data
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
       );
       return response.data.data;
     },
@@ -112,9 +147,26 @@ export const useUpdateUser = () => {
 
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: UpdateUserRequest }) => {
+      const formData = new FormData();
+
+      // Add text fields
+      if (data.name) formData.append('name', data.name);
+      if (data.phoneNumber) formData.append('phoneNumber', data.phoneNumber);
+      if (data.role) formData.append('role', data.role);
+
+      // Add file if provided
+      if (data.file) {
+        formData.append('file', data.file);
+      }
+
       const response = await axiosPrivate.patch<UserSingleResponse>(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/${id}`,
-        data
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
       );
       return response.data.data;
     },

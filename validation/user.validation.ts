@@ -41,13 +41,9 @@ export const createUserSchema = z.object({
 
 export const updateUserSchema = z.object({
   name: nameValidator('Name').optional(),
-  email: emailValidator.optional(),
-  phoneNumber: bangladeshiPhoneValidator,
-  password: z.string().optional(),
+  phoneNumber: bangladeshiPhoneValidator.optional(),
   role: z.enum(['admin', 'user']).optional(),
-  status: z.enum(['ACTIVE', 'INACTIVE', 'SUSPENDED'], {
-    message: 'Status must be either ACTIVE, INACTIVE, or SUSPENDED',
-  }).optional(),
+  isActive: z.boolean().optional(),
 });
 
 export const updateUserProfileSchema = z.object({
@@ -55,43 +51,23 @@ export const updateUserProfileSchema = z.object({
   phoneNumber: bangladeshiPhoneValidator,
 });
 
-// User Filters Validation
 export const userFiltersSchema = z.object({
   searchTerm: z.string().optional(),
-  isActive: z.boolean().optional(),
-  isEmailVerified: z.boolean().optional(),
-  roleId: z.string().optional(),
-  pointId: z.string().optional(),
-  regionId: z.string().optional(),
-  areaId: z.string().optional(),
-  distributionHouseId: z.string().optional(),
-  territoryId: z.string().optional(),
+  role: z.string().optional(),
+  email: z.string().optional(),
+  isVerified: z.string().optional(),
   page: z.number().int().min(1).optional().default(1),
   limit: z.number().int().min(1).max(100).optional().default(10),
   sortBy: z.string().optional(),
   sortOrder: z.enum(['asc', 'desc']).optional().default('asc'),
 });
 
-// Bulk Operations Validation
-export const bulkUpdateUsersSchema = z.object({
-  userIds: z.array(z.string()).min(1, 'At least one user must be selected'),
-  data: z.object({
-    status: z.enum(['ACTIVE', 'INACTIVE', 'SUSPENDED']).optional(),
-    roleId: z.string().optional(),
-  }),
-});
-
-export const bulkDeleteUsersSchema = z.object({
-  userIds: z.array(z.string()).min(1, 'At least one user must be selected'),
-});
-
-// Change Password Validation (Admin)
 export const changePasswordSchema = z
   .object({
     oldPassword: z
       .string({ error: 'Current password is required' })
       .min(1, 'Current password is required')
-      .optional(), // Optional for admin changes
+      .optional(),
     newPassword: passwordValidator,
     confirmNewPassword: z
       .string({ error: 'Password confirmation is required' })
@@ -105,30 +81,3 @@ export const changePasswordSchema = z
     message: 'New password must be different from current password',
     path: ['newPassword'],
   });
-
-// Export CSV Validation
-export const exportUsersSchema = z.object({
-  searchTerm: z.string().optional(),
-  isActive: z.boolean().optional(),
-  isEmailVerified: z.boolean().optional(),
-  roleId: z.string().optional(),
-  pointId: z.string().optional(),
-  regionId: z.string().optional(),
-  areaId: z.string().optional(),
-  distributionHouseId: z.string().optional(),
-  territoryId: z.string().optional(),
-  sortBy: z.string().optional(),
-  sortOrder: z.enum(['asc', 'desc']).optional().default('asc'),
-});
-
-// User ID Validation
-export const userIdSchema = z.object({
-  id: z.string().min(1, 'User ID is required'),
-});
-
-// User Role Validation
-export const userRoleSchema = z.object({
-  name: z.string().min(1, 'Role name is required').max(50, 'Role name too long'),
-  description: z.string().max(255, 'Description too long').optional(),
-  permissions: z.array(z.string()).default([]),
-});
