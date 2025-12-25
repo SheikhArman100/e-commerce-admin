@@ -7,6 +7,7 @@ import {
   Bell,
   CheckSquare,
   FolderCode,
+  Grid,
   Mails,
   NotepadText,
   ScrollText,
@@ -66,10 +67,16 @@ const menuItems = [
     rootPath: '/users'
   },
   {
-    icon: FolderCode,
-    tooltip: 'Variant Management',
+    icon: Grid,
+    tooltip: 'Category Management',
     path: '/categories',
     rootPath: '/categories'
+  },
+  {
+    icon: FolderCode,
+    tooltip: 'Variant Management',
+    path: '/sizes',
+    rootPath: '/sizes'
   },
   {
     icon: Settings,
@@ -91,7 +98,6 @@ export function SidebarPrimary() {
         (item.rootPath && pathname.includes(item.rootPath)) ||
         // Special handling for variant management paths
         (item.tooltip === 'Variant Management' && (
-          pathname.includes('/categories') ||
           pathname.includes('/sizes') ||
           pathname.includes('/flavors')
         ))

@@ -71,13 +71,18 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
     ],
   },
   {
-    title: 'Variant Management',
+    title: 'Category Management',
     children: [
       {
         title: 'Categories',
         path: '/categories',
         icon: Grid
       },
+    ],
+  },
+  {
+    title: 'Variant Management',
+    children: [
       {
         title: 'Sizes',
         path: '/sizes',
