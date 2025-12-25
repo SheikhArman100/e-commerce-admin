@@ -66,6 +66,12 @@ const menuItems = [
     rootPath: '/users'
   },
   {
+    icon: FolderCode,
+    tooltip: 'Variant Management',
+    path: '/categories',
+    rootPath: '/categories'
+  },
+  {
     icon: Settings,
     tooltip: 'Account',
     path: '#',
@@ -82,7 +88,13 @@ export function SidebarPrimary() {
     menuItems.forEach((item) => {
       if (
         item.rootPath === pathname ||
-        (item.rootPath && pathname.includes(item.rootPath))
+        (item.rootPath && pathname.includes(item.rootPath)) ||
+        // Special handling for variant management paths
+        (item.tooltip === 'Variant Management' && (
+          pathname.includes('/categories') ||
+          pathname.includes('/sizes') ||
+          pathname.includes('/flavors')
+        ))
       ) {
         setSelectedMenuItem(item);
         setSelectedPrimaryItem(item.tooltip);

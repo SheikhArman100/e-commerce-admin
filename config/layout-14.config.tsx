@@ -71,6 +71,26 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
     ],
   },
   {
+    title: 'Variant Management',
+    children: [
+      {
+        title: 'Categories',
+        path: '/categories',
+        icon: Grid
+      },
+      {
+        title: 'Sizes',
+        path: '/sizes',
+        icon: BarChart3
+      },
+      {
+        title: 'Flavors',
+        path: '/flavors',
+        icon: Palette
+      },
+    ],
+  },
+  {
     title: 'Account',
     children: [
       {

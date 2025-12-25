@@ -140,7 +140,7 @@ export default function UserDetailsPage() {
             <Link href="/users">
               <Button variant="outline" size="sm">
                 <ArrowLeft className="w-4 h-4 mr-2" />
-                Back to Users
+                Back to Table
               </Button>
             </Link>
             <h1 className="text-3xl font-bold tracking-tight mt-2">
