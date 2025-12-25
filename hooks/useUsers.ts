@@ -23,6 +23,7 @@ export const useUsers = (filters: UserFilters = {}) => {
 
       if (filters.searchTerm) params.append('searchTerm', filters.searchTerm);
       if (filters.isVerified !== undefined && filters.isVerified !== 'all') params.append('isVerified', filters.isVerified);
+      if (filters.isActive !== undefined && filters.isActive !== 'all') params.append('isActive', filters.isActive);
       if (filters.role && filters.role !== 'all') params.append('role', filters.role);
       if (filters.page) params.append('page', filters.page.toString());
       if (filters.limit !== undefined) params.append('limit', filters.limit.toString());
@@ -156,6 +157,7 @@ export const useUpdateUser = () => {
       if (data.name) formData.append('name', data.name);
       if (data.phoneNumber) formData.append('phoneNumber', data.phoneNumber);
       if (data.role) formData.append('role', data.role);
+      if (data.isActive !== undefined) formData.append('isActive', data.isActive.toString());
 
       // Add file if provided
       if (data.file) {

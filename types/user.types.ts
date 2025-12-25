@@ -9,10 +9,23 @@ export interface IUser {
   password: string;
   role: ENUM_USER_ROLE;
   isVerified: boolean;
+  isActive: boolean;
   createdAt: Date;
   updatedAt?: Date;
   createdBy?: number;
   updatedBy?: number;
+  detail?: {
+    profileImage?: string | null;
+    address?: string;
+    city?: string;
+    road?: string;
+    image?: {
+      path: string;
+      originalName: string;
+      modifiedName: string;
+      type: string;
+    } | null;
+  } | null;
 }
 
 export interface ICreateUserPayload {

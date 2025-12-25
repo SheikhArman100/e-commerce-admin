@@ -26,6 +26,7 @@ import PaginationTable from '@/components/PaginationTable';
 export default function UsersTable() {
   const [sortBy, setSortBy] = useState<string>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [currentLimit, setCurrentLimit] = useState<number>(10);
 
   const searchParams = useSearchParams();
   const router = useRouter();
@@ -38,6 +39,11 @@ export default function UsersTable() {
   const isVerified = searchParams.get('isVerified') || '';
   const isActive = searchParams.get('isActive') || '';
   const role = searchParams.get('role') || '';
+
+  // Update currentLimit when limit changes
+  React.useEffect(() => {
+    setCurrentLimit(limit);
+  }, [limit]);
 
   // Build filters object matching API expectations
   const filters = {
@@ -206,11 +212,29 @@ export default function UsersTable() {
                   </div>
                 </div>
               </TableHead>
-              <TableHead className="w-[150px]">
-                <span>Status</span>
+              <TableHead
+                className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[150px]"
+                onClick={() => handleSort('isActive')}
+              >
+                <div className="flex items-center justify-between">
+                  <span>Status</span>
+                  <div className="flex flex-col">
+                    <ChevronUp className={`w-3 h-3 ${sortBy === 'isActive' && sortOrder === 'asc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
+                    <ChevronDown className={`w-3 h-3 -mt-1 ${sortBy === 'isActive' && sortOrder === 'desc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
+                  </div>
+                </div>
               </TableHead>
-              <TableHead className="w-[150px]">
-                <span>Verification</span>
+              <TableHead
+                className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[150px]"
+                onClick={() => handleSort('isVerified')}
+              >
+                <div className="flex items-center justify-between">
+                  <span>Verification</span>
+                  <div className="flex flex-col">
+                    <ChevronUp className={`w-3 h-3 ${sortBy === 'isVerified' && sortOrder === 'asc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
+                    <ChevronDown className={`w-3 h-3 -mt-1 ${sortBy === 'isVerified' && sortOrder === 'desc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
+                  </div>
+                </div>
               </TableHead>
               <TableHead
                 className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[200px]"
@@ -235,8 +259,8 @@ export default function UsersTable() {
                   <TableRow key={user.id}>
                     <TableCell className="">
                       <div className="flex items-center space-x-2">
-                        <Avatar className="h-8 w-8">
-                          <ProfileImage image={null} />
+                        <Avatar className="h-8 w-8 rounded-full">
+                          <ProfileImage image={user.detail?.image || user.detail?.profileImage} />
                         </Avatar>
                         <Link
                           href={`/users/${user.id}`}
@@ -255,8 +279,8 @@ export default function UsersTable() {
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                        <span className="text-sm text-muted-foreground">Active</span>
+                        <span className={`w-2 h-2 rounded-full ${getStatusColor(user.isActive ? 'ACTIVE' : 'INACTIVE')}`}></span>
+                        <span className="text-sm text-muted-foreground">{user.isActive ? 'Active' : 'Inactive'}</span>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -297,7 +321,8 @@ export default function UsersTable() {
             Showing
             <input
               type="number"
-              defaultValue={Math.min(limit, totalCount)}
+              value={totalCount && (currentLimit > totalCount) ? totalCount : currentLimit}
+              onChange={(e) => setCurrentLimit(parseInt(e.target.value) || 10)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
                   const value = parseInt((e.target as HTMLInputElement).value) || 10;

@@ -31,7 +31,8 @@ export default function ClearAllFiltersButton() {
   const hasActiveFilters =
     searchParams.get('searchTerm') ||
     searchParams.get('isVerified') ||
-    searchParams.get('role')
+    searchParams.get('role')||
+    searchParams.get('isActive')
 
   const handleClearAll = () => {
     const params = new URLSearchParams()

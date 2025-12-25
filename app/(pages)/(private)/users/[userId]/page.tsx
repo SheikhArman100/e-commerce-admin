@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { formatDateTime } from '@/lib/helpers';
 import { useUser } from '@/hooks/useUsers';
+import type { User } from '@/types/user.types';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -37,6 +38,30 @@ export default function UserDetailsPage() {
   const userId = params.userId as string;
 
   const { data: userData, isLoading, error } = useUser(userId);
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'ACTIVE':
+        return 'bg-green-100 text-green-800';
+      case 'INACTIVE':
+        return 'bg-gray-100 text-gray-800';
+      case 'SUSPENDED':
+      default:
+        return 'bg-red-100 text-red-800';
+    }
+  };
+
+  const getRoleColor = (role: string) => {
+    switch (role.toLowerCase()) {
+      case 'super_admin':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'admin':
+        return 'bg-blue-100 text-blue-800';
+      case 'user':
+      default:
+        return 'bg-gray-100 text-gray-800';
+    }
+  };
 
   if (isLoading) {
     return <ScreenLoader />;
@@ -125,7 +150,7 @@ export default function UserDetailsPage() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <Button asChild variant="outline">
+          <Button asChild variant="primary">
             <Link href={`/users/${userId}/update-user`}>
               <Edit className="w-4 h-4 mr-2" />
               Edit User
@@ -183,9 +208,7 @@ export default function UserDetailsPage() {
                     Role
                   </label>
                   <div className="mt-1">
-                    <Badge className={`${user.role === 'admin'
-                        ? 'bg-blue-100 text-blue-800 border-blue-200'
-                        : 'bg-gray-100 text-gray-800 border-gray-200'} capitalize`}>
+                    <Badge className={`${getRoleColor(user.role)} capitalize`}>
                       {user.role.split('_').join(' ')}
                     </Badge>
                   </div>
@@ -198,6 +221,17 @@ export default function UserDetailsPage() {
                     <Badge className={user.isVerified ? 'bg-green-100 text-green-800 border-green-200' : 'bg-yellow-100 text-yellow-800 border-yellow-200'}>
                       {user.isVerified ? 'Verified' : 'Unverified'}
                     </Badge>
+                  </div>
+                </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Active Status
+                  </label>
+                  <div className="mt-1 flex items-center gap-2">
+                    <span className={`w-3 h-3 rounded-full ${user.isActive ? 'bg-green-500' : 'bg-gray-500'}`}></span>
+                    <span className="text-sm">
+                      {user.isActive ? 'Active' : 'Inactive'}
+                    </span>
                   </div>
                 </div>
                 {user.phoneNumber && (
@@ -222,6 +256,42 @@ export default function UserDetailsPage() {
                   </div>
                 )}
               </div>
+
+              {/* Address Information */}
+              {(user.detail?.address || user.detail?.city || user.detail?.road) && (
+                <div className="space-y-4">
+                  <Separator />
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">Address Information</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {user.detail.address && (
+                        <div>
+                          <label className="text-sm font-medium text-muted-foreground">
+                            Address
+                          </label>
+                          <p className="text-sm">{user.detail.address}</p>
+                        </div>
+                      )}
+                      {user.detail.city && (
+                        <div>
+                          <label className="text-sm font-medium text-muted-foreground">
+                            City
+                          </label>
+                          <p className="text-sm">{user.detail.city}</p>
+                        </div>
+                      )}
+                      {user.detail.road && (
+                        <div>
+                          <label className="text-sm font-medium text-muted-foreground">
+                            Road
+                          </label>
+                          <p className="text-sm">{user.detail.road}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -252,6 +322,46 @@ export default function UserDetailsPage() {
               )}
             </CardContent>
           </Card>
+
+          {/* Creator and Updater Information */}
+          {(user.creator || user.updater) && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Shield className="w-4 h-4" />
+                  Creator Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {user.creator && (
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Created By
+                    </label>
+                    <p className="text-sm font-medium">
+                      {user.creator.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {user.creator.email}
+                    </p>
+                  </div>
+                )}
+                {user.updater && (
+                  <div>
+                    <label className="text-sm font-medium text-muted-foreground">
+                      Last Updated By
+                    </label>
+                    <p className="text-sm font-medium">
+                      {user.updater.name}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {user.updater.email}
+                    </p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </div>
       </div>
     </div>

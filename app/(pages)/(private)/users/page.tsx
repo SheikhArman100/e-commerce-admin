@@ -22,6 +22,11 @@ const verificationFilters = [
   { value: 'false', label: 'Unverified', color: '#f59e0b' },
 ];
 
+const activeStatusFilters = [
+  { value: 'true', label: 'Active', color: '#10b981' },
+  { value: 'false', label: 'Inactive', color: '#6b7280' },
+];
+
 export default function UsersPage() {
   // Get users data for potential stats or loading states
   const { data: usersData, isLoading } = useUsers({
@@ -71,6 +76,11 @@ export default function UsersPage() {
                   filters={verificationFilters}
                   paramName="isVerified"
                   placeholder="Filter by verification"
+                />
+                <StatusFilter
+                  filters={activeStatusFilters}
+                  paramName="isActive"
+                  placeholder="Filter by status"
                 />
                 <RoleFilter
                   paramName="role"

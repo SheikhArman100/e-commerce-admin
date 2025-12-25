@@ -53,7 +53,7 @@ export default function UpdateUserPage() {
       name: user?.name || '',
       phoneNumber: user?.phoneNumber || '',
       role: (user?.role as 'admin' | 'user') || 'user',
-      isActive: true, // Default to active
+      isActive: user?.isActive ?? true,
     },
   });
 
@@ -64,7 +64,7 @@ export default function UpdateUserPage() {
         name: user.name,
         phoneNumber: user.phoneNumber || '',
         role: user.role as 'admin' | 'user',
-        isActive: true, // Default to active since API doesn't provide this field
+        isActive: user.isActive ?? true,
       });
     }
   }, [user, reset]);
@@ -111,11 +111,11 @@ export default function UpdateUserPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col items-start gap-4">
           <Button asChild variant="outline">
             <Link href={`/users/${userId}`}>
               <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to User Details
+              Back to Details
             </Link>
           </Button>
           <div>
