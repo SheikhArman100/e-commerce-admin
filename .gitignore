@@ -13,5 +13,8 @@ dist-ssr
 
 .next
 .env.production
+.env.development
+.env.local
+.env
 
 memory-bank

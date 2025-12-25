@@ -44,6 +44,7 @@ export interface User {
   phoneNumber: string;
   role: string;
   isVerified: boolean;
+  isActive: boolean;
   createdAt: string;
   updatedAt: string;
   detail?: {
@@ -82,6 +83,9 @@ export interface UpdateUserRequest {
   phoneNumber?: string;
   role?: 'admin' | 'user';
   isActive?: boolean;
+  address?: string;
+  city?: string;
+  road?: string;
   file?: File;
 }
 

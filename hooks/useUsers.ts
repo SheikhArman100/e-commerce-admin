@@ -80,6 +80,9 @@ export const useUpdateUserProfile = () => {
       // Add text fields
       if (data.name) formData.append('name', data.name);
       if (data.phoneNumber) formData.append('phoneNumber', data.phoneNumber);
+      if (data.address) formData.append('address', data.address);
+      if (data.city) formData.append('city', data.city);
+      if (data.road) formData.append('road', data.road);
 
       // Add file if provided
       if (data.file) {

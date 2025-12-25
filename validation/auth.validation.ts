@@ -60,7 +60,7 @@ export const signInSchema = z.object({
   email: emailValidator,
   password: z
     .string({ error: 'Password is required' })
-    .min(1, 'Password is required'),
+    .min(6, 'Password must be at least 6 characters long.'),
 })
 
 export const changePasswordSchema = z

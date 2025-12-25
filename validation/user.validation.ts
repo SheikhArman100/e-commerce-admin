@@ -47,8 +47,11 @@ export const updateUserSchema = z.object({
 });
 
 export const updateUserProfileSchema = z.object({
-  name: nameValidator('Name'),
-  phoneNumber: bangladeshiPhoneValidator,
+  name: nameValidator('Name').optional(),
+  phoneNumber: bangladeshiPhoneValidator.optional(),
+  address: z.string().min(5, 'Address must be at least 5 characters').max(200, 'Address must not exceed 200 characters').optional(),
+  city: z.string().min(2, 'City must be at least 2 characters').max(50, 'City must not exceed 50 characters').optional(),
+  road: z.string().min(2, 'Road must be at least 2 characters').max(100, 'Road must not exceed 100 characters').optional(),
 });
 
 export const userFiltersSchema = z.object({

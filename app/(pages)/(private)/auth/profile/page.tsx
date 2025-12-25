@@ -122,7 +122,7 @@ export default function ProfilePage() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <Button asChild variant="outline">
+          <Button asChild variant="primary">
             <Link href="/auth/profile/update-profile">
               <Edit className="w-4 h-4 mr-2" />
               Edit Profile
@@ -195,6 +195,17 @@ export default function ProfilePage() {
                     </Badge>
                   </div>
                 </div>
+                <div>
+                  <label className="text-sm font-medium text-muted-foreground">
+                    Active Status
+                  </label>
+                  <div className="mt-1 flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full ${getStatusColor(user.isActive ? 'ACTIVE' : 'INACTIVE').split(' ')[0].replace('100', '500')}`}></span>
+                    <span className={`text-sm `}>
+                      {user.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
+                </div>
                 {user.phoneNumber && (
                   <div>
                     <label className="text-sm font-medium text-muted-foreground">
@@ -207,6 +218,42 @@ export default function ProfilePage() {
                   </div>
                 )}
               </div>
+
+              {/* Address Information */}
+              {(user.detail?.address || user.detail?.city || user.detail?.road) && (
+                <div className="space-y-4">
+                  <Separator />
+                  <div>
+                    <h3 className="text-lg font-semibold mb-3">Address Information</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {user.detail.address && (
+                        <div>
+                          <label className="text-sm font-medium text-muted-foreground">
+                            Address
+                          </label>
+                          <p className="text-sm">{user.detail.address}</p>
+                        </div>
+                      )}
+                      {user.detail.city && (
+                        <div>
+                          <label className="text-sm font-medium text-muted-foreground">
+                            City
+                          </label>
+                          <p className="text-sm">{user.detail.city}</p>
+                        </div>
+                      )}
+                      {user.detail.road && (
+                        <div>
+                          <label className="text-sm font-medium text-muted-foreground">
+                            Road
+                          </label>
+                          <p className="text-sm">{user.detail.road}</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </div>

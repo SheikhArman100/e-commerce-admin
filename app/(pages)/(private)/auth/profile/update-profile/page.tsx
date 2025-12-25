@@ -47,6 +47,9 @@ export default function UpdateProfilePage() {
     defaultValues: {
       name: user?.name || '',
       phoneNumber: user?.phoneNumber || '',
+      address: user?.detail?.address || '',
+      city: user?.detail?.city || '',
+      road: user?.detail?.road || '',
     },
   });
 
@@ -56,6 +59,9 @@ export default function UpdateProfilePage() {
       reset({
         name: user.name,
         phoneNumber: user.phoneNumber || '',
+        address: user?.detail?.address || '',
+        city: user?.detail?.city || '',
+        road: user?.detail?.road || '',
       });
     }
   }, [user, reset]);
@@ -161,6 +167,37 @@ export default function UpdateProfilePage() {
                     {errors.phoneNumber.message}
                   </p>
                 )}
+              </div>
+
+              <div className="space-y-2">
+                <TextInput
+                  label="Address (Optional)"
+                  placeholder="Enter your address"
+                  name="address"
+                  register={register}
+                  errors={errors.address?.message}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <TextInput
+                    label="City (Optional)"
+                    placeholder="Enter your city"
+                    name="city"
+                    register={register}
+                    errors={errors.city?.message}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <TextInput
+                    label="Road (Optional)"
+                    placeholder="Enter your road/street"
+                    name="road"
+                    register={register}
+                    errors={errors.road?.message}
+                  />
+                </div>
               </div>
 
               {/* Read-only email field */}
