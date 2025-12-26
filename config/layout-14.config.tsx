@@ -84,15 +84,16 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
     title: 'Variant Management',
     children: [
       {
-        title: 'Sizes',
-        path: '/sizes',
-        icon: BarChart3
-      },
-      {
         title: 'Flavors',
         path: '/flavors',
         icon: Palette
       },
+      {
+        title: 'Sizes',
+        path: '/sizes',
+        icon: BarChart3
+      },
+      
     ],
   },
   {
