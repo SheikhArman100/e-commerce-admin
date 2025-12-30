@@ -10,7 +10,7 @@ import {
   SizeSingleResponse,
 } from '@/types/size.types';
 
-export const useSizes = (filters: SizeFilters = {}) => {
+export const useSizes = (filters: SizeFilters = {}, options?: { enabled?: boolean }) => {
   const axiosPrivate = useAxiosPrivate();
 
   return useQuery({
@@ -31,7 +31,7 @@ export const useSizes = (filters: SizeFilters = {}) => {
       );
       return response.data;
     },
-    enabled: true,
+    enabled: options?.enabled ?? true,
   });
 };
 

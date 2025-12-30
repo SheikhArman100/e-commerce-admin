@@ -32,7 +32,9 @@ export default function ClearAllFiltersButton() {
     searchParams.get('searchTerm') ||
     searchParams.get('isVerified') ||
     searchParams.get('role')||
-    searchParams.get('isActive')
+    searchParams.get('isActive')||
+    searchParams.get('inStock')||
+    searchParams.get('categoryId')
 
   const handleClearAll = () => {
     const params = new URLSearchParams()

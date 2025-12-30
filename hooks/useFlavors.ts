@@ -10,7 +10,7 @@ import {
   FlavorSingleResponse,
 } from '@/types/flavor.types';
 
-export const useFlavors = (filters: FlavorFilters = {}) => {
+export const useFlavors = (filters: FlavorFilters = {}, options?: { enabled?: boolean }) => {
   const axiosPrivate = useAxiosPrivate();
 
   return useQuery({
@@ -32,7 +32,7 @@ export const useFlavors = (filters: FlavorFilters = {}) => {
       );
       return response.data;
     },
-    enabled: true,
+    enabled: options?.enabled ?? true,
   });
 };
 

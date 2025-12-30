@@ -24,6 +24,7 @@ import {
   ExternalLink,
   Zap,
   Target,
+  ClipboardList,
 } from 'lucide-react';
 import {
   Avatar,
@@ -75,8 +76,14 @@ const menuItems = [
   {
     icon: FolderCode,
     tooltip: 'Variant Management',
-    path: '/sizes',
-    rootPath: '/sizes'
+    path: '/flavors',
+    rootPath: '/flavors'
+  },
+  {
+    icon: ClipboardList,
+    tooltip: 'Product Management',
+    path: '/products',
+    rootPath: '/products'
   },
   {
     icon: Settings,

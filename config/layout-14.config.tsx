@@ -97,6 +97,16 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
     ],
   },
   {
+    title:"Product Management",
+    children:[
+      {
+        title: 'Products',
+        path: '/products',
+        icon: ClipboardList
+      },
+    ],
+  },
+  {
     title: 'Account',
     children: [
       {

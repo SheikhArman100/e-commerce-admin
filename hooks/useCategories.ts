@@ -10,7 +10,7 @@ import {
   CategorySingleResponse,
 } from '@/types/category.types';
 
-export const useCategories = (filters: CategoryFilters = {}) => {
+export const useCategories = (filters: CategoryFilters = {}, options?: { enabled?: boolean }) => {
   const axiosPrivate = useAxiosPrivate();
 
   return useQuery({
@@ -31,7 +31,7 @@ export const useCategories = (filters: CategoryFilters = {}) => {
       );
       return response.data;
     },
-    enabled: true,
+    enabled: options?.enabled ?? true,
   });
 };
 
