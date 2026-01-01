@@ -142,48 +142,96 @@ export const useUpdateProduct = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ id, data }: { id: string; data: UpdateProductRequest }) => {
+    mutationFn: async ({ id, data }: { id: string; data: any }) => {
       const formData = new FormData();
 
-      // Add basic fields (only if provided)
+      // Add basic product fields (only if provided)
       if (data.title) formData.append('title', data.title);
       if (data.description) formData.append('description', data.description);
       if (data.categoryId) formData.append('categoryId', data.categoryId);
       if (data.isActive !== undefined) {
-        formData.append('isActive', data.isActive);
+        formData.append('isActive', data.isActive.toString());
       }
 
-      // Add flavors with complex nested structure (only if provided)
-      if (data.flavors) {
-        const flavorsData = data.flavors.map(flavor => ({
-          flavorId: flavor.flavorId,
-          soldByQuantity: flavor.soldByQuantity,
-          // Include sizes for size-based products, stock/price for quantity-based
-          ...(flavor.soldByQuantity ? {
-            ...(flavor.stock !== undefined && { stock: flavor.stock }),
-            ...(flavor.price !== undefined && { price: flavor.price })
-          } : {
-            sizes: flavor.sizes?.map(size => ({
-              sizeId: size.sizeId,
-              stock: size.stock,
-              price: size.price,
-            })) || []
-          }),
-          // Only include images if provided
-          ...(flavor.images && flavor.images.length > 0 && {
-            images: flavor.images
-          })
-        }));
+      // Add flavor operations using bracket notation
+      if (data.flavors?.add) {
+        data.flavors.add.forEach((flavor: any, flavorIndex: number) => {
+          formData.append(`flavors[add][${flavorIndex}][flavorId]`, flavor.flavorId);
 
-        formData.append('flavors', JSON.stringify(flavorsData));
-
-        // Add images for each flavor with specific naming convention
-        data.flavors.forEach((flavor, flavorIndex) => {
-          if (flavor.images && flavor.images.length > 0) {
-            flavor.images.forEach((image) => {
-              formData.append(`flavors[${flavorIndex}][images]`, image);
+          if (flavor.soldByQuantity) {
+            formData.append(`flavors[add][${flavorIndex}][soldByQuantity]`, 'true');
+            if (flavor.stock) formData.append(`flavors[add][${flavorIndex}][stock]`, flavor.stock);
+            if (flavor.price) formData.append(`flavors[add][${flavorIndex}][price]`, flavor.price);
+          } else if (flavor.sizes) {
+            flavor.sizes.forEach((size: any, sizeIndex: number) => {
+              formData.append(`flavors[add][${flavorIndex}][sizes][${sizeIndex}][sizeId]`, size.sizeId);
+              formData.append(`flavors[add][${flavorIndex}][sizes][${sizeIndex}][stock]`, size.stock);
+              formData.append(`flavors[add][${flavorIndex}][sizes][${sizeIndex}][price]`, size.price);
             });
           }
+
+          // Add images for new flavors
+          if (flavor.images) {
+            flavor.images.forEach((image: File) => {
+              formData.append(`flavors[add][${flavorIndex}][images]`, image);
+            });
+          }
+        });
+      }
+
+      if (data.flavors?.update) {
+        data.flavors.update.forEach((flavor: any, flavorIndex: number) => {
+          formData.append(`flavors[update][${flavorIndex}][flavorId]`, flavor.flavorId);
+
+          if (flavor.soldByQuantity !== undefined) {
+            formData.append(`flavors[update][${flavorIndex}][soldByQuantity]`, flavor.soldByQuantity.toString());
+          }
+
+          // Add stock/price for quantity-based updates
+          if (flavor.stock) formData.append(`flavors[update][${flavorIndex}][stock]`, flavor.stock);
+          if (flavor.price) formData.append(`flavors[update][${flavorIndex}][price]`, flavor.price);
+
+          // Size operations
+          if (flavor.sizes?.add) {
+            flavor.sizes.add.forEach((size: any, sizeIndex: number) => {
+              formData.append(`flavors[update][${flavorIndex}][sizes][add][${sizeIndex}][sizeId]`, size.sizeId);
+              formData.append(`flavors[update][${flavorIndex}][sizes][add][${sizeIndex}][stock]`, size.stock);
+              formData.append(`flavors[update][${flavorIndex}][sizes][add][${sizeIndex}][price]`, size.price);
+            });
+          }
+
+          if (flavor.sizes?.update) {
+            flavor.sizes.update.forEach((size: any, sizeIndex: number) => {
+              formData.append(`flavors[update][${flavorIndex}][sizes][update][${sizeIndex}][sizeId]`, size.sizeId);
+              if (size.stock) formData.append(`flavors[update][${flavorIndex}][sizes][update][${sizeIndex}][stock]`, size.stock);
+              if (size.price) formData.append(`flavors[update][${flavorIndex}][sizes][update][${sizeIndex}][price]`, size.price);
+            });
+          }
+
+          if (flavor.sizes?.remove) {
+            flavor.sizes.remove.forEach((sizeId: string, sizeIndex: number) => {
+              formData.append(`flavors[update][${flavorIndex}][sizes][remove][${sizeIndex}]`, sizeId);
+            });
+          }
+
+          // Image operations
+          if (flavor.images?.add) {
+            flavor.images.add.forEach((image: File) => {
+              formData.append(`flavors[update][${flavorIndex}][images][add]`, image);
+            });
+          }
+
+          if (flavor.images?.remove) {
+            flavor.images.remove.forEach((fileId: string, imageIndex: number) => {
+              formData.append(`flavors[update][${flavorIndex}][images][remove][${imageIndex}]`, fileId);
+            });
+          }
+        });
+      }
+
+      if (data.flavors?.remove) {
+        data.flavors.remove.forEach((flavorId: string, index: number) => {
+          formData.append(`flavors[remove][${index}]`, flavorId);
         });
       }
 

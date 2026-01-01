@@ -49,7 +49,7 @@ import { useProduct, useUpdateProduct } from '@/hooks/useProducts';
 import { useCategories } from '@/hooks/useCategories';
 import { useFlavors } from '@/hooks/useFlavors';
 import { useSizes } from '@/hooks/useSizes';
-import type { UpdateProductRequest, ProductFlavorForm } from '@/types/product.types';
+import type { IUpdateProductInterface, ProductFlavorForm } from '@/types/product.types';
 import Link from 'next/link';
 import { ScreenLoader } from '@/components/screen-loader';
 
@@ -64,6 +64,7 @@ type UpdateProductFormData = {
 type ImageToRemove = {
   flavorIndex: number;
   imagePath: string;
+  fileId: number;
 };
 
 export default function UpdateProductPage() {
@@ -75,6 +76,8 @@ export default function UpdateProductPage() {
   const [flavorImages, setFlavorImages] = useState<File[][]>([[]]);
   const [originalProductData, setOriginalProductData] = useState<any>(null);
   const [imagesToRemove, setImagesToRemove] = useState<ImageToRemove[]>([]);
+  const [flavorsToRemove, setFlavorsToRemove] = useState<number[]>([]);
+  const [sizesToRemove, setSizesToRemove] = useState<{flavorIndex: number, sizeId: string}[]>([]);
 
   const { data: productData, isLoading: isLoadingProduct, error: productError } = useProduct(productId);
   const updateProductMutation = useUpdateProduct();
@@ -93,10 +96,12 @@ export default function UpdateProductPage() {
   const { watch, setValue, reset } = form;
   const watchedFlavors = watch('flavors');
 
-  // Combined change detection: form changes + image operations
+  // Combined change detection: form changes + image operations + flavor removal + size removal
   const hasChanges = form.formState.isDirty ||
     flavorImages.some(images => images.length > 0) ||
-    imagesToRemove.length > 0;
+    imagesToRemove.length > 0 ||
+    flavorsToRemove.length > 0 ||
+    sizesToRemove.length > 0;
 
   // Load product data and populate form
   useEffect(() => {
@@ -176,6 +181,17 @@ export default function UpdateProductPage() {
   const removeFlavor = (flavorIndex: number) => {
     const currentFlavors = form.getValues('flavors');
     if (currentFlavors.length > 1) {
+      // Check if this is an existing flavor (has an ID) or a new one being added
+      const flavorToRemove = currentFlavors[flavorIndex];
+      if (flavorToRemove.flavorId && originalProductData) {
+        // This is an existing flavor being removed - add to removal list
+        const originalFlavor = originalProductData.flavors.find((f: any) => f.flavor.id.toString() === flavorToRemove.flavorId);
+        if (originalFlavor) {
+          setFlavorsToRemove(prev => [...prev, originalFlavor.flavor.id]);
+        }
+      }
+
+      // Remove from form
       setValue('flavors', currentFlavors.filter((_, index) => index !== flavorIndex));
       // Also remove the corresponding images array
       setFlavorImages(flavorImages.filter((_, index) => index !== flavorIndex));
@@ -197,15 +213,42 @@ export default function UpdateProductPage() {
 
   const removeSize = (flavorIndex: number, sizeIndex: number) => {
     const currentFlavors = form.getValues('flavors');
-    const updatedFlavors = [...currentFlavors];
-    if (updatedFlavors[flavorIndex].sizes && updatedFlavors[flavorIndex].sizes.length > 1) {
-      updatedFlavors[flavorIndex].sizes = updatedFlavors[flavorIndex].sizes.filter((_, index) => index !== sizeIndex);
+    if (currentFlavors[flavorIndex].sizes && currentFlavors[flavorIndex].sizes.length > 1) {
+      // Get the size being removed BEFORE filtering
+      const sizeToRemove = currentFlavors[flavorIndex].sizes?.[sizeIndex];
+
+      // Check if this is an existing size being removed
+      if (sizeToRemove?.sizeId && originalProductData) {
+        // Find the original flavor and check if this size existed originally
+        const originalFlavor = originalProductData.flavors?.[flavorIndex];
+        if (originalFlavor) {
+          const originalSize = originalFlavor.sizes?.find((s: any) =>
+            s.size?.id.toString() === sizeToRemove.sizeId
+          );
+          if (originalSize) {
+            // This is an existing size being removed - track it
+            setSizesToRemove(prev => [...prev, {
+              flavorIndex,
+              sizeId: originalSize.size.id.toString()
+            }]);
+          }
+        }
+      }
+
+      // Remove from form
+      const updatedFlavors = [...currentFlavors];
+      updatedFlavors[flavorIndex].sizes = updatedFlavors[flavorIndex]?.sizes?.filter((_, index) => index !== sizeIndex);
       setValue('flavors', updatedFlavors);
     }
   };
 
   const removeImage = (flavorIndex: number, imagePath: string) => {
-    setImagesToRemove(prev => [...prev, { flavorIndex, imagePath }]);
+    // Find the file ID from the product data
+    const flavorData = productData?.flavors[flavorIndex];
+    const imageData = flavorData?.images.find(img => img.path === imagePath);
+    const fileId = imageData?.id || 0;
+
+    setImagesToRemove(prev => [...prev, { flavorIndex, imagePath, fileId }]);
   };
 
   const isImageMarkedForRemoval = (flavorIndex: number, imagePath: string) => {
@@ -220,168 +263,10 @@ export default function UpdateProductPage() {
     }
 
     try {
+      // Build the clean IUpdateProductInterface structure
+      const updateRequest: IUpdateProductInterface = {};
 
-      // Process flavors with granular operations
-      const flavorsData = data.flavors.map((flavor, flavorIndex) => {
-        const originalFlavor = originalProductData.flavors[flavorIndex];
-        const isNewFlavor = !originalFlavor; // Flavor doesn't exist in original data
-
-        if (isNewFlavor) {
-          // NEW FLAVOR: Use direct sizes array approach
-          const newFlavorData: any = {
-            flavorId: flavor.flavorId
-          };
-
-          if (flavor.soldByQuantity) {
-            // Quantity-based new flavor
-            newFlavorData.soldByQuantity = true;
-            newFlavorData.stock = flavor.stock;
-            newFlavorData.price = flavor.price;
-          } else {
-            // Size-based new flavor: use sizes array directly
-            newFlavorData.sizes = flavor.sizes?.map(size => ({
-              sizeId: size.sizeId,
-              stock: size.stock,
-              price: size.price
-            })) || [];
-          }
-
-          return newFlavorData;
-        } else {
-          // EXISTING FLAVOR: Check if original was quantity-based or size-based
-          const originalQuantitySize = originalFlavor?.sizes?.find((s: any) => s.size === null && s.soldByQuantity === true);
-          const wasOriginallyQuantityBased = !!originalQuantitySize;
-
-          if (wasOriginallyQuantityBased) {
-            // ORIGINAL WAS QUANTITY-BASED: Send direct properties
-            const flavorOperations: any = {
-              flavorId: flavor.flavorId,
-              soldByQuantity: true
-            };
-
-            const trimmedStock = flavor.stock?.trim() || '';
-            const trimmedPrice = flavor.price?.trim() || '';
-
-            // Only include stock if it's not empty and different from original
-            const originalStock = originalQuantitySize.stock?.toString().trim() || '';
-            if (trimmedStock.length > 0 && trimmedStock !== originalStock) {
-              flavorOperations.stock = trimmedStock;
-            }
-
-            // Only include price if it's not empty and different from original
-            const originalPrice = originalQuantitySize.price?.toString().trim() || '';
-            if (trimmedPrice.length > 0 && trimmedPrice !== originalPrice) {
-              flavorOperations.price = trimmedPrice;
-            }
-
-            // Only include if there are changes
-            if (Object.keys(flavorOperations).length > 2) { // More than flavorId and soldByQuantity
-              return flavorOperations;
-            } else {
-              return null; // No changes
-            }
-          } else {
-            // ORIGINAL WAS SIZE-BASED: Use sizeOperations
-            const flavorOperations: any = {
-              flavorId: flavor.flavorId
-            };
-
-            const sizeOperations: any = {};
-            const currentSizes = flavor.sizes || [];
-            const originalSizes = originalFlavor?.sizes?.filter((s: any) => s.size !== null) || [];
-
-            // Find sizes to add (new sizes in form that don't exist in original)
-            const sizesToAdd = currentSizes.filter(currentSize => {
-              return currentSize.sizeId && !originalSizes.some((originalSize: any) =>
-                originalSize.size?.id.toString() === currentSize.sizeId
-              );
-            });
-
-            // Find sizes to update (existing sizes with changed values)
-            const sizesToUpdate = currentSizes.filter((currentSize: any) => {
-              if (!currentSize.sizeId) return false;
-              const originalSize = originalSizes.find((os: any) => os.size?.id.toString() === currentSize.sizeId);
-              return originalSize && (
-                originalSize.stock.toString() !== currentSize.stock ||
-                originalSize.price.toString() !== currentSize.price
-              );
-            });
-
-            // Find sizes to remove (original sizes not in current form)
-            const sizesToRemove = originalSizes.filter((originalSize: any) => {
-              return originalSize.size?.id && !currentSizes.some(currentSize =>
-                currentSize.sizeId === originalSize.size.id.toString()
-              );
-            });
-
-            if (sizesToAdd.length > 0) {
-              sizeOperations.add = sizesToAdd
-                .filter(size => size.sizeId && size.sizeId.trim() !== '')
-                .map(size => ({
-                  sizeId: size.sizeId,
-                  stock: size.stock,
-                  price: size.price
-                }));
-            }
-
-            if (sizesToUpdate.length > 0) {
-              sizeOperations.update = sizesToUpdate
-                .filter(size => size.sizeId && size.sizeId.trim() !== '')
-                .map(size => ({
-                  sizeId: size.sizeId,
-                  stock: size.stock,
-                  price: size.price
-                }));
-            }
-
-            if (sizesToRemove.length > 0) {
-              sizeOperations.remove = sizesToRemove.map((size: any) => size.size?.id.toString());
-            }
-
-            if (Object.keys(sizeOperations).length > 0) {
-              flavorOperations.sizeOperations = sizeOperations;
-            }
-
-            // Only return if there are operations
-            if (Object.keys(flavorOperations).length > 1) { // More than just flavorId
-              return flavorOperations;
-            } else {
-              return null; // No changes
-            }
-          }
-        }
-      });
-
-      // Filter out null results and add image operations
-      const validFlavorsData = flavorsData.filter(flavor => flavor !== null).map((flavor, index) => {
-        // Handle image operations for each flavor
-        const originalFlavorIndex = data.flavors.findIndex(f => f.flavorId === flavor.flavorId);
-        const imagesToRemoveForFlavor = imagesToRemove.filter(img => img.flavorIndex === originalFlavorIndex);
-        const newImagesForFlavor = flavorImages[originalFlavorIndex] || [];
-
-        const imageOperations: any = {};
-
-        if (imagesToRemoveForFlavor.length > 0) {
-          // TODO: Change to fileIds when backend provides them
-          // For now using paths, but API docs show fileIds [123, 456]
-          imageOperations.remove = imagesToRemoveForFlavor.map(img => img.imagePath);
-        }
-
-        if (newImagesForFlavor.length > 0) {
-          imageOperations.add = [];
-        }
-
-        if (Object.keys(imageOperations).length > 0) {
-          flavor.imageOperations = imageOperations;
-        }
-
-        return flavor;
-      });
-
-      // Prepare update request data for the hook
-      const updateRequest: UpdateProductRequest = {};
-
-      // Add basic product fields only if changed
+      // Basic product fields (only if changed)
       if (data.title !== originalProductData.title) {
         updateRequest.title = data.title;
       }
@@ -391,31 +276,173 @@ export default function UpdateProductPage() {
       if (data.categoryId !== originalProductData.category.id.toString()) {
         updateRequest.categoryId = data.categoryId;
       }
-      if (data.isActive && data.isActive !== (originalProductData.isActive ? 'true' : 'false')) {
-        updateRequest.isActive = data.isActive;
+      if (data.isActive !== (originalProductData.isActive ? 'true' : 'false')) {
+        updateRequest.isActive = data.isActive === 'true';
       }
 
-      // Add flavors if there are changes
-      if (validFlavorsData.length > 0) {
-        updateRequest.flavors = validFlavorsData;
+      // Flavor operations structure
+      const flavorOps: IUpdateProductInterface['flavors'] = {
+        add: [],
+        update: [],
+        remove: []
+      };
+
+      // Process each flavor in the form
+      data.flavors.forEach((flavor, flavorIndex) => {
+        const originalFlavor = originalProductData.flavors?.[flavorIndex];
+        const isNewFlavor = !originalFlavor;
+        const imagesToRemoveForFlavor = imagesToRemove.filter(img => img.flavorIndex === flavorIndex);
+        const newImagesForFlavor = flavorImages[flavorIndex] || [];
+
+        if (isNewFlavor) {
+          // New flavor - add to 'add' array
+          const addFlavor: any = {
+            flavorId: flavor.flavorId,
+            soldByQuantity: flavor.soldByQuantity,
+            images: newImagesForFlavor.length > 0 ? newImagesForFlavor : undefined
+          };
+
+          if (flavor.soldByQuantity) {
+            addFlavor.stock = flavor.stock;
+            addFlavor.price = flavor.price;
+          } else {
+            addFlavor.sizes = flavor.sizes?.filter(size => size.sizeId && size.sizeId.trim() !== '').map(size => ({
+              sizeId: size.sizeId,
+              stock: size.stock,
+              price: size.price
+            })) || [];
+          }
+
+          flavorOps.add!.push(addFlavor);
+        } else {
+          // Existing flavor - check for updates
+          const originalQuantitySize = originalFlavor?.sizes?.find((s: any) => s.size === null && s.soldByQuantity === true);
+          const wasOriginallyQuantityBased = !!originalQuantitySize;
+
+          const updateFlavor: any = {
+            flavorId: originalFlavor.flavor.id.toString(),
+            images: {
+              remove: imagesToRemoveForFlavor.map(img => img.fileId.toString()),
+              add: newImagesForFlavor.length > 0 ? newImagesForFlavor : undefined
+            }
+          };
+
+          let hasUpdates = false;
+
+          // Check for stock/price changes in quantity-based products
+          if (wasOriginallyQuantityBased) {
+            const originalStock = originalQuantitySize.stock?.toString() || '';
+            const originalPrice = originalQuantitySize.price?.toString() || '';
+
+            if (flavor.stock !== originalStock || flavor.price !== originalPrice) {
+              updateFlavor.stock = flavor.stock;
+              updateFlavor.price = flavor.price;
+              hasUpdates = true;
+            }
+          } else {
+            // Size-based product - check for size operations
+            const currentSizes = flavor.sizes || [];
+            const originalSizes = originalFlavor?.sizes?.filter((s: any) => s.size !== null) || [];
+
+            const sizeOps: any = {};
+
+            // Sizes to add
+            const sizesToAdd = currentSizes.filter(currentSize =>
+              currentSize.sizeId && !originalSizes.some((os: any) => os.size?.id.toString() === currentSize.sizeId)
+            );
+            if (sizesToAdd.length > 0) {
+              sizeOps.add = sizesToAdd.map(size => ({
+                sizeId: size.sizeId,
+                stock: size.stock,
+                price: size.price
+              }));
+              hasUpdates = true;
+            }
+
+            // Sizes to update
+            const sizesToUpdate = currentSizes.filter(currentSize => {
+              if (!currentSize.sizeId) return false;
+              const originalSize = originalSizes.find((os: any) => os.size?.id.toString() === currentSize.sizeId);
+              return originalSize && (
+                originalSize.stock.toString() !== currentSize.stock ||
+                originalSize.price.toString() !== currentSize.price
+              );
+            });
+            if (sizesToUpdate.length > 0) {
+              sizeOps.update = sizesToUpdate.map(size => ({
+                sizeId: size.sizeId, // Use sizeId instead of id
+                stock: size.stock,
+                price: size.price
+              }));
+              hasUpdates = true;
+            }
+
+            // Sizes to remove
+            const sizesToRemove = originalSizes.filter((originalSize: any) =>
+              !currentSizes.some(currentSize => currentSize.sizeId === originalSize.size?.id.toString())
+            );
+            if (sizesToRemove.length > 0) {
+              sizeOps.remove = sizesToRemove.map((size: any) => size.size?.id.toString());
+              hasUpdates = true;
+            }
+
+            if (hasUpdates) {
+              updateFlavor.sizes = sizeOps;
+            }
+          }
+
+          // Check for image operations
+          if (imagesToRemoveForFlavor.length > 0 || newImagesForFlavor.length > 0) {
+            hasUpdates = true;
+          }
+
+          if (hasUpdates) {
+            flavorOps.update!.push(updateFlavor);
+          }
+        }
+      });
+
+      // Add flavors to remove
+      if (flavorsToRemove.length > 0) {
+        flavorOps.remove = flavorsToRemove.map(id => id.toString());
       }
+
+      // Clean up empty arrays
+      if (flavorOps.add!.length === 0) delete flavorOps.add;
+      if (flavorOps.update!.length === 0) delete flavorOps.update;
+      if (flavorOps.remove!.length === 0) delete flavorOps.remove;
+
+      // Add flavors operations if any exist
+      if (Object.keys(flavorOps).length > 0) {
+        updateRequest.flavors = flavorOps;
+      }
+
+      // Convert to the format expected by the hook
+      const hookData: any = { ...updateRequest };
 
       // Add image files to the request (hook will handle FormData creation)
       if (flavorImages.some(images => images.length > 0)) {
-        // The hook expects images in the flavors array with images property
-        updateRequest.flavors = updateRequest.flavors || [];
-        data.flavors.forEach((flavor, flavorIndex) => {
-          const flavorInRequest = updateRequest.flavors?.find(f => f.flavorId === flavor.flavorId);
-          if (flavorInRequest && flavorImages[flavorIndex]?.length > 0) {
-            (flavorInRequest as any).images = flavorImages[flavorIndex];
-          }
-        });
+        // The hook expects images in the flavors structure
+        if (hookData.flavors?.add) {
+          hookData.flavors.add.forEach((flavor: any) => {
+            if (flavor.images) {
+              // Keep images in the add structure for the hook
+            }
+          });
+        }
+        if (hookData.flavors?.update) {
+          hookData.flavors.update.forEach((flavor: any) => {
+            if (flavor.images?.add) {
+              // Keep images in the update structure for the hook
+            }
+          });
+        }
       }
 
-      // Use the hook for the API call (includes automatic invalidation)
+      // Use the hook for the API call
       await updateProductMutation.mutateAsync({
         id: productId,
-        data: updateRequest
+        data: hookData
       });
 
       toast.success('Product updated successfully!');
@@ -899,11 +926,22 @@ export default function UpdateProductPage() {
                   )}
                 </Button>
 
-                <Link href={`/products/${productId}`}>
-                  <Button type="button" variant="outline">
-                    Cancel
-                  </Button>
-                </Link>
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => {
+                    // Reset form to original values
+                    reset();
+
+                    // Reset all state variables
+                    setFlavorImages(productData.flavors.map(() => []));
+                    setImagesToRemove([]);
+                    setFlavorsToRemove([]);
+                    setSizesToRemove([]);
+                  }}
+                >
+                  Reset
+                </Button>
               </div>
             </form>
           </Form>

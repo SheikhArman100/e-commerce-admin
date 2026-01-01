@@ -18,6 +18,7 @@ export interface IProduct {
       color: string;
     };
     images: Array<{
+      id: number;
       path: string;
       originalName: string;
       modifiedName: string;
@@ -105,6 +106,62 @@ export interface CreateProductRequest {
   }>;
 }
 
+export interface IUpdateProductInterface {
+  // ===== Product level =====
+  title?: string;
+  description?: string;
+  categoryId?: string;
+  isActive?: boolean;
+
+  // ===== Flavor operations =====
+  flavors?: {
+    add?: {
+      flavorId: string;
+      soldByQuantity?: boolean;
+
+      // Quantity-based
+      stock?: string;
+      price?: string;
+
+      // Size-based
+      sizes?: {
+        sizeId: string;
+        stock: string;
+        price: string;
+      }[];
+
+      images?: File[];
+    }[];
+    update?: {
+      flavorId: string; // flavor record id (required)
+      soldByQuantity?: boolean;
+      // Quantity-based
+      stock?: string;
+      price?: string;
+      // Size-based operations
+      sizes?: {
+        add?: {
+          sizeId: string;
+          stock: string;
+          price: string;
+        }[];
+        update?: {
+          sizeId: string; // size record id
+          stock?: string;
+          price?: string;
+        }[];
+        remove?: string[]; // sizeIds
+      };
+      // Image operations
+      images?: {
+        add?: File[];
+        remove?: string[]; // imageIds or imageUrls
+      };
+    }[];
+    remove?: string[]; // flavorIds
+  };
+}
+
 export interface UpdateProductRequest {
   title?: string;
   description?: string;
@@ -124,6 +181,7 @@ export interface UpdateProductRequest {
     }>;
     images?: File[];
   }>;
+  removeFlavors?: number[]; // Array of flavor IDs to remove
 }
 
 export interface ProductListResponse {
