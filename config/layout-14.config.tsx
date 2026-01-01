@@ -107,6 +107,16 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
     ],
   },
   {
+    title: 'Review Management',
+    children: [
+      {
+        title: 'Reviews',
+        path: '/reviews',
+        icon: MessageCircle
+      }
+    ],
+  },
+  {
     title: 'Account',
     children: [
       {

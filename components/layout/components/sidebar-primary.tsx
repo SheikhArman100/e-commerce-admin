@@ -86,6 +86,12 @@ const menuItems = [
     rootPath: '/products'
   },
   {
+    icon: Mails,
+    tooltip: 'Review Management',
+    path: '/reviews',
+    rootPath: '/reviews'
+  },
+  {
     icon: Settings,
     tooltip: 'Account',
     path: '#',
