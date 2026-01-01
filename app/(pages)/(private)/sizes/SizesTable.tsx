@@ -58,10 +58,7 @@ export default function SizesTable() {
         <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
       </TableCell>
       <TableCell>
-        <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
-      </TableCell>
-      <TableCell>
-        <div className="h-6 w-16 bg-gray-200 rounded-full animate-pulse"></div>
+        <div className="w-2 h-2 bg-gray-200 rounded-full animate-pulse"></div>
       </TableCell>
       <TableCell>
         <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
@@ -213,7 +210,7 @@ export default function SizesTable() {
                 ))
               : (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground h-80">
+                    <TableCell colSpan={4} className="text-center py-8 text-muted-foreground h-80">
                       No sizes found
                     </TableCell>
                   </TableRow>
