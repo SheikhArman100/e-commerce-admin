@@ -8,23 +8,23 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Check, ChevronsUpDown } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { useCategories } from '@/hooks/useCategories'
+import { useProducts } from '@/hooks/useProducts'
 import useDebounce from '@/hooks/useDebounce'
-import { ICategory } from '@/types/category.types'
+import { IProduct } from '@/types/product.types'
 
-interface CategoryFilterProps {
+interface ProductFilterProps {
   paramName?: string
   placeholder?: string
   className?: string
   showCounts?: boolean
 }
 
-export default function CategoryFilter({
-  paramName = 'categoryId',
-  placeholder = 'Filter by category',
+export default function ProductFilter({
+  paramName = 'productId',
+  placeholder = 'Filter by product',
   className = '',
   showCounts = false
-}: CategoryFilterProps) {
+}: ProductFilterProps) {
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
@@ -40,14 +40,14 @@ export default function CategoryFilter({
   const debouncedSearchTerm = useDebounce(searchTerm, 300)
 
   // Only fetch data when the popover is open
-  const { data, isLoading } = useCategories({
+  const { data, isLoading } = useProducts({
     page: 1,
-    limit: 20, // Always show 20 categories
+    limit: 20, // Always show 20 products
     searchTerm: debouncedSearchTerm || undefined, // Send search term to backend when user types
-    isActive: 'true', // Only fetch active categories
+    isActive: 'true', // Only fetch active products
   }, { enabled: open })
 
-  const categories: ICategory[] = data?.data || []
+  const products: IProduct[] = data?.data || []
 
   const handleValueChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString())
@@ -63,19 +63,16 @@ export default function CategoryFilter({
       params.delete('page')
     }
 
-    // Clear flavor filter when category changes
-    params.delete('flavorId')
-
     router.push(`${pathname}?${params.toString()}`)
     setOpen(false)
   }
 
-  const getSelectedCategory = () => {
+  const getSelectedProduct = () => {
     if (currentValue === 'all') return null
-    return categories.find(category => category.id.toString() === currentValue)
+    return products.find(product => product.id.toString() === currentValue)
   }
 
-  const selectedCategory = getSelectedCategory()
+  const selectedProduct = getSelectedProduct()
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
@@ -87,11 +84,11 @@ export default function CategoryFilter({
             aria-expanded={open}
             className="min-w-[200px] w-full justify-between"
           >
-            {selectedCategory ? (
+            {selectedProduct ? (
               <div className="flex items-center gap-2">
-                <span>{selectedCategory.name}</span>
+                <span>{selectedProduct.title}</span>
                 {/* <Badge variant="outline" className="text-xs">
-                  {selectedCategory.status}
+                  {selectedProduct.category.name}
                 </Badge> */}
 
               </div>
@@ -104,20 +101,20 @@ export default function CategoryFilter({
         <PopoverContent className="w-[300px] p-0">
           <Command shouldFilter={false}>
             <CommandInput
-              placeholder="Search categories..."
+              placeholder="Search products..."
               value={searchTerm}
               onValueChange={setSearchTerm}
             />
             <CommandList>
               {isLoading ? (
                 <div className="p-4 text-center text-sm text-muted-foreground">
-                  Loading categories...
+                  Loading products...
                 </div>
               ) : (
                 <>
-                  <CommandEmpty>No categories found.</CommandEmpty>
+                  <CommandEmpty>No products found.</CommandEmpty>
                   <CommandGroup>
-                {categories.length === 20 && (
+                {products.length === 20 && (
                   <div className="px-2 py-1.5 text-xs text-muted-foreground border-b">
                     Showing top results. Refine your search for more options.
                   </div>
@@ -133,32 +130,31 @@ export default function CategoryFilter({
                     )}
                   />
                   <div className="flex items-center gap-2">
-                    <span>All Categories</span>
+                    <span>All Products</span>
                     {/* {showCounts && (
                       <Badge variant="outline" className="text-xs">
-                        {categories.length}
+                        {products.length}
                       </Badge>
                     )} */}
                   </div>
                 </CommandItem>
-                {categories.map((category) => (
+                {products.map((product) => (
                   <CommandItem
-                    key={category.id}
-                    value={category.name}
-                    onSelect={() => handleValueChange(category.id.toString())}
+                    key={product.id}
+                    value={product.title}
+                    onSelect={() => handleValueChange(product.id.toString())}
                   >
                     <Check
                       className={cn(
                         'mr-2 h-4 w-4',
-                        currentValue === category.id.toString() ? 'opacity-100' : 'opacity-0'
+                        currentValue === product.id.toString() ? 'opacity-100' : 'opacity-0'
                       )}
                     />
                     <div className="flex items-center gap-2">
-                      <span>{category.name}</span>
-                      {/* <Badge variant="outline" className="text-xs">
-                        {category.status}
-                      </Badge> */}
-
+                      <span className="truncate">{product.title}</span>
+                      <Badge variant="outline" className="text-xs shrink-0">
+                        {product.category.name}
+                      </Badge>
                     </div>
                   </CommandItem>
                 ))}

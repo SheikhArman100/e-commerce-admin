@@ -10,11 +10,12 @@ import {
   ProductResponse,
 } from '@/types/product.types';
 
-export const useProducts = (filters: ProductFilters = {}) => {
+export const useProducts = (filters: ProductFilters = {}, options?: { enabled?: boolean }) => {
   const axiosPrivate = useAxiosPrivate();
 
   return useQuery({
     queryKey: ['products', filters],
+    enabled: options?.enabled ?? true,
     queryFn: async () => {
       const params = new URLSearchParams();
 
@@ -43,7 +44,6 @@ export const useProducts = (filters: ProductFilters = {}) => {
       );
       return response.data;
     },
-    enabled: true,
   });
 };
 

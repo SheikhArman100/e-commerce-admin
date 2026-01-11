@@ -1,19 +1,13 @@
 'use client';
 
-import { Star, MessageSquare } from 'lucide-react';
-import { useReviews } from '@/hooks/useReviews';
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import ReviewsTable from './ReviewsTable';
-import Link from 'next/link';
 import SearchFilter from '@/components/filters/SearchFilter';
 import StatusFilter from '@/components/filters/StatusFilter';
+import ProductFilter from '@/components/filters/ProductFilter';
 import ClearAllFiltersButton from '@/components/filters/ClearAllFiltersButton';
 
 const ratingFilters = [
@@ -24,18 +18,12 @@ const ratingFilters = [
   { value: '5', label: '5 Stars', color: '#10b981' },
 ];
 
-const hideStatusFilters = [
+const visibilityFilters = [
   { value: 'true', label: 'Hidden', color: '#6b7280' },
   { value: 'false', label: 'Visible', color: '#10b981' },
 ];
 
 export default function ReviewsPage() {
-  // Get reviews data for potential stats
-  const { data: reviewsData, isLoading } = useReviews({
-    page: 1,
-    limit: 10
-  });
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -44,15 +32,6 @@ export default function ReviewsPage() {
             Review Management
           </h1>
           <p className="text-muted-foreground">Manage customer reviews and ratings</p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <Link href="/reviews/create-review">
-            <Button size="md">
-              <MessageSquare className="w-4 h-4 mr-1" />
-              Add Review
-            </Button>
-          </Link>
         </div>
       </div>
 
@@ -66,14 +45,18 @@ export default function ReviewsPage() {
                   paramName="searchTerm"
                   placeholder="Search reviews by comment"
                 />
+                <ProductFilter
+                  paramName="productId"
+                  placeholder="Filter by product"
+                />
                 <StatusFilter
                   filters={ratingFilters}
                   paramName="rating"
                   placeholder="Filter by rating"
                 />
                 <StatusFilter
-                  filters={hideStatusFilters}
-                  paramName="isHide"
+                  filters={visibilityFilters}
+                  paramName="isHidden"
                   placeholder="Filter by visibility"
                 />
               </div>

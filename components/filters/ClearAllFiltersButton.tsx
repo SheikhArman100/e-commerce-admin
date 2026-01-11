@@ -34,7 +34,10 @@ export default function ClearAllFiltersButton() {
     searchParams.get('role')||
     searchParams.get('isActive')||
     searchParams.get('inStock')||
-    searchParams.get('categoryId')
+    searchParams.get('categoryId')||
+    searchParams.get('productId')||
+    searchParams.get('rating') ||
+    searchParams.get('isHidden')
 
   const handleClearAll = () => {
     const params = new URLSearchParams()

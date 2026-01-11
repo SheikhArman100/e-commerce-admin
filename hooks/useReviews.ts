@@ -21,7 +21,7 @@ export const useReviews = (filters: ReviewFilters = {}) => {
       // Add all filter parameters
       if (filters.searchTerm) params.append('searchTerm', filters.searchTerm);
       if (filters.rating) params.append('rating', filters.rating);
-      if (filters.isHide !== undefined) params.append('isHide', filters.isHide);
+      if (filters.isHidden !== undefined) params.append('isHidden', filters.isHidden);
       if (filters.userId) params.append('userId', filters.userId);
       if (filters.productId) params.append('productId', filters.productId);
       if (filters.orderId) params.append('orderId', filters.orderId);
@@ -102,7 +102,7 @@ export const useUpdateReview = () => {
       // Add fields only if provided
       if (data.rating !== undefined) formData.append('rating', data.rating.toString());
       if (data.comment) formData.append('comment', data.comment);
-      if (data.isHide !== undefined) formData.append('isHide', data.isHide.toString());
+      if (data.isHide !== undefined) formData.append('isHidden', data.isHide.toString());
 
       const response = await axiosPrivate.patch<ReviewResponse>(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/review/${id}`,
