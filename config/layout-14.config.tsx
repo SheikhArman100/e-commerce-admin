@@ -43,7 +43,8 @@ import {
   Trash,
   UserCheck,
   Lock,
-  FileCheck
+  FileCheck,
+  Heart
 } from "lucide-react";
 
 export const MENU_SIDEBAR_MAIN: MenuConfig = [
@@ -113,6 +114,16 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
         title: 'Reviews',
         path: '/reviews',
         icon: MessageCircle
+      }
+    ],
+  },
+  {
+    title: 'Wishlist Management',
+    children: [
+      {
+        title: 'Wishlist',
+        path: '/wishlists',
+        icon: Heart
       }
     ],
   },

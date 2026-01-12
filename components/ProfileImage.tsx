@@ -50,7 +50,7 @@ const ProfileImage: React.FC<ImageProps> = ({
         <AvatarImage
           src={imageSrc}
           alt={altText}
-          className={`${className} w-full h-full object-fit rounded-full`}
+          className={`${className} w-full h-full object-cover rounded-full`}
         />
       )}
       <AvatarFallback>

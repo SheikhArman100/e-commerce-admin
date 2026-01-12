@@ -384,7 +384,9 @@ export default function ProductsTable() {
             />
             of {totalCount} Records
           </div>
-          <PaginationTable count={totalCount} limit={limit} />
+         <div>
+ <PaginationTable count={totalCount} limit={limit} />
+</div>
         </div>
       )}
     </div>

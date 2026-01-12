@@ -13,15 +13,18 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, ChevronUp, ChevronDown, Eye } from 'lucide-react';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Loader2, ChevronUp, ChevronDown, Eye, Heart, Trash2 } from 'lucide-react';
 
 import { formatDateTime } from '@/lib/helpers';
 import { ScreenLoader } from '@/components/screen-loader';
-import { useFlavors } from '@/hooks/useFlavors';
-import { IFlavor } from '@/types/flavor.types';
+import { useWishlists } from '@/hooks/useWishlists';
+import { IWishlist } from '@/types/wishlist.types';
 import PaginationTable from '@/components/PaginationTable';
+import DeleteWishlistModal from './DeleteWishlistModal';
+import ProfileImage from '@/components/ProfileImage';
 
-export default function FlavorsTable() {
+export default function WishlistsTable() {
   const [sortBy, setSortBy] = useState<string>('createdAt');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [currentLimit, setCurrentLimit] = useState<number>(10);
@@ -34,7 +37,8 @@ export default function FlavorsTable() {
   const page = parseInt(searchParams.get('page') || '1');
   const limit = parseInt(searchParams.get('limit') || '10');
   const searchTerm = searchParams.get('searchTerm') || '';
-  const isActive = searchParams.get('isActive') || '';
+  const productId = searchParams.get('productId') || '';
+  const userId = searchParams.get('userId') || '';
 
   // Update currentLimit when limit changes
   React.useEffect(() => {
@@ -46,44 +50,34 @@ export default function FlavorsTable() {
     page,
     limit,
     ...(searchTerm && { searchTerm }),
-    ...(isActive && isActive !== 'all' && { isActive }),
+    ...(productId && { productId }),
+    ...(userId && { userId }),
     sortBy,
     sortOrder,
   };
 
-  const { data: flavorsData, isLoading, error } = useFlavors(filters);
+  const { data: wishlistsData, isLoading, error } = useWishlists(filters);
 
   const renderSkeletonRow = (index: number) => (
     <TableRow key={`skeleton-${index}`}>
       <TableCell>
-        <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+          <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+        </div>
       </TableCell>
       <TableCell>
-        <div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div>
+        <div className="h-4 w-32 bg-gray-200 rounded animate-pulse"></div>
+        <div className="h-3 w-16 bg-gray-200 rounded animate-pulse mt-1"></div>
       </TableCell>
       <TableCell>
-        <div className="w-2 h-2 bg-gray-200 rounded-full animate-pulse"></div>
-      </TableCell>
-      <TableCell>
-        <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+        <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
       </TableCell>
       <TableCell>
         <div className="h-8 w-16 bg-gray-200 rounded animate-pulse"></div>
       </TableCell>
     </TableRow>
   );
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'ACTIVE':
-        return 'bg-green-400 ';
-      case 'INACTIVE':
-        return 'bg-gray-400 ';
-      case 'SUSPENDED':
-      default:
-        return 'bg-red-400 ';
-    }
-  };
 
   const handleLimitChange = (newLimit: number) => {
     const params = new URLSearchParams(searchParams);
@@ -107,15 +101,15 @@ export default function FlavorsTable() {
   };
 
   if (error) {
-    console.error('Flavors fetch error:', error);
+    console.error('Wishlists fetch error:', error);
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-600 mb-2">
-            Error Loading Flavors
+            Error Loading Wishlists
           </h2>
           <p className="text-gray-600 mb-4">
-            An error occurred while fetching flavors.
+            An error occurred while fetching wishlists.
           </p>
           <Button
             onClick={() => window.location.reload()}
@@ -128,8 +122,8 @@ export default function FlavorsTable() {
     );
   }
 
-  const flavors: IFlavor[] = flavorsData?.data || [];
-  const totalCount = flavorsData?.meta?.count || 0;
+  const wishlists: IWishlist[] = wishlistsData?.data || [];
+  const totalCount = wishlistsData?.meta?.count || 0;
 
   return (
     <div>
@@ -138,47 +132,35 @@ export default function FlavorsTable() {
           <TableHeader>
             <TableRow>
               <TableHead
-                className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[200px]"
-                onClick={() => handleSort('name')}
+                className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[250px]"
+                onClick={() => handleSort('user.name')}
               >
                 <div className="flex items-center justify-between">
-                  <span>Name</span>
+                  <span>User</span>
                   <div className="flex flex-col">
-                    <ChevronUp className={`w-3 h-3 ${sortBy === 'name' && sortOrder === 'asc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
-                    <ChevronDown className={`w-3 h-3 -mt-1 ${sortBy === 'name' && sortOrder === 'desc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
+                    <ChevronUp className={`w-3 h-3 ${sortBy === 'user.name' && sortOrder === 'asc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
+                    <ChevronDown className={`w-3 h-3 -mt-1 ${sortBy === 'user.name' && sortOrder === 'desc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
                   </div>
                 </div>
               </TableHead>
               <TableHead
-                className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[150px]"
-                onClick={() => handleSort('color')}
+                className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[300px]"
+                onClick={() => handleSort('product.title')}
               >
                 <div className="flex items-center justify-between">
-                  <span>Color</span>
+                  <span>Product</span>
                   <div className="flex flex-col">
-                    <ChevronUp className={`w-3 h-3 ${sortBy === 'color' && sortOrder === 'asc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
-                    <ChevronDown className={`w-3 h-3 -mt-1 ${sortBy === 'color' && sortOrder === 'desc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
+                    <ChevronUp className={`w-3 h-3 ${sortBy === 'product.title' && sortOrder === 'asc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
+                    <ChevronDown className={`w-3 h-3 -mt-1 ${sortBy === 'product.title' && sortOrder === 'desc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
                   </div>
                 </div>
               </TableHead>
               <TableHead
-                className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[150px]"
-                onClick={() => handleSort('isActive')}
-              >
-                <div className="flex items-center justify-between">
-                  <span>Status</span>
-                  <div className="flex flex-col">
-                    <ChevronUp className={`w-3 h-3 ${sortBy === 'isActive' && sortOrder === 'asc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
-                    <ChevronDown className={`w-3 h-3 -mt-1 ${sortBy === 'isActive' && sortOrder === 'desc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
-                  </div>
-                </div>
-              </TableHead>
-              <TableHead
-                className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[200px]"
+                className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[180px]"
                 onClick={() => handleSort('createdAt')}
               >
                 <div className="flex items-center justify-between">
-                  <span>Created Date</span>
+                  <span>Added Date</span>
                   <div className="flex flex-col">
                     <ChevronUp className={`w-3 h-3 ${sortBy === 'createdAt' && sortOrder === 'asc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
                     <ChevronDown className={`w-3 h-3 -mt-1 ${sortBy === 'createdAt' && sortOrder === 'desc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
@@ -191,52 +173,56 @@ export default function FlavorsTable() {
           <TableBody>
             {isLoading
               ? Array.from({ length: limit }, (_, index) => renderSkeletonRow(index))
-              : flavors.length > 0
-              ? flavors.map((flavor) => (
-                  <TableRow key={flavor.id}>
-                    <TableCell className="">
-                      <Link
-                        href={`/flavors/${flavor.id}`}
-                        className="font-medium hover:text-blue-800 hover:underline"
-                      >
-                        {flavor.name}
-                      </Link>
-                    </TableCell>
+              : wishlists.length > 0
+              ? wishlists.map((wishlist) => (
+                  <TableRow key={wishlist.id}>
                     <TableCell>
                       <div className="flex items-center gap-2">
-                        <div
-                          className="w-4 h-4 rounded border border-gray-300"
-                          style={{ backgroundColor: flavor.color }}
-                        />
-                        <span className="text-sm font-mono">{flavor.color}</span>
+                        <Avatar className="h-8 w-8 rounded-full">
+                          <ProfileImage image={wishlist.user.detail?.image || wishlist.user.detail?.profileImage} />
+                        </Avatar>
+                        <div>
+                          <p className="font-medium text-sm">{wishlist.user.name}</p>
+                          <p className="text-xs text-muted-foreground">{wishlist.user.email}</p>
+                        </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <span className={`w-2 h-2 rounded-full ${getStatusColor(flavor.isActive ? 'ACTIVE' : 'INACTIVE')}`}></span>
-                        <span className="text-sm text-muted-foreground">{flavor.isActive ? 'Active' : 'Inactive'}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell className="">
-                      {formatDateTime(flavor.createdAt)}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        asChild
-                      >
-                        <Link href={`/flavors/${flavor.id}`}>
-                          <Eye className="w-4 h-4" />
+                      <div className="max-w-48">
+                        <Link
+                          href={`/products/${wishlist.product.id}`}
+                          className="font-medium hover:text-blue-600 hover:underline cursor-pointer transition-colors"
+                        >
+                          {wishlist.product.title}
                         </Link>
-                      </Button>
+                        <p className="text-sm text-muted-foreground truncate">
+                          {wishlist.product.category.name}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {formatDateTime(wishlist.createdAt)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          asChild
+                        >
+                          <Link href={`/wishlists/${wishlist.id}`}>
+                            <Eye className="w-4 h-4" />
+                          </Link>
+                        </Button>
+                        <DeleteWishlistModal wishlist={wishlist} />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
               : (
                   <TableRow>
-                    <TableCell colSpan={5} className="text-center py-8 text-muted-foreground h-80">
-                      No flavors found
+                    <TableCell colSpan={4} className="text-center py-8 text-muted-foreground h-80">
+                      No wishlists found
                     </TableCell>
                   </TableRow>
                 )}
@@ -244,17 +230,22 @@ export default function FlavorsTable() {
         </Table>
       </div>
 
-      {flavors.length > 0 && (
+      {wishlists.length > 0 && (
         <div className="flex flex-col md:flex-row justify-between items-center mt-4 gap-3">
           <div className="text-sm font-medium text-gray-600 flex items-center gap-2">
             Showing
             <input
               type="number"
-              value={totalCount && (currentLimit > totalCount) ? totalCount : currentLimit}
+              value={
+                totalCount && currentLimit > totalCount
+                  ? totalCount
+                  : currentLimit
+              }
               onChange={(e) => setCurrentLimit(parseInt(e.target.value) || 10)}
               onKeyDown={(e) => {
                 if (e.key === 'Enter') {
-                  const value = parseInt((e.target as HTMLInputElement).value) || 10;
+                  const value =
+                    parseInt((e.target as HTMLInputElement).value) || 10;
                   handleLimitChange(value);
                 }
               }}
@@ -270,5 +261,5 @@ export default function FlavorsTable() {
         </div>
       )}
     </div>
-  );
+  )
 }

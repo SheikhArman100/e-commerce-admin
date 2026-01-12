@@ -25,6 +25,7 @@ import {
   Zap,
   Target,
   ClipboardList,
+  Heart,
 } from 'lucide-react';
 import {
   Avatar,
@@ -90,6 +91,12 @@ const menuItems = [
     tooltip: 'Review Management',
     path: '/reviews',
     rootPath: '/reviews'
+  },
+  {
+    icon: Heart,
+    tooltip: 'Wishlist Management',
+    path: '/wishlists',
+    rootPath: '/wishlists'
   },
   {
     icon: Settings,

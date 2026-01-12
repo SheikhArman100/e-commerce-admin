@@ -57,7 +57,7 @@ const PaginationTable: React.FC<IPageProps> = ({ count, limit }) => {
   }
 
   return (
-    <Pagination>
+    <Pagination className=' '>
       <PaginationContent>
         <PaginationItem>
           <Button
