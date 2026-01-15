@@ -106,6 +106,12 @@ const menuItems = [
     rootPath: '/carts'
   },
   {
+    icon: Target,
+    tooltip: 'Order Management',
+    path: '/orders',
+    rootPath: '/orders'
+  },
+  {
     icon: Settings,
     tooltip: 'Account',
     path: '#',

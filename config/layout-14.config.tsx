@@ -138,6 +138,16 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
     ],
   },
   {
+    title: 'Order Management',
+    children: [
+      {
+        title: 'Orders',
+        path: '/orders',
+        icon: FileText
+      }
+    ],
+  },
+  {
     title: 'Account',
     children: [
       {
