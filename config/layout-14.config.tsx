@@ -128,6 +128,16 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
     ],
   },
   {
+    title: 'Cart Management',
+    children: [
+      {
+        title: 'Carts',
+        path: '/carts',
+        icon: FileText
+      }
+    ],
+  },
+  {
     title: 'Account',
     children: [
       {

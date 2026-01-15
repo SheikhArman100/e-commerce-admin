@@ -26,6 +26,7 @@ import {
   Target,
   ClipboardList,
   Heart,
+  FileText,
 } from 'lucide-react';
 import {
   Avatar,
@@ -97,6 +98,12 @@ const menuItems = [
     tooltip: 'Wishlist Management',
     path: '/wishlists',
     rootPath: '/wishlists'
+  },
+  {
+    icon: FileText,
+    tooltip: 'Cart Management',
+    path: '/carts',
+    rootPath: '/carts'
   },
   {
     icon: Settings,
