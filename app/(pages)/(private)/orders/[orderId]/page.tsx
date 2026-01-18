@@ -3,6 +3,7 @@
 import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Edit, Package, Truck, CheckCircle, Clock } from 'lucide-react';
 import { formatDateTime } from '@/lib/helpers';
 
@@ -206,7 +207,29 @@ export default function OrderDetailPage() {
               {order.items.length > 0 ? (
                 order.items.map((item) => (
                   <div key={item.id} className="border rounded-lg p-4">
-                    <div className="flex items-start justify-between">
+                    <div className="flex items-start gap-4">
+                      {/* Product Image */}
+                      {item.productFlavorSize.productFlavor?.images &&
+                       item.productFlavorSize.productFlavor.images.length > 0 ? (
+                        <div className="flex-shrink-0 ">
+                          <Image
+                            src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${item.productFlavorSize.productFlavor.images[0].path}`}
+                            alt={item.product.title}
+                            width={64}
+                            height={64}
+                            className="w-16 h-16 object-cover rounded-lg border shadow-sm"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                            }}
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-lg border flex items-center justify-center">
+                          <Package className="w-6 h-6 text-gray-400" />
+                        </div>
+                      )}
+
                       <div className="flex-1">
                         <h4 className="font-medium">{item.product.title}</h4>
                         <p className="text-sm text-muted-foreground">
@@ -224,9 +247,10 @@ export default function OrderDetailPage() {
                         <div className="flex items-center gap-4 mt-2 text-sm">
                           <span>Price: ${item.price.toFixed(2)}</span>
                           <span>Quantity: {item.quantity}</span>
-                          <span>Stock: {item.productFlavorSize.stock}</span>
+                          {/* <span>Stock: {item.productFlavorSize.stock}</span> */}
                         </div>
                       </div>
+
                       <div className="text-right">
                         <span className="font-medium">
                           ${(item.price * item.quantity).toFixed(2)}

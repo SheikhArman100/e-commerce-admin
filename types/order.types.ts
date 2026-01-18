@@ -82,6 +82,20 @@ export interface IOrderItem {
         color: string;
         description: string | null;
       };
+      images?: Array<{
+        id: number;
+        type: string;
+        path: string;
+        originalName: string;
+        modifiedName: string;
+        createdAt: string;
+        updatedAt: string;
+        productId: number | null;
+        flavorId: number;
+        userDetailId: number | null;
+        categoryId: number | null;
+        reviewId: number | null;
+      }>;
     };
   };
 }
