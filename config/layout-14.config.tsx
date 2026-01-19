@@ -57,6 +57,22 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
         path: '/',
         icon: BarChart3
       },
+
+      {
+        title: 'Sales Analytics',
+        path: '/sales-analytics',
+        icon: BarChart2
+      },
+      {
+        title: 'Product Performance',
+        path: '/product-performance',
+        icon: ChartLine
+      },
+      {
+        title: 'Customer Insights',
+        path: '/customer-insights',
+        icon: UserRoundCog
+      }
       
     ],
   },
