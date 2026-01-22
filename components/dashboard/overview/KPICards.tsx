@@ -30,32 +30,32 @@ export default function KPICards({ metrics, isLoading }: KPICardsProps) {
       value: formatCurrency(metrics.totalRevenue),
       growth: metrics.revenueGrowth,
       icon: DollarSign,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
+      iconBg: 'bg-emerald-100',
+      iconText: 'text-emerald-700',
     },
     {
       title: 'Total Orders',
       value: formatNumber(metrics.totalOrders),
       growth: metrics.orderGrowth,
       icon: ShoppingCart,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
+      iconBg: 'bg-blue-100',
+      iconText: 'text-blue-700',
     },
     {
       title: 'Total Products',
       value: formatNumber(metrics.totalProducts),
       growth: metrics.productGrowth,
       icon: Package,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
+      iconBg: 'bg-violet-100',
+      iconText: 'text-violet-700',
     },
     {
       title: 'Total Customers',
       value: formatNumber(metrics.totalCustomers),
       growth: metrics.customerGrowth,
       icon: Users,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50',
+      iconBg: 'bg-amber-100',
+      iconText: 'text-amber-700',
     },
   ];
 
@@ -79,26 +79,27 @@ export default function KPICards({ metrics, isLoading }: KPICardsProps) {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-4 gap-6">
       {cards.map((card, index) => {
         const Icon = card.icon;
         const isPositive = card.growth >= 0;
 
         return (
-          <Card key={index} className="hover:shadow-md transition-shadow">
+          <Card key={index} className="hover:shadow-md transition-shadow border-slate-200 bg-slate-50/80">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
+              <CardTitle className="text-sm font-medium text-slate-700">
                 {card.title}
               </CardTitle>
-              <div className={`p-2 rounded-full ${card.bgColor}`}>
-                <Icon className={`h-4 w-4 ${card.color}`} />
+              <div className={`p-2.5 rounded-xl ${card.iconBg} shadow-sm`}>
+                <Icon className={`h-4 w-4 ${card.iconText}`} />
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{card.value}</div>
-              <div className="flex items-center space-x-2 text-xs text-muted-foreground">
+            <CardContent className="bg-white/60 rounded-lg p-3">
+              <div className="text-2xl font-bold text-slate-800">{card.value}</div>
+              <div className="flex items-center space-x-2 text-xs text-slate-600">
                 <Badge
                   variant={isPositive ? "success" : "destructive"}
+                  appearance="light"
                   className="flex items-center space-x-1"
                 >
                   {isPositive ? (

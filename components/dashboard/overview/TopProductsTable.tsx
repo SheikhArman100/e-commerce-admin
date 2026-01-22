@@ -43,13 +43,13 @@ export default function TopProductsTable({ data, isLoading }: TopProductsTablePr
   const getRankBadgeColor = (rank: number) => {
     switch (rank) {
       case 1:
-        return 'bg-yellow-100 text-yellow-800 border-yellow-200';
+        return 'bg-yellow-100 text-yellow-600';
       case 2:
-        return 'bg-gray-100 text-gray-800 border-gray-200';
+        return 'bg-gray-100 text-gray-600';
       case 3:
-        return 'bg-amber-100 text-amber-800 border-amber-200';
+        return 'bg-amber-100 text-amber-600';
       default:
-        return 'bg-blue-50 text-blue-700 border-blue-200';
+        return ' bg-slate-100 text-slate-600';
     }
   };
 
@@ -79,28 +79,28 @@ export default function TopProductsTable({ data, isLoading }: TopProductsTablePr
       </Card>
     );
   }
-  console.log("Top Products", data);
+
 
   return (
-    <Card className='h-full'>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <TrendingUp className="h-5 w-5" />
+    <Card className='h-full border-slate-200 bg-slate-50/80 shadow-sm'>
+      <CardHeader className="bg-white/60 rounded-t-lg">
+        <CardTitle className="flex items-center gap-2 text-slate-800">
+          <TrendingUp className="h-5 w-5 text-slate-600" />
           Top Products
         </CardTitle>
         {data.length > 0 && (
           <div className="">
             <Link
               href="/products"
-              className="text-sm  hover:underline text-blue-500 flex items-center gap-1"
+              className="text-sm hover:underline text-slate-600 flex items-center gap-1"
             >
               View all products
-              
+
             </Link>
           </div>
         )}
       </CardHeader>
-      <CardContent>
+      <CardContent className="bg-white/40 rounded-b-lg">
         <div className="space-y-4 h-full">
           {data.length > 0 ? (
             data.map((product, index) => {
@@ -108,20 +108,20 @@ export default function TopProductsTable({ data, isLoading }: TopProductsTablePr
               return (
                 <div
                   key={product.id}
-                  className="flex items-center space-x-4 p-3 rounded-lg hover:bg-muted/50 transition-colors"
+                  className="flex items-center space-x-4 p-3 rounded-lg hover:bg-slate-100/80 transition-colors bg-white/60"
                 >
                   {/* Rank */}
                   <div className="flex items-center justify-center w-8 h-8">
                     <Badge
                       variant="outline"
-                      className={`flex items-center justify-center w-8 h-8 p-0 ${getRankBadgeColor(rank)}`}
+                      className={`flex items-center justify-center w-8 h-8 p-0 border-slate-300 ${getRankBadgeColor(rank)}`}
                     >
                       #{rank}
                     </Badge>
                   </div>
 
                   {/* Product Image */}
-                  <div className="relative h-12 w-12 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                  <div className="relative h-12 w-12 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
                     <Avatar className="w-full h-full">
                                               {product.image? (
                                                 <AvatarImage
@@ -129,33 +129,33 @@ export default function TopProductsTable({ data, isLoading }: TopProductsTablePr
                                                   alt={product.title}
                                                 />
                                               ) : (
-                                                <AvatarFallback className="rounded-md">
-                                                  <Package className="w-4 h-4" />
+                                                <AvatarFallback className="rounded-md bg-slate-200">
+                                                  <Package className="w-4 h-4 text-slate-600" />
                                                 </AvatarFallback>
                                               )}
                                             </Avatar>
-                    
+
                   </div>
 
                   {/* Product Info */}
                   <div className="flex-1 min-w-0">
                     <Link
                       href={`/products/${product.id}`}
-                      className="font-medium text-sm hover:text-primary hover:underline line-clamp-1"
+                      className="font-medium text-sm text-slate-800 hover:text-slate-900 hover:underline line-clamp-1"
                     >
                       {product.title}
                     </Link>
-                    <div className="flex items-center gap-4 text-xs text-muted-foreground mt-1">
+                    <div className="flex items-center gap-4 text-xs text-slate-600 mt-1">
                       <span>{formatNumber(product.orders)} orders</span>
                     </div>
                   </div>
 
                   {/* Revenue */}
                   <div className="text-right">
-                    <div className="font-semibold text-sm">
+                    <div className="font-semibold text-sm text-slate-800">
                       {formatCurrency(product.revenue)}
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-xs text-slate-600">
                       Revenue
                     </div>
                   </div>
@@ -163,14 +163,14 @@ export default function TopProductsTable({ data, isLoading }: TopProductsTablePr
               );
             })
           ) : (
-            <div className="text-center py-8 text-muted-foreground h-full flex flex-col items-center justify-center">
-              <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <div className="text-center py-8 text-slate-500 h-full flex flex-col items-center justify-center">
+              <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-50 text-slate-400" />
               <p>No product data available</p>
             </div>
           )}
         </div>
 
-        
+
       </CardContent>
     </Card>
   );

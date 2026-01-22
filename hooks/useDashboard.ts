@@ -21,7 +21,7 @@ export const useDashboardOverview = (filters: DashboardFilters = {}) => {
       if (filters.month) params.append('month', filters.month);
       if (filters.year) params.append('year', filters.year);
 
-      await new Promise(resolve => setTimeout(resolve, 10000));
+      
 
       const response = await axiosPrivate.get<{ data: DashboardOverviewResponse }>(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/dashboard/overview?${params.toString()}`

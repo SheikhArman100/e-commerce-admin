@@ -23,11 +23,11 @@ export default function LowStockAlertsTable({ data, isLoading }: LowStockAlertsT
   const getStockColor = (level: string) => {
     switch (level) {
       case 'critical':
-        return 'destructive';
+        return 'bg-red-100 text-red-800 border-red-200';
       case 'warning':
-        return 'warning';
+        return 'bg-amber-100 text-amber-800 border-amber-200';
       default:
-        return 'secondary';
+        return 'bg-emerald-100 text-emerald-800 border-emerald-200';
     }
   };
 
@@ -45,11 +45,11 @@ export default function LowStockAlertsTable({ data, isLoading }: LowStockAlertsT
   const getCardBorderColor = (level: string) => {
     switch (level) {
       case 'critical':
-        return 'border-red-200 bg-red-50/50';
+        return 'border-red-200 bg-gradient-to-r from-red-50/50 to-pink-50/30';
       case 'warning':
-        return 'border-yellow-200 bg-yellow-50/50';
+        return 'border-amber-200 bg-gradient-to-r from-amber-50/50 to-yellow-50/30';
       default:
-        return '';
+        return 'border-emerald-200 bg-gradient-to-r from-emerald-50/50 to-teal-50/30';
     }
   };
 
@@ -80,14 +80,14 @@ export default function LowStockAlertsTable({ data, isLoading }: LowStockAlertsT
   }
 
   return (
-    <Card className='h-full'>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <AlertTriangle className="h-5 w-5 text-orange-500" />
+    <Card className='h-full border-slate-200 bg-slate-50/80 shadow-sm'>
+      <CardHeader className="bg-white/60 rounded-t-lg">
+        <CardTitle className="flex items-center gap-2 text-slate-800">
+          <AlertTriangle className="h-5 w-5 text-slate-600" />
           Low Stock Alerts
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="bg-white/40 rounded-b-lg">
         <div className="space-y-3 h-full">
           {data.length > 0 ? (
             data.map((item) => {
@@ -95,32 +95,32 @@ export default function LowStockAlertsTable({ data, isLoading }: LowStockAlertsT
               return (
                 <div
                   key={item.productId}
-                  className={`flex items-center justify-between p-3 border rounded-lg hover:bg-muted/50 transition-colors ${getCardBorderColor(stockLevel)}`}
+                  className={`flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-100/80 transition-colors bg-white/60 ${getCardBorderColor(stockLevel)}`}
                 >
                   {/* Product Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <Link
                         href={`/products/${item.productId}`}
-                        className="font-medium text-sm hover:text-primary hover:underline"
+                        className="font-medium text-sm text-slate-800 hover:text-slate-900 hover:underline"
                       >
                         {item.productName}
                       </Link>
-                      <Badge variant={getStockColor(stockLevel) as any} className="text-xs">
+                      <Badge className={`text-xs ${getStockColor(stockLevel)}`}>
                         {getStockIcon(stockLevel)} {stockLevel}
                       </Badge>
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-xs text-slate-600">
                       {item.category}
                     </div>
                   </div>
 
                   {/* Stock Info */}
                   <div className="text-right mr-3">
-                    <div className="font-semibold text-sm">
+                    <div className="font-semibold text-sm text-slate-800">
                       {item.currentStock} / {item.threshold}
                     </div>
-                    <div className="text-xs text-muted-foreground">
+                    <div className="text-xs text-slate-600">
                       Current / Threshold
                     </div>
                   </div>
@@ -151,8 +151,8 @@ export default function LowStockAlertsTable({ data, isLoading }: LowStockAlertsT
               );
             })
           ) : (
-            <div className="text-center py-8 text-muted-foreground h-full flex flex-col items-center justify-center">
-              <Package className="h-12 w-12 mx-auto mb-4 opacity-50" />
+            <div className="text-center py-8 text-slate-500 h-full flex flex-col items-center justify-center">
+              <Package className="h-12 w-12 mx-auto mb-4 opacity-50 text-slate-400" />
               <p>All products are well stocked</p>
             </div>
           )}

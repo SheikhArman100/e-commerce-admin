@@ -90,7 +90,7 @@ export default function RevenueChart({ data, isLoading, period = 'yearly' }: Rev
       },
       background: 'transparent',
     },
-    colors: ['#10b981', '#3b82f6'], // Green for revenue, blue for orders
+    colors: ['#10b981', '#6366f1'], // Emerald-300 for revenue, Indigo-300 for orders
     dataLabels: {
       enabled: false,
     },
@@ -246,16 +246,16 @@ export default function RevenueChart({ data, isLoading, period = 'yearly' }: Rev
   ];
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
+    <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+      <CardHeader className="bg-white/60 rounded-t-lg">
+        <CardTitle className="flex items-center gap-2 text-slate-800">
           Revenue Trend
-          <span className="text-sm font-normal text-muted-foreground">
+          <span className="text-sm font-normal text-slate-600">
             ({data.length} {period === 'daily' ? 'hours' : period === 'weekly' || period === 'monthly' ? 'days' : 'months'})
           </span>
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex-1">
+      <CardContent className="flex-1 bg-white/40 rounded-b-lg">
         <div className="h-80">
           <ReactApexChart
             options={options}

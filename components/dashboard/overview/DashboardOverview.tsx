@@ -44,7 +44,7 @@ export default function DashboardOverview() {
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className='flex justify-between'>
+      <div className='flex flex-col sm:flex-row gap-2 justify-between'>
         <div>
         <h1 className="text-2xl md:text-3xl font-bold tracking-tight">
           Dashboard Overview
@@ -78,9 +78,9 @@ export default function DashboardOverview() {
       />
 
       {/* Charts Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 items-stretch">
         {/* Revenue Chart - Full Width */}
-        <div className="lg:col-span-2 flex">
+        <div className="xl:col-span-2 flex">
           <div className="w-full">
           <RevenueChart
             data={data?.revenueTrend || []}
@@ -94,15 +94,17 @@ export default function DashboardOverview() {
         <div className="lg:col-span-1 flex">
           <div className="w-full h-full">
             <OrderStatusChart
+              key={`order-status-${filters.period || 'yearly'}`}
               data={data?.orderStatusDistribution || []}
               isLoading={isLoading}
+              period={filters.period || 'yearly'}
             />
           </div>
         </div>
       </div>
 
       {/* Tables Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+      <div className="grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-6 items-stretch">
         {/* Top Products */}
         <div className="lg:col-span-1 flex">
           <div className="w-full">

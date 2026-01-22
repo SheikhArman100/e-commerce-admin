@@ -11,9 +11,10 @@ const ReactApexChart = dynamic(() => import('react-apexcharts'), {
 interface OrderStatusChartProps {
   data: OrderStatusDistribution[];
   isLoading?: boolean;
+  period?: 'daily' | 'weekly' | 'monthly' | 'yearly';
 }
 
-export default function OrderStatusChart({ data, isLoading }: OrderStatusChartProps) {
+export default function OrderStatusChart({ data, isLoading, period }: OrderStatusChartProps) {
   if (isLoading) {
     return (
       <Card>
@@ -39,17 +40,17 @@ export default function OrderStatusChart({ data, isLoading }: OrderStatusChartPr
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
       case 'delivered':
-        return '#16a34a';
+        return '#10b981'; // emerald-400 - balanced brightness
       case 'shipped':
-        return '#2563eb';
+        return '#6366f1'; // indigo-400 - balanced brightness
       case 'pending':
-        return '#f97316';
+        return '#f59e0b'; // amber-400 - balanced brightness
       case 'cancelled':
-        return '#dc2626';
+        return '#ef4444'; // red-400 - balanced brightness
       case 'processing':
-        return '#9333ea';
+        return '#8b5cf6'; // violet-400 - balanced brightness
       default:
-        return '#64748b';
+        return '#64748b'; // slate-400 - balanced brightness
     }
   };
 
@@ -80,12 +81,21 @@ export default function OrderStatusChart({ data, isLoading }: OrderStatusChartPr
     },
     tooltip: {
       enabled: true,
+      theme: 'light',
+      style: {
+        fontSize: '14px',
+        fontFamily: 'inherit',
+      },
       y: {
         formatter: (value) => {
           const percentage = ((value / totalOrders) * 100).toFixed(1);
           return `${value} orders (${percentage}%)`;
         },
       },
+      marker: {
+        show: true,
+      },
+      fillSeriesColor: false,
     },
     plotOptions: {
       pie: {
@@ -100,7 +110,7 @@ export default function OrderStatusChart({ data, isLoading }: OrderStatusChartPr
               show: true,
               fontSize: '36px',
               fontWeight: 700,
-              color: '#111827',
+              color: '#1e293b', // slate-800
               offsetY: 8,
               formatter: () => totalOrders.toString(),
             },
@@ -109,7 +119,7 @@ export default function OrderStatusChart({ data, isLoading }: OrderStatusChartPr
               label: 'Total Orders',
               fontSize: '14px',
               fontWeight: 500,
-              color: '#6b7280',
+              color: '#64748b', // slate-500
               formatter: () => totalOrders.toString(),
             },
           },
@@ -135,13 +145,13 @@ export default function OrderStatusChart({ data, isLoading }: OrderStatusChartPr
   };
 
   return (
-    <Card>
-      <CardHeader >
-        <CardTitle className="text-lg font-semibold text-gray-900">
+    <Card className="border-slate-200 bg-slate-50/80 shadow-sm h-full">
+      <CardHeader className="bg-white/60 rounded-t-lg">
+        <CardTitle className="text-lg font-semibold text-slate-800">
           Order Status Distribution
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6 bg-white/40 rounded-b-lg">
         <div className="flex justify-center">
           <div style={{ width: '220px', height: '220px' }}>
             <ReactApexChart
@@ -154,28 +164,20 @@ export default function OrderStatusChart({ data, isLoading }: OrderStatusChartPr
           </div>
         </div>
 
-        <div className="space-y-3  flex flex-wrap gap-4 justify-center items-center">
+        <div className="space-y-3 flex flex-wrap gap-4 justify-center items-center">
           {data.map((item, index) => {
             const percentage = ((item.count / totalOrders) * 100).toFixed(1);
             return (
-              <div key={index} className="flex items-center justify-between ">
+              <div key={index} className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div
                     className="w-3 h-3 rounded-full flex-shrink-0"
                     style={{ backgroundColor: getStatusColor(item.status) }}
                   />
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-slate-700">
                     {item.status}
                   </span>
                 </div>
-                {/* <div className="flex items-center gap-3">
-                  <span className="text-sm font-semibold text-gray-900">
-                    {item.count}
-                  </span>
-                  <span className="text-sm text-gray-500 w-14 text-right">
-                    {percentage}%
-                  </span>
-                </div> */}
               </div>
             );
           })}
