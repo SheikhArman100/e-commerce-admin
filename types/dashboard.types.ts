@@ -130,3 +130,107 @@ export interface SalesAnalyticsResponse {
   peakHours: PeakHour[];
   categoryRevenueTrend: CategoryRevenueTrend[];
 }
+
+// Product Performance Types
+export interface ProductRanking {
+  productId: number;
+  productName: string;
+  revenue: number;
+  orders: number;
+  ranking: number;
+  category: string;
+  growthRate?: number;
+}
+
+export interface ProductTrend {
+  productId: number;
+  productName: string;
+  currentPeriod: {
+    revenue: number;
+    orders: number;
+  };
+  previousPeriod: {
+    revenue: number;
+    orders: number;
+  };
+  growthRate: number;
+}
+
+export interface CategoryProductAnalysis {
+  categoryId: number;
+  categoryName: string;
+  totalProducts: number;
+  topProduct: {
+    id: number;
+    name: string;
+    revenue: number;
+  };
+  averageRevenue: number;
+  totalRevenue: number;
+}
+
+export interface ProductStockAnalysis {
+  productId: number;
+  productName: string;
+  currentStock: number;
+  stockValue: number;
+  turnoverRate: number;
+  outOfStockDays: number;
+  reorderPoint: number;
+}
+
+export interface ProductReviewAnalytics {
+  productId: number;
+  productName: string;
+  averageRating: number;
+  totalReviews: number;
+  ratingDistribution: {
+    1: number;
+    2: number;
+    3: number;
+    4: number;
+    5: number;
+  };
+  recentRatingTrend: number;
+}
+
+export interface ProductProfitability {
+  productId: number;
+  productName: string;
+  revenue: number;
+  costOfGoods: number;
+  profit: number;
+  profitMargin: number;
+  breakEvenPoint: number;
+}
+
+export interface ProductLifecycle {
+  productId: number;
+  productName: string;
+  ageInDays: number;
+  lifecycleStage: 'new' | 'growing' | 'mature' | 'declining';
+  firstSaleDate: string;
+  lastSaleDate: string;
+  consistencyScore: number;
+}
+
+export interface ProductConversion {
+  productId: number;
+  productName: string;
+  views: number | null;
+  cartAdditions: number;
+  purchases: number;
+  conversionRate: number;
+  abandonmentRate: number;
+}
+
+export interface ProductPerformanceResponse {
+  performanceRankings: ProductRanking[];
+  productTrends: ProductTrend[];
+  categoryAnalysis: CategoryProductAnalysis[];
+  stockAnalysis: ProductStockAnalysis[];
+  reviewAnalytics: ProductReviewAnalytics[];
+  profitabilityMetrics: ProductProfitability[];
+  lifecycleAnalysis: ProductLifecycle[];
+  conversionRates: ProductConversion[];
+}
