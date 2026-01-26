@@ -14,10 +14,12 @@ import ProductPerformanceKPICards from '@/components/dashboard/product-performan
 import ProductTrendsChart from '@/components/dashboard/product-performance/ProductTrendsChart';
 import CategoryAnalysisChart from '@/components/dashboard/product-performance/CategoryAnalysisChart';
 import StockAnalysisTable from '@/components/dashboard/product-performance/StockAnalysisTable';
-import ReviewAnalyticsCards from '@/components/dashboard/product-performance/ReviewAnalyticsCards';
-import ProfitabilityMetricsTable from '@/components/dashboard/product-performance/ProfitabilityMetricsTable';
+
+
 import LifecycleAnalysisCards from '@/components/dashboard/product-performance/LifecycleAnalysisCards';
 import ConversionRatesChart from '@/components/dashboard/product-performance/ConversionRatesChart';
+import ReviewAnalyticsChart from '@/components/dashboard/product-performance/ReviewAnalyticsChart';
+import ProfitabilityMetricsChart from '@/components/dashboard/product-performance/ProfitabilityMetricsChart';
 
 export default function ProductPerformancePage() {
   const [filters, setFilters] = useState<DashboardFilters>({
@@ -76,10 +78,21 @@ export default function ProductPerformancePage() {
         />
 
       </div>
-      
+      {/* Stock Analysis & Review Analytics - 2 Column Grid */}
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        
+        <ReviewAnalyticsChart
+          data={currentData.reviewAnalytics}
+          isLoading={isLoading}
+        />
+        <ProfitabilityMetricsChart
+            data={currentData.profitabilityMetrics}
+            isLoading={isLoading}
+          />
+      </div>
 
       {/* Product Trends & Category Analysis - 2 Column Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+      {/* <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <ProductTrendsChart
           data={currentData.productTrends}
           isLoading={isLoading}
@@ -88,34 +101,27 @@ export default function ProductPerformancePage() {
           data={currentData.categoryAnalysis}
           isLoading={isLoading}
         />
-      </div>
+      </div> */}
 
-      {/* Stock Analysis & Review Analytics - 2 Column Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        
-        <ReviewAnalyticsCards
-          data={currentData.reviewAnalytics}
-          isLoading={isLoading}
-        />
-      </div>
+      
 
       {/* Profitability Metrics & Lifecycle Analysis - 2 Column Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <ProfitabilityMetricsTable
-          data={currentData.profitabilityMetrics}
-          isLoading={isLoading}
-        />
+        
+          
+        
         <LifecycleAnalysisCards
           data={currentData.lifecycleAnalysis}
           isLoading={isLoading}
         />
-      </div>
-
-      {/* Conversion Rates - Full Width */}
-      <ConversionRatesChart
+        <ConversionRatesChart
         data={currentData.conversionRates}
         isLoading={isLoading}
       />
+      </div>
+
+      {/* Conversion Rates - Full Width */}
+      
     </div>
   );
 }
