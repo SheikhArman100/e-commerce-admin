@@ -234,3 +234,105 @@ export interface ProductPerformanceResponse {
   lifecycleAnalysis: ProductLifecycle[];
   conversionRates: ProductConversion[];
 }
+
+// Customer Insights Types
+export interface CustomerDemographics {
+  ageGroup: string;
+  count: number;
+  percentage: number;
+  averageOrderValue: number;
+}
+
+export interface CustomerLifetimeValue {
+  customerId: number;
+  customerName: string;
+  totalOrders: number;
+  totalSpent: number;
+  averageOrderValue: number;
+  lastOrderDate: string;
+  customerSegment: string;
+}
+
+export interface RepeatPurchaseAnalysis {
+  totalCustomers: number;
+  oneTimeCustomers: number;
+  repeatCustomers: number;
+  oneTimePercentage: number;
+  repeatPercentage: number;
+  averageOrdersPerRepeatCustomer: number;
+  averageDaysBetweenPurchases: number;
+}
+
+export interface CustomerRetention {
+  cohortAnalysis: Array<{
+    cohort: string;
+    month0: number;
+    month1: number;
+    month2: number;
+    month3: number;
+    retentionRate: number;
+  }>;
+  retentionRate: number;
+  churnRate: number;
+  averageCustomerLifespan: number;
+}
+
+export interface CustomerSegmentation {
+  segment: string;
+  customerCount: number;
+  percentage: number;
+  averageOrderValue: number;
+  totalRevenue: number;
+  averageOrdersPerCustomer: number;
+}
+
+export interface CustomerAcquisition {
+  newCustomers: number;
+  returningCustomers: number;
+  acquisitionRate: number;
+  customerAcquisitionTrend: Array<{
+    period: string;
+    newCustomers: number;
+    returningCustomers: number;
+    totalCustomers: number;
+  }>;
+}
+
+export interface CustomerSatisfaction {
+  overallRating: number;
+  totalReviews: number;
+  ratingDistribution: {
+    1: number;
+    2: number;
+    3: number;
+    4: number;
+    5: number;
+  };
+  customerSatisfactionTrend: Array<{
+    period: string;
+    averageRating: number;
+    reviewCount: number;
+    trend: string;
+  }>;
+}
+
+export interface CustomerBehavior {
+  averageTimeBetweenPurchases: number;
+  preferredPurchaseDay: string;
+  preferredPurchaseHour: number;
+  averageCartSize: number;
+  averageOrderFrequency: number;
+  topCategories: string[];
+  cartAbandonmentRate: number;
+}
+
+export interface CustomerInsightsResponse {
+  customerDemographics: CustomerDemographics[];
+  customerLifetimeValue: CustomerLifetimeValue[];
+  repeatPurchaseAnalysis: RepeatPurchaseAnalysis;
+  customerRetention: CustomerRetention;
+  customerSegmentation: CustomerSegmentation[];
+  customerAcquisition: CustomerAcquisition;
+  customerSatisfaction: CustomerSatisfaction;
+  customerBehavior: CustomerBehavior;
+}
