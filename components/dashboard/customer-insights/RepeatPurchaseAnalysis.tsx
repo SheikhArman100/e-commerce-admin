@@ -37,56 +37,52 @@ export default function RepeatPurchaseAnalysis({ data, isLoading }: RepeatPurcha
     );
   }
 
-  // Prepare funnel data
-  const funnelData = [
-    { name: 'Total Customers', value: analysisData.totalCustomers },
-    { name: 'One-time Customers', value: analysisData.oneTimeCustomers },
-    { name: 'Repeat Customers', value: analysisData.repeatCustomers }
+  // Prepare donut chart data for one-time vs repeat customers
+  const donutData = [
+    { name: 'One-time Customers', value: analysisData.oneTimeCustomers, percentage: analysisData.oneTimePercentage },
+    { name: 'Repeat Customers', value: analysisData.repeatCustomers, percentage: analysisData.repeatPercentage }
   ];
 
-  const funnelOptions = {
+  const donutOptions = {
     chart: {
-      type: 'bar' as const,
-      height: 300,
+      type: 'donut' as const,
+      height: 350,
       fontFamily: 'inherit',
     },
-    series: [{
-      name: 'Customers',
-      data: funnelData.map(item => item.value)
-    }],
-    plotOptions: {
-      bar: {
-        horizontal: true,
-        barHeight: '60%',
-        borderRadius: 4,
-        distributed: true,
-        dataLabels: {
-          position: 'center',
+    series: donutData.map(item => item.value),
+    labels: donutData.map(item => item.name),
+    colors: ['#ef4444', '#22c55e'], // Red for one-time, Green for repeat
+    responsive: [{
+      breakpoint: 480,
+      options: {
+        chart: {
+          width: 200
         },
-      },
+        legend: {
+          position: 'bottom'
+        }
+      }
+    }],
+    legend: {
+      position: 'top' as const,
+      horizontalAlign: 'center' as const,
+      labels: {
+        colors: '#475569',
+        useSeriesColors: false
+      }
     },
-    colors: ['#3b82f6', '#ef4444', '#10b981'],
     dataLabels: {
       enabled: true,
-      textAnchor: 'middle' as const,
-      formatter: (val: number) => val.toLocaleString(),
+      formatter: (val: number, opts: any) => {
+        const dataPointIndex = opts?.dataPointIndex ?? 0;
+        const percentage = donutData[dataPointIndex]?.percentage ?? Math.round(val);
+        return `${percentage}%`;
+      },
       style: {
-        fontSize: '12px',
+        fontSize: '14px',
         fontWeight: 600,
         colors: ['#ffffff'],
       },
-    },
-    xaxis: {
-      categories: funnelData.map(item => item.name),
-      labels: {
-        style: {
-          colors: '#475569',
-          fontSize: '12px',
-        },
-      },
-    },
-    yaxis: {
-      show: false,
     },
     tooltip: {
       theme: 'light',
@@ -95,28 +91,30 @@ export default function RepeatPurchaseAnalysis({ data, isLoading }: RepeatPurcha
         fontFamily: 'inherit',
       },
       custom: function({ series, seriesIndex, dataPointIndex, w }: any) {
-        const stage = funnelData[dataPointIndex];
-        const value = series[seriesIndex][dataPointIndex];
-        const percentage = dataPointIndex === 0 ? 100 : 
-                          dataPointIndex === 1 ? analysisData.oneTimePercentage :
-                          analysisData.repeatPercentage;
+        const customerType = donutData[dataPointIndex];
+        const value = series[seriesIndex];
+        const percentage = customerType.percentage;
 
         return `
           <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-xl min-w-[260px]">
-            <div class="font-bold text-gray-800 mb-3 text-base">${stage.name}</div>
+            <div class="font-bold text-gray-800 mb-3 text-base">${customerType.name}</div>
             <div class="space-y-2 text-sm">
               <div class="flex justify-between">
-                <span class="text-gray-600">Volume:</span>
+                <span class="text-gray-600">Customers:</span>
                 <span class="font-semibold text-gray-800">${value.toLocaleString()}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">Percentage:</span>
                 <span class="font-semibold text-gray-800">${percentage}%</span>
               </div>
-              ${dataPointIndex > 0 ? `
-                <div class="flex justify-between text-red-600">
-                  <span>Drop-off Rate:</span>
-                  <span class="font-semibold">${(100 - percentage)}%</span>
+              ${seriesIndex === 1 ? `
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Avg Orders:</span>
+                  <span class="font-semibold text-green-600">${analysisData.averageOrdersPerRepeatCustomer.toFixed(1)}</span>
+                </div>
+                <div class="flex justify-between">
+                  <span class="text-gray-600">Avg Days Between:</span>
+                  <span class="font-semibold text-blue-600">${analysisData.averageDaysBetweenPurchases} days</span>
                 </div>
               ` : ''}
             </div>
@@ -124,50 +122,60 @@ export default function RepeatPurchaseAnalysis({ data, isLoading }: RepeatPurcha
         `;
       },
     },
-    grid: {
-      show: false,
+    plotOptions: {
+      pie: {
+        donut: {
+          size: '60%',
+          labels: {
+            show: true,
+            name: {
+              show: true,
+              fontSize: '16px',
+              fontWeight: 600,
+              color: '#475569',
+              offsetY: -10
+            },
+            value: {
+              show: true,
+              fontSize: '24px',
+              fontWeight: 700,
+              color: '#1f2937',
+              offsetY: 10,
+              formatter: (val: string) => val
+            },
+            total: {
+              show: true,
+              showAlways: true,
+              label: 'Total Customers',
+              fontSize: '14px',
+              fontWeight: 600,
+              color: '#6b7280',
+              formatter: () => analysisData?.totalCustomers?.toLocaleString() || '0'
+            }
+          }
+        }
+      }
     },
-    legend: {
-      show: false,
-    },
+    stroke: {
+      width: 0
+    }
   };
 
   return (
     <div className="space-y-6">
-      {/* Repeat Purchase Funnel */}
+      {/* Repeat Purchase Donut Chart */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Customer Purchase Behavior</h3>
+        {/* <h3 className="text-lg font-semibold text-gray-800 mb-4">Customer Purchase Behavior</h3> */}
         {isLoading ? (
           <Skeleton className="h-80 w-full" />
         ) : (
-          <ReactApexChart options={funnelOptions} series={funnelOptions.series} type="bar" height={300} />
+          <ReactApexChart options={donutOptions} series={donutOptions.series} type="donut" height={350} />
         )}
       </div>
 
       {/* Key Metrics */}
       <div className="grid grid-cols-2 gap-4">
-        <div className="p-4 bg-blue-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <Users className="h-6 w-6 text-blue-600" />
-            <div>
-              <div className="text-2xl font-bold text-blue-600">
-                {isLoading ? <Skeleton className="h-8 w-16" /> : analysisData.totalCustomers.toLocaleString()}
-              </div>
-              <div className="text-sm text-gray-600">Total Customers</div>
-            </div>
-          </div>
-        </div>
-        <div className="p-4 bg-green-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <Repeat className="h-6 w-6 text-green-600" />
-            <div>
-              <div className="text-2xl font-bold text-green-600">
-                {isLoading ? <Skeleton className="h-8 w-16" /> : `${analysisData.repeatPercentage}%`}
-              </div>
-              <div className="text-sm text-gray-600">Repeat Customers</div>
-            </div>
-          </div>
-        </div>
+        
         <div className="p-4 bg-purple-50 rounded-lg">
           <div className="flex items-center gap-3">
             <TrendingUp className="h-6 w-6 text-purple-600" />
@@ -192,16 +200,7 @@ export default function RepeatPurchaseAnalysis({ data, isLoading }: RepeatPurcha
         </div>
       </div>
 
-      {/* Analysis Summary */}
-      <div className="bg-gray-50 rounded-lg p-4">
-        <h4 className="font-semibold text-gray-800 mb-2">Analysis Summary</h4>
-        <div className="text-sm text-gray-600 space-y-1">
-          <div>• {analysisData.repeatPercentage}% of customers make repeat purchases</div>
-          <div>• Repeat customers place an average of {analysisData.averageOrdersPerRepeatCustomer.toFixed(1)} orders</div>
-          <div>• Average time between purchases is {analysisData.averageDaysBetweenPurchases} days</div>
-          <div>• {analysisData.oneTimePercentage}% of customers are one-time buyers</div>
-        </div>
-      </div>
+      
     </div>
   );
 }
