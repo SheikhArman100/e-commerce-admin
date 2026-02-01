@@ -98,7 +98,7 @@ export default function CustomerInsightsPage() {
       </div>
 
       {/* Second Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Customer Retention */}
         <Card className="lg:col-span-1">
           <CardHeader>
@@ -125,6 +125,9 @@ export default function CustomerInsightsPage() {
           </CardContent>
         </Card>
 
+        
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Customer Acquisition */}
         <Card className="lg:col-span-1">
           <CardHeader>
@@ -133,6 +136,18 @@ export default function CustomerInsightsPage() {
           <CardContent>
             <CustomerAcquisitionChart 
               data={data?.customerAcquisition} 
+              isLoading={isLoading} 
+            />
+          </CardContent>
+        </Card>
+        {/* Customer Satisfaction */}
+        <Card className="lg:col-span-1">
+          <CardHeader>
+            <CardTitle>Customer Satisfaction</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CustomerSatisfactionChart 
+              data={data?.customerSatisfaction} 
               isLoading={isLoading} 
             />
           </CardContent>

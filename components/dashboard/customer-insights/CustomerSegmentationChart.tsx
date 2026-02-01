@@ -175,26 +175,26 @@ export default function CustomerSegmentationChart({ data, isLoading }: CustomerS
     <div className="space-y-6">
       {/* Customer Segments Pie Chart */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Customer Segments</h3>
+        {/* <h3 className="text-lg font-semibold text-gray-800 mb-4">Customer Segments</h3> */}
         {isLoading ? (
           <Skeleton className="h-80 w-full" />
         ) : (
-          <ReactApexChart options={pieOptions} series={pieOptions.series} type="pie" height={300} />
+          <ReactApexChart options={pieOptions} series={pieOptions.series} type="pie" height={350} />
         )}
       </div>
 
       {/* Revenue Contribution */}
-      <div>
+      {/* <div>
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Revenue Contribution by Segment</h3>
         {isLoading ? (
           <Skeleton className="h-80 w-full" />
         ) : (
           <ReactApexChart options={barOptions} series={barOptions.series} type="bar" height={300} />
         )}
-      </div>
+      </div> */}
 
       {/* Segment Details Table */}
-      <div>
+      {/* <div>
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Segment Analysis</h3>
         {isLoading ? (
           <div className="space-y-3">
@@ -246,10 +246,10 @@ export default function CustomerSegmentationChart({ data, isLoading }: CustomerS
             </div>
           </div>
         )}
-      </div>
+      </div> */}
 
       {/* Summary Statistics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="p-4 bg-green-50 rounded-lg">
           <div className="flex items-center gap-3">
             <Users className="h-6 w-6 text-green-600" />

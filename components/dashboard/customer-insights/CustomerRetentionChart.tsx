@@ -194,7 +194,7 @@ export default function CustomerRetentionChart({ data, isLoading }: CustomerRete
     <div className="space-y-6">
       {/* Cohort Analysis Heatmap */}
       <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Cohort Analysis</h3>
+        {/* <h3 className="text-lg font-semibold text-gray-800 mb-4">Cohort Analysis</h3> */}
         {isLoading ? (
           <Skeleton className="h-96 w-full" />
         ) : (
@@ -203,17 +203,17 @@ export default function CustomerRetentionChart({ data, isLoading }: CustomerRete
       </div>
 
       {/* Retention Trend */}
-      <div>
+      {/* <div>
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Retention Rate Trend</h3>
         {isLoading ? (
           <Skeleton className="h-64 w-full" />
         ) : (
           <ReactApexChart options={trendOptions} series={trendOptions.series} type="line" height={200} />
         )}
-      </div>
+      </div> */}
 
       {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="p-4 bg-green-50 rounded-lg">
           <div className="flex items-center gap-3">
             <TrendingUp className="h-6 w-6 text-green-600" />
@@ -250,7 +250,7 @@ export default function CustomerRetentionChart({ data, isLoading }: CustomerRete
       </div>
 
       {/* Summary */}
-      <div className="bg-gray-50 rounded-lg p-4">
+      {/* <div className="bg-gray-50 rounded-lg p-4">
         <h4 className="font-semibold text-gray-800 mb-2">Retention Insights</h4>
         <div className="text-sm text-gray-600 space-y-1">
           <div>• Average retention rate across cohorts: {retentionData.retentionRate}%</div>
@@ -260,7 +260,7 @@ export default function CustomerRetentionChart({ data, isLoading }: CustomerRete
             current.retentionRate > best.retentionRate ? current : best, retentionData.cohortAnalysis[0]
           ).cohort}</div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
