@@ -231,7 +231,7 @@ export default function OrderDetailPage() {
                       )}
 
                       <div className="flex-1">
-                        <h4 className="font-medium">{item.product.title}</h4>
+                        <h4 className="font-medium">{item.productTitle || item.product.title}</h4>
                         <p className="text-sm text-muted-foreground">
                           {item.productFlavorSize.productFlavor?.flavor?.color && (
                             <span className="inline-flex items-center gap-1 mr-1">
@@ -239,10 +239,10 @@ export default function OrderDetailPage() {
                                 className="w-3 h-3 rounded-full border inline-block"
                                 style={{ backgroundColor: item.productFlavorSize.productFlavor.flavor.color }}
                               />
-                              {item.productFlavorSize.productFlavor.flavor.name}
+                              {item.flavorName || item.productFlavorSize.productFlavor.flavor.name}
                             </span>
                           )}
-                          • {item.productFlavorSize.size?.name}kg
+                          • {item.sizeName || item.productFlavorSize.size?.name}Pound
                         </p>
                         <div className="flex items-center gap-4 mt-2 text-sm">
                           <span>Price: ${item.price.toFixed(2)}</span>
