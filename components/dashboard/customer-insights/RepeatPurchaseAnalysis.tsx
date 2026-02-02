@@ -37,10 +37,27 @@ export default function RepeatPurchaseAnalysis({ data, isLoading }: RepeatPurcha
     );
   }
 
+  // Calculate percentages correctly to ensure they add up to 100%
+  const totalCustomers = analysisData.totalCustomers || (analysisData.oneTimeCustomers + analysisData.repeatCustomers);
+  const oneTimePercentage = totalCustomers > 0 
+    ? Math.round((analysisData.oneTimeCustomers / totalCustomers) * 100) 
+    : 0;
+  const repeatPercentage = totalCustomers > 0 
+    ? Math.round((analysisData.repeatCustomers / totalCustomers) * 100) 
+    : 0;
+
   // Prepare donut chart data for one-time vs repeat customers
   const donutData = [
-    { name: 'One-time Customers', value: analysisData.oneTimeCustomers, percentage: analysisData.oneTimePercentage },
-    { name: 'Repeat Customers', value: analysisData.repeatCustomers, percentage: analysisData.repeatPercentage }
+    { 
+      name: 'One-time Customers', 
+      value: analysisData.oneTimeCustomers, 
+      percentage: oneTimePercentage 
+    },
+    { 
+      name: 'Repeat Customers', 
+      value: analysisData.repeatCustomers, 
+      percentage: repeatPercentage 
+    }
   ];
 
   const donutOptions = {
@@ -51,7 +68,7 @@ export default function RepeatPurchaseAnalysis({ data, isLoading }: RepeatPurcha
     },
     series: donutData.map(item => item.value),
     labels: donutData.map(item => item.name),
-    colors: ['#ef4444', '#22c55e'], // Red for one-time, Green for repeat
+    colors: ['#ef4444', '#10b981'], // Red for one-time, Emerald for repeat
     responsive: [{
       breakpoint: 480,
       options: {
@@ -74,7 +91,8 @@ export default function RepeatPurchaseAnalysis({ data, isLoading }: RepeatPurcha
     dataLabels: {
       enabled: true,
       formatter: (val: number, opts: any) => {
-        const dataPointIndex = opts?.dataPointIndex ?? 0;
+        // Use seriesIndex for donut charts
+        const dataPointIndex = opts?.seriesIndex ?? opts?.dataPointIndex ?? 0;
         const percentage = donutData[dataPointIndex]?.percentage ?? Math.round(val);
         return `${percentage}%`;
       },
@@ -91,7 +109,7 @@ export default function RepeatPurchaseAnalysis({ data, isLoading }: RepeatPurcha
         fontFamily: 'inherit',
       },
       custom: function({ series, seriesIndex, dataPointIndex, w }: any) {
-        const customerType = donutData[dataPointIndex];
+        const customerType = donutData[seriesIndex];
         const value = series[seriesIndex];
         const percentage = customerType.percentage;
 
@@ -150,7 +168,7 @@ export default function RepeatPurchaseAnalysis({ data, isLoading }: RepeatPurcha
               fontSize: '14px',
               fontWeight: 600,
               color: '#6b7280',
-              formatter: () => analysisData?.totalCustomers?.toLocaleString() || '0'
+              formatter: () => totalCustomers.toLocaleString()
             }
           }
         }

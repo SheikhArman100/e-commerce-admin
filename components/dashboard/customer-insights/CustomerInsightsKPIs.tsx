@@ -36,29 +36,29 @@ export default function CustomerInsightsKPIs({ data, isLoading }: CustomerInsigh
       title: 'Total Customers',
       value: data.customerAcquisition?.newCustomers || 0,
       icon: Users,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50'
+      color: 'text-slate-600',
+      bgColor: 'bg-slate-50'
     },
     {
       title: 'Repeat Purchase Rate',
       value: `${data.repeatPurchaseAnalysis?.repeatPercentage || 0}%`,
       icon: Repeat,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50'
+      color: 'text-slate-600',
+      bgColor: 'bg-slate-50'
     },
     {
       title: 'Average CLV',
       value: `$${(data.customerLifetimeValue?.[0]?.averageOrderValue || 0).toFixed(2)}`,
       icon: DollarSign,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50'
+      color: 'text-slate-600',
+      bgColor: 'bg-slate-50'
     },
     {
       title: 'Customer Satisfaction',
       value: `${data.customerSatisfaction?.overallRating || 0}/5.0`,
       icon: TrendingUp,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50'
+      color: 'text-slate-600',
+      bgColor: 'bg-slate-50'
     }
   ];
 

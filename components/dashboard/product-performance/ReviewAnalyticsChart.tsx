@@ -89,11 +89,11 @@ export default function ReviewAnalyticsChart({ data, isLoading }: ReviewAnalytic
       return {
         rating: `${rating}★`,
         count: aggregatedRatings.totals[rating as keyof typeof aggregatedRatings.totals],
-        fill: rating === 1 ? 'hsl(var(--destructive))' :
-               rating === 2 ? 'hsl(var(--destructive-foreground))' :
-               rating === 3 ? 'hsl(var(--muted-foreground))' :
-               rating === 4 ? 'hsl(var(--primary-foreground))' :
-               'hsl(var(--primary))',
+        fill: rating === 1 ? '#ef4444' : // Red for 1 star (critical)
+               rating === 2 ? '#f59e0b' : // Amber for 2 stars (warning)
+               rating === 3 ? '#64748b' : // Slate for 3 stars (neutral)
+               rating === 4 ? '#3b82f6' : // Blue for 4 stars (good)
+               '#10b981',               // Emerald for 5 stars (excellent)
         products
       };
     });

@@ -38,7 +38,7 @@ export default function CustomerInsightsPage() {
   return (
     <div className="space-y-6 p-6">
       {/* Page Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col sm:flex-row gap-2 justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Customer Insights</h1>
           <p className="text-gray-600 mt-1">Comprehensive analysis of customer behavior and trends</p>
@@ -155,19 +155,9 @@ export default function CustomerInsightsPage() {
       </div>
 
       {/* Third Row */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1  gap-6">
         {/* Customer Satisfaction */}
-        <Card className="lg:col-span-1">
-          <CardHeader>
-            <CardTitle>Customer Satisfaction</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <CustomerSatisfactionChart 
-              data={data?.customerSatisfaction} 
-              isLoading={isLoading} 
-            />
-          </CardContent>
-        </Card>
+        
 
         {/* Customer Behavior */}
         <Card className="lg:col-span-1">

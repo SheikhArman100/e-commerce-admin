@@ -124,7 +124,7 @@ export default function CustomerLifetimeValue({ data, isLoading }: CustomerLifet
         formatter: (val: number) => `$${val.toFixed(0)}`
       },
     },
-    colors: ['#10b981', '#f59e0b', '#ef4444', '#94a3b8'], // Green for High, Yellow for Medium, Red for Low, Gray for New
+    colors: ['#10b981', '#f59e0b', '#ef4444', '#64748b'], // Green for High, Amber for Medium, Red for Low, Slate for New
     markers: {
       size: 8,
       strokeWidth: 2,

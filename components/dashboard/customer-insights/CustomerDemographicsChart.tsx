@@ -51,7 +51,7 @@ export default function CustomerDemographicsChart({ data, isLoading }: CustomerD
     },
     series: chartData.map(item => item.percentage),
     labels: chartData.map(item => item.ageGroup),
-    colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
+    colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#64748b'],
     responsive: [{
       breakpoint: 480,
       options: {

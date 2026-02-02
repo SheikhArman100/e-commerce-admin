@@ -2,396 +2,292 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { ShoppingCart, Eye, Clock, TrendingUp } from 'lucide-react';
-import dynamic from 'next/dynamic';
-
-const ReactApexChart = dynamic(() => import('react-apexcharts'), {
-  ssr: false,
-});
+import { Clock, Calendar, MapPin, ShoppingCart, TrendingUp, Package } from 'lucide-react';
+import { CustomerBehavior as CustomerBehaviorType } from '@/types/dashboard.types';
 
 interface CustomerBehaviorChartProps {
-  data: any;
+  data: CustomerBehaviorType | undefined;
   isLoading: boolean;
 }
 
 export default function CustomerBehaviorChart({ data, isLoading }: CustomerBehaviorChartProps) {
   const behaviorData = data;
 
-  if (!behaviorData || !behaviorData.behaviorMetrics || !behaviorData.behaviorFlow) {
+  if (!behaviorData) {
     return (
       <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Customer Engagement Patterns</h3>
-          <Skeleton className="h-80 w-full" />
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Purchase Behavior</h3>
-          <Skeleton className="h-80 w-full" />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="p-4 bg-gray-50 rounded-lg">
-              <Skeleton className="h-8 w-16 mb-2" />
-              <Skeleton className="h-4 w-24" />
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <Card key={i}>
+              <CardHeader>
+                <CardTitle>
+                  <Skeleton className="h-6 w-24" />
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Skeleton className="h-8 w-16 mb-2" />
+                <Skeleton className="h-4 w-32" />
+              </CardContent>
+            </Card>
           ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <Skeleton className="h-6 w-32" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {[...Array(3)].map((_, i) => (
+                  <Skeleton key={i} className="h-6 w-full" />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                <Skeleton className="h-6 w-32" />
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {[...Array(3)].map((_, i) => (
+                  <Skeleton key={i} className="h-6 w-full" />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
   }
 
-  // Prepare data for behavior metrics bar chart
-  const metricsData = behaviorData.behaviorMetrics.map((metric: any) => metric.value);
-  const metricsLabels = behaviorData.behaviorMetrics.map((metric: any) => metric.metric);
-
-  const metricsOptions = {
-    chart: {
-      type: 'bar' as const,
-      height: 300,
-      fontFamily: 'inherit',
-    },
-    series: [{
-      name: 'Value',
-      data: metricsData
-    }],
-    plotOptions: {
-      bar: {
-        borderRadius: 4,
-        distributed: true,
-        dataLabels: {
-          position: 'top',
-        },
-      },
-    },
-    colors: ['#3b82f6', '#10b981', '#ef4444', '#f59e0b', '#8b5cf6'],
-    dataLabels: {
-      enabled: true,
-      formatter: (val: number, opts: any) => {
-        const metric = behaviorData.behaviorMetrics[opts.dataPointIndex];
-        return `${val}${metric.unit === '%' ? '%' : ''}`;
-      },
-      offsetY: -20,
-      style: {
-        fontSize: '12px',
-        colors: ['#374151'],
-      },
-    },
-    xaxis: {
-      categories: metricsLabels,
-      labels: {
-        style: {
-          colors: '#475569',
-          fontSize: '12px',
-        },
-      },
-    },
-    yaxis: {
-      title: {
-        text: 'Value',
-        style: {
-          color: '#475569',
-        },
-      },
-    },
-    grid: {
-      show: true,
-      borderColor: '#e2e8f0',
-    },
-    tooltip: {
-      theme: 'light',
-      style: {
-        fontSize: '13px',
-        fontFamily: 'inherit',
-      },
-      y: {
-        formatter: (val: number, opts: any) => {
-          const metric = behaviorData.behaviorMetrics[opts.dataPointIndex];
-          return `${val}${metric.unit === '%' ? '%' : ''}`;
-        }
-      }
-    }
-  };
-
-  // Prepare data for behavior flow funnel
-  const flowData = behaviorData.behaviorFlow.map((step: any) => step.visitors);
-  const flowLabels = behaviorData.behaviorFlow.map((step: any) => step.step);
-
-  const funnelOptions = {
-    chart: {
-      type: 'bar' as const,
-      height: 300,
-      fontFamily: 'inherit',
-    },
-    series: [{
-      name: 'Visitors',
-      data: flowData
-    }],
-    plotOptions: {
-      bar: {
-        horizontal: true,
-        barHeight: '60%',
-        borderRadius: 4,
-        distributed: true,
-        dataLabels: {
-          position: 'center',
-        },
-      },
-    },
-    colors: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#6366f1'],
-    dataLabels: {
-      enabled: true,
-      textAnchor: 'middle' as const,
-      formatter: (val: number) => val.toLocaleString(),
-      style: {
-        fontSize: '12px',
-        fontWeight: 600,
-        colors: ['#ffffff'],
-      },
-    },
-    xaxis: {
-      categories: flowLabels,
-      labels: {
-        style: {
-          colors: '#475569',
-          fontSize: '12px',
-        },
-      },
-    },
-    yaxis: {
-      show: false,
-    },
-    tooltip: {
-      theme: 'light',
-      style: {
-        fontSize: '13px',
-        fontFamily: 'inherit',
-      },
-      custom: function({ series, seriesIndex, dataPointIndex, w }: any) {
-        const step = behaviorData.behaviorFlow[dataPointIndex];
-        const value = series[seriesIndex][dataPointIndex];
-        const dropOff = step.dropOff;
-
-        return `
-          <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-xl min-w-[260px]">
-            <div class="font-bold text-gray-800 mb-3 text-base">${step.step}</div>
-            <div class="space-y-2 text-sm">
-              <div class="flex justify-between">
-                <span class="text-gray-600">Visitors:</span>
-                <span class="font-semibold text-gray-800">${value.toLocaleString()}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Drop-off Rate:</span>
-                <span class="font-semibold ${dropOff > 50 ? 'text-red-600' : 'text-green-600'}">${dropOff}%</span>
-              </div>
-            </div>
-          </div>
-        `;
-      },
-    },
-    grid: {
-      show: false,
-    },
-    legend: {
-      show: false,
-    },
-  };
-
-  // Prepare data for device distribution pie chart
-  const deviceData = behaviorData.deviceDistribution.map((device: any) => device.percentage);
-  const deviceLabels = behaviorData.deviceDistribution.map((device: any) => device.device);
-
-  const deviceOptions = {
-    chart: {
-      type: 'pie' as const,
-      height: 300,
-      fontFamily: 'inherit',
-    },
-    series: deviceData,
-    labels: deviceLabels,
-    colors: ['#3b82f6', '#10b981', '#f59e0b'],
-    responsive: [{
-      breakpoint: 480,
-      options: {
-        chart: {
-          width: 200
-        },
-        legend: {
-          position: 'bottom'
-        }
-      }
-    }],
-    legend: {
-      position: 'bottom' as const,
-      horizontalAlign: 'center' as const,
-    },
-    dataLabels: {
-      enabled: true,
-      formatter: (val: number) => `${val.toFixed(1)}%`
-    },
-    tooltip: {
-      theme: 'light',
-      style: {
-        fontSize: '13px',
-        fontFamily: 'inherit',
-      },
-      custom: function({ series, seriesIndex, dataPointIndex, w }: any) {
-        const device = behaviorData.deviceDistribution[dataPointIndex];
-        return `
-          <div class="p-4 bg-white border border-gray-200 rounded-lg shadow-xl min-w-[260px]">
-            <div class="font-bold text-gray-800 mb-3 text-base">${device.device}</div>
-            <div class="space-y-2 text-sm">
-              <div class="flex justify-between">
-                <span class="text-gray-600">Percentage:</span>
-                <span class="font-semibold text-gray-800">${device.percentage}%</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="text-gray-600">Sessions:</span>
-                <span class="font-semibold text-gray-800">${device.sessions.toLocaleString()}</span>
-              </div>
-            </div>
-          </div>
-        `;
-      },
-    }
-  };
-
   return (
     <div className="space-y-6">
-      {/* Behavior Metrics */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Behavior Metrics</h3>
-        {isLoading ? (
-          <Skeleton className="h-80 w-full" />
-        ) : (
-          <ReactApexChart options={metricsOptions} series={metricsOptions.series} type="bar" height={300} />
-        )}
+      {/* Key Metrics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className=" w-full flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Avg Time Between Purchases</CardTitle>
+              <Clock className="h-5 w-5 text-slate-600" />
+            </div>
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-slate-800">
+              {isLoading ? <Skeleton className="h-8 w-16" /> : `${behaviorData.averageTimeBetweenPurchases} days`}
+            </div>
+            <div className="text-xs text-slate-600 mt-1">Average customer purchase interval</div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className=" w-full flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Preferred Purchase Day</CardTitle>
+              <Calendar className="h-5 w-5 text-slate-600" />
+            </div>
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-slate-800">
+              {isLoading ? <Skeleton className="h-8 w-24" /> : behaviorData.preferredPurchaseDay}
+            </div>
+            <div className="text-xs text-slate-600 mt-1">Most popular shopping day</div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className=" w-full flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Preferred Purchase Hour</CardTitle>
+              <Clock className="h-5 w-5 text-slate-600" />
+            </div>
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-slate-800">
+              {isLoading ? <Skeleton className="h-8 w-12" /> : `${behaviorData.preferredPurchaseHour}:00`}
+            </div>
+            <div className="text-xs text-slate-600 mt-1">Peak shopping hour</div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className=" w-full flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Average Cart Size</CardTitle>
+              <ShoppingCart className="h-5 w-5 text-slate-600" />
+            </div>
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-slate-800">
+              {isLoading ? <Skeleton className="h-8 w-12" /> : behaviorData.averageCartSize}
+            </div>
+            <div className="text-xs text-slate-600 mt-1">Average items per order</div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className=" w-full flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Order Frequency</CardTitle>
+              <TrendingUp className="h-5 w-5 text-slate-600" />
+            </div>
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-slate-800">
+              {isLoading ? <Skeleton className="h-8 w-16" /> : `${behaviorData.averageOrderFrequency}x/year`}
+            </div>
+            <div className="text-xs text-slate-600 mt-1">Average orders per customer per year</div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className=" w-full flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Cart Abandonment Rate</CardTitle>
+              <Package className="h-5 w-5 text-slate-600" />
+            </div>
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className={`text-2xl font-bold ${
+              behaviorData.cartAbandonmentRate < 0 ? 'text-green-600' : 'text-red-600'
+            }`}>
+              {isLoading ? <Skeleton className="h-8 w-16" /> : `${Math.abs(behaviorData.cartAbandonmentRate)}%`}
+            </div>
+            <div className="text-xs text-slate-600 mt-1">
+              {behaviorData.cartAbandonmentRate < 0 ? 'Cart recovery rate' : 'Cart abandonment rate'}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Behavior Flow */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Customer Journey Flow</h3>
-        {isLoading ? (
-          <Skeleton className="h-80 w-full" />
-        ) : (
-          <ReactApexChart options={funnelOptions} series={funnelOptions.series} type="bar" height={300} />
-        )}
+      {/* Top Categories */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <MapPin className="h-5 w-5 text-blue-500" />
+              Top Categories
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {isLoading ? (
+              <div className="space-y-3">
+                {[...Array(3)].map((_, i) => (
+                  <Skeleton key={i} className="h-10 w-full" />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {behaviorData.topCategories.map((category, index) => (
+                  <div key={category} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-3 h-3 rounded-full ${
+                        index === 0 ? 'bg-blue-500' : index === 1 ? 'bg-green-500' : 'bg-purple-500'
+                      }`}></div>
+                      <span className="font-medium text-gray-900">{category}</span>
+                    </div>
+                    <span className="text-sm text-gray-500">
+                      #{index + 1}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Additional Insights */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Customer Behavior Insights</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {isLoading ? (
+              <div className="space-y-3">
+                {[...Array(4)].map((_, i) => (
+                  <Skeleton key={i} className="h-6 w-full" />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                  <div>
+                    <div className="font-medium text-gray-900">Purchase Timing</div>
+                    <div className="text-sm text-gray-600">Peak activity on {behaviorData.preferredPurchaseDay}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-bold">{behaviorData.preferredPurchaseHour}:00</div>
+                    <div className="text-xs text-gray-500">Peak hour</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                  <div>
+                    <div className="font-medium text-gray-900">Shopping Patterns</div>
+                    <div className="text-sm text-gray-600">Average {behaviorData.averageCartSize} items per cart</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-bold">{behaviorData.averageTimeBetweenPurchases} days</div>
+                    <div className="text-xs text-gray-500">Between purchases</div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                  <div>
+                    <div className="font-medium text-gray-900">Customer Loyalty</div>
+                    <div className="text-sm text-gray-600">{behaviorData.averageOrderFrequency} orders/year</div>
+                  </div>
+                  <div className="text-right">
+                    <div className={`text-lg font-bold ${
+                      behaviorData.cartAbandonmentRate < 0 ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {Math.abs(behaviorData.cartAbandonmentRate)}%
+                    </div>
+                    <div className="text-xs text-gray-500">
+                      {behaviorData.cartAbandonmentRate < 0 ? 'Recovery rate' : 'Abandonment rate'}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Device Distribution */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Device Distribution</h3>
-        {isLoading ? (
-          <Skeleton className="h-80 w-full" />
-        ) : (
-          <ReactApexChart options={deviceOptions} series={deviceOptions.series} type="pie" height={300} />
-        )}
-      </div>
-
-      {/* Key Metrics */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="p-4 bg-blue-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <ShoppingCart className="h-6 w-6 text-blue-600" />
-            <div>
-              <div className="text-2xl font-bold text-blue-600">
-                {isLoading ? <Skeleton className="h-8 w-16" /> : `${behaviorData.conversionRate}%`}
+      {/* Summary Card */}
+      {/* <Card className="border-2 border-gray-200">
+        <CardHeader>
+          <CardTitle>Behavior Summary</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {isLoading ? (
+            <Skeleton className="h-20 w-full" />
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-center">
+              <div className="p-4 bg-blue-50 rounded-lg">
+                <div className="text-2xl font-bold text-blue-600">{behaviorData.preferredPurchaseDay}</div>
+                <div className="text-sm text-gray-600">Peak Shopping Day</div>
               </div>
-              <div className="text-sm text-gray-600">Conversion Rate</div>
-            </div>
-          </div>
-        </div>
-        <div className="p-4 bg-green-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <Eye className="h-6 w-6 text-green-600" />
-            <div>
-              <div className="text-2xl font-bold text-green-600">
-                {isLoading ? <Skeleton className="h-8 w-16" /> : behaviorData.uniqueVisitors.toLocaleString()}
+              <div className="p-4 bg-green-50 rounded-lg">
+                <div className="text-2xl font-bold text-green-600">{behaviorData.preferredPurchaseHour}:00</div>
+                <div className="text-sm text-gray-600">Peak Shopping Hour</div>
               </div>
-              <div className="text-sm text-gray-600">Unique Visitors</div>
-            </div>
-          </div>
-        </div>
-        <div className="p-4 bg-purple-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <Clock className="h-6 w-6 text-purple-600" />
-            <div>
-              <div className="text-2xl font-bold text-purple-600">
-                {isLoading ? <Skeleton className="h-8 w-16" /> : `${behaviorData.behaviorMetrics[0].value} min`}
+              <div className="p-4 bg-purple-50 rounded-lg">
+                <div className="text-2xl font-bold text-purple-600">{behaviorData.averageCartSize}</div>
+                <div className="text-sm text-gray-600">Avg Items per Order</div>
               </div>
-              <div className="text-sm text-gray-600">Avg Session Duration</div>
-            </div>
-          </div>
-        </div>
-        <div className="p-4 bg-orange-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <TrendingUp className="h-6 w-6 text-orange-600" />
-            <div>
-              <div className="text-2xl font-bold text-orange-600">
-                {isLoading ? <Skeleton className="h-8 w-16" /> : behaviorData.totalSessions.toLocaleString()}
+              <div className="p-4 bg-orange-50 rounded-lg">
+                <div className="text-2xl font-bold text-orange-600">{behaviorData.averageTimeBetweenPurchases} days</div>
+                <div className="text-sm text-gray-600">Avg Time Between Purchases</div>
               </div>
-              <div className="text-sm text-gray-600">Total Sessions</div>
             </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Behavior Analysis Table */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Behavior Analysis</h3>
-        {isLoading ? (
-          <div className="space-y-3">
-            {[...Array(5)].map((_, i) => (
-              <Skeleton key={i} className="h-16 w-full" />
-            ))}
-          </div>
-        ) : (
-          <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Metric</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Value</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Previous</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Trend</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Change</th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {behaviorData.behaviorMetrics.map((metric: any, index: number) => (
-                    <tr key={metric.metric} className="hover:bg-gray-50">
-                      <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {metric.metric}
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {metric.value}{metric.unit === '%' ? '%' : ''}
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {metric.previous}{metric.unit === '%' ? '%' : ''}
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                          metric.trend === 'up'
-                            ? 'bg-green-100 text-green-800'
-                            : metric.trend === 'down'
-                            ? 'bg-red-100 text-red-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}>
-                          {metric.trend === 'up' ? '↗' : metric.trend === 'down' ? '↘' : '→'}
-                          {metric.trend === 'up' ? ' Improved' : metric.trend === 'down' ? ' Declined' : ' Stable'}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                        {metric.trend === 'up' ? '+' : ''}{(metric.value - metric.previous).toFixed(1)}{metric.unit === '%' ? '%' : ''}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        )}
-      </div>
+          )}
+        </CardContent>
+      </Card> */}
     </div>
   );
 }
