@@ -44,7 +44,8 @@ import {
   UserCheck,
   Lock,
   FileCheck,
-  Heart
+  Heart,
+  Code
 } from "lucide-react";
 
 export const MENU_SIDEBAR_MAIN: MenuConfig = [
@@ -160,6 +161,16 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
         title: 'Orders',
         path: '/orders',
         icon: FileText
+      }
+    ],
+  },
+  {
+    title: 'Coupon Management',
+    children: [
+      {
+        title: 'Coupons',
+        path: '/coupons',
+        icon: Code
       }
     ],
   },

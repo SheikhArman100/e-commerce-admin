@@ -27,6 +27,7 @@ import {
   ClipboardList,
   Heart,
   FileText,
+  Code,
 } from 'lucide-react';
 import {
   Avatar,
@@ -110,6 +111,12 @@ const menuItems = [
     tooltip: 'Order Management',
     path: '/orders',
     rootPath: '/orders'
+  },
+  {
+    icon: Code,
+    tooltip: 'Coupon Management',
+    path: '/coupons',
+    rootPath: '/coupons'
   },
   {
     icon: Settings,

@@ -106,12 +106,15 @@ export function formatDate(input: Date | string | number): string {
 
 export function formatDateTime(input: Date | string | number): string {
   const date = new Date(input);
-  return date.toLocaleString('en-US', {
+  const formattedDate = date.toLocaleDateString('en-US', {
     month: 'long',
     day: 'numeric',
     year: 'numeric',
+  });
+  const formattedTime = date.toLocaleTimeString('en-US', {
     hour: 'numeric',
     minute: 'numeric',
     hour12: true,
   });
+  return `${formattedDate} at ${formattedTime}`;
 }
