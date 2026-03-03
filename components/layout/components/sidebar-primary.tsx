@@ -28,6 +28,7 @@ import {
   Heart,
   FileText,
   Code,
+  CreditCard,
 } from 'lucide-react';
 import {
   Avatar,
@@ -117,6 +118,12 @@ const menuItems = [
     tooltip: 'Coupon Management',
     path: '/coupons',
     rootPath: '/coupons'
+  },
+  {
+    icon: CreditCard,
+    tooltip: 'Payment Management',
+    path: '/payments',
+    rootPath: '/payments'
   },
   {
     icon: Settings,

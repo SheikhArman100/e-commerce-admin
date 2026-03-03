@@ -175,6 +175,16 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
     ],
   },
   {
+    title: 'Payment Management',
+    children: [
+      {
+        title: 'Payments',
+        path: '/payments',
+        icon: CreditCard
+      }
+    ],
+  },
+  {
     title: 'Account',
     children: [
       {
