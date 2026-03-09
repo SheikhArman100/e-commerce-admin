@@ -185,6 +185,16 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
     ],
   },
   {
+    title: 'Campaign Management',
+    children: [
+      {
+        title: 'Campaigns',
+        path: '/campaigns',
+        icon: Megaphone
+      }
+    ],
+  },
+  {
     title: 'Account',
     children: [
       {

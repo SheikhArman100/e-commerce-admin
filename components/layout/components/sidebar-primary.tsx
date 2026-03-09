@@ -29,6 +29,7 @@ import {
   FileText,
   Code,
   CreditCard,
+  Megaphone,
 } from 'lucide-react';
 import {
   Avatar,
@@ -124,6 +125,12 @@ const menuItems = [
     tooltip: 'Payment Management',
     path: '/payments',
     rootPath: '/payments'
+  },
+  {
+    icon: Megaphone,
+    tooltip: 'Campaign Management',
+    path: '/campaigns',
+    rootPath: '/campaigns'
   },
   {
     icon: Settings,
