@@ -41,7 +41,7 @@ export default function UpdateCampaignPage() {
     reset,
     formState: { errors, isDirty },
   } = useForm<UpdateCampaignFormData>({
-    resolver: zodResolver(updateCampaignSchema),
+    resolver: zodResolver(updateCampaignSchema as any),
   });
 
   React.useEffect(() => {
