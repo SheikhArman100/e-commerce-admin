@@ -83,7 +83,7 @@ export const useUpdateCoupon = () => {
       return response.data.data;
     },
     onSuccess: (data, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['coupons'] });
+      queryClient.invalidateQueries({ queryKey: ['coupons'] ,refetchType:'all' });
       queryClient.invalidateQueries({ queryKey: ['coupon', variables.id],refetchType:'all' });
     },
   });
@@ -98,7 +98,7 @@ export const useDeleteCoupon = () => {
       await axiosPrivate.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/coupon/${id}`);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['coupons'] });
+      queryClient.invalidateQueries({ queryKey: ['coupons'] ,refetchType:'all' });
     },
   });
 };
