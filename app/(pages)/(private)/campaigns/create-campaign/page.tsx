@@ -36,7 +36,7 @@ export default function CreateCampaignPage() {
     watch,
     formState: { errors },
   } = useForm<CreateCampaignFormData>({
-    resolver: zodResolver(createCampaignSchema),
+    resolver: zodResolver(createCampaignSchema) as any,
     defaultValues: {
       title: '',
       slug: '',

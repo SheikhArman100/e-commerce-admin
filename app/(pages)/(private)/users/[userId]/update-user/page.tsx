@@ -241,7 +241,9 @@ export default function UpdateUserPage() {
                 </label>
                 <FileUpload
                   value={selectedFile}
-                  onChange={setSelectedFile}
+                  onChange={(files) =>
+                    setSelectedFile(Array.isArray(files) ? files[0] ?? null : files)
+                  }
                   accept="image/*"
                   maxSize={5}
                   placeholder="Upload new profile image"

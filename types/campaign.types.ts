@@ -96,3 +96,57 @@ export interface CampaignResponse {
   message: string;
   data: ICampaign;
 }
+
+export interface ButtonContent {
+  id: string;
+  text: string;
+  isDefault: boolean;
+  backgroundColor?: string;
+  textColor?: string;
+}
+
+export enum QuestionType {
+  TEXT = 'TEXT',
+  DROPDOWN = 'DROPDOWN',
+  DATE = 'DATE',
+  SIGN = 'SIGN',
+}
+
+export type Question =
+  | { id: string; text: string; type: QuestionType.TEXT; placeholder?: string }
+  | { id: string; text: string; type: QuestionType.DROPDOWN; options: string[] }
+  | { id: string; text: string; type: QuestionType.DATE; placeholder?: string }
+  | { id: string; text: string; type: QuestionType.SIGN; placeholder?: string };
+
+export interface ImageAsset {
+  id: string;
+  name: string;
+  url: string;
+}
+
+export interface TextSnippet {
+  id: string;
+  name: string;
+  text: string;
+}
+
+export interface ContentContainerStyle {
+  backgroundColor: string;
+  textColor: string;
+  borderColor: string;
+  borderWidth: number;
+}
+
+export type ContentItem =
+  | { id: string; type: 'QUESTION'; width: number; height: number }
+  | { id: string; type: 'TEXT_SNIPPET'; width: number; height: number }
+  | { id: string; type: 'BUTTON'; width: number; height: number };
+
+export interface Step {
+  id: string;
+  title?: string;
+  name?: string;
+  backgroundAssetId?: string | null;
+  contentItems: ContentItem[];
+  contentContainerStyle: ContentContainerStyle;
+}
