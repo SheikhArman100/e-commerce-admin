@@ -26,7 +26,7 @@ export const useCampaigns = (filters: CampaignFilters = {}) => {
       if (filters.sortOrder) params.append('sortOrder', filters.sortOrder);
 
       const response = await axiosPrivate.get<CampaignListResponse>(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/campaigns?${params.toString()}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/campaign?${params.toString()}`
       );
       return response.data;
     },
@@ -40,7 +40,7 @@ export const useCampaign = (id: string) => {
     queryKey: ['campaign', id],
     queryFn: async () => {
       const response = await axiosPrivate.get<CampaignResponse>(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/campaigns/${id}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/campaign/${id}`
       );
       return response.data.data;
     },
@@ -55,7 +55,7 @@ export const useCreateCampaign = () => {
   return useMutation({
     mutationFn: async (data: FormData) => {
       const response = await axiosPrivate.post<CampaignResponse>(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/campaigns`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/campaign`,
         data,
         {
           headers: {
@@ -82,7 +82,7 @@ export const useUpdateCampaign = () => {
   return useMutation({
     mutationFn: async ({ id, data }: { id: string; data: FormData }) => {
       const response = await axiosPrivate.patch<CampaignResponse>(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/campaigns/${id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/campaign/${id}`,
         data,
         {
           headers: {
@@ -110,7 +110,7 @@ export const useDeleteCampaign = () => {
   return useMutation({
     mutationFn: async (id: string) => {
       const response = await axiosPrivate.delete<CampaignResponse>(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/campaigns/${id}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/campaign/${id}`
       );
       return response.data;
     },
@@ -131,7 +131,7 @@ export const useAddProductToCampaign = () => {
   return useMutation({
     mutationFn: async ({ campaignId, data }: { campaignId: string; data: AddProductToCampaignRequest }) => {
       const response = await axiosPrivate.post<CampaignResponse>(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/campaigns/${campaignId}/products`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/campaign/${campaignId}/products`,
         data
       );
       return response.data.data;
@@ -153,7 +153,7 @@ export const useRemoveProductFromCampaign = () => {
   return useMutation({
     mutationFn: async ({ campaignId, productId }: { campaignId: string; productId: number }) => {
       const response = await axiosPrivate.delete<CampaignResponse>(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/campaigns/${campaignId}/products/${productId}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/campaign/${campaignId}/products/${productId}`
       );
       return response.data;
     },
