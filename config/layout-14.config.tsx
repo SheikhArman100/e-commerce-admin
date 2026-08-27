@@ -1,7 +1,6 @@
 import { MenuConfig } from "@/config/types";
 import {
   ChartLine,
-  Cog,
   UserRoundCog,
   Bolt,
   Users,
@@ -16,49 +15,29 @@ import {
   Handshake,
   ClipboardList,
   Grid,
-  Calendar,
   BarChart3,
-  Network,
-  Phone,
   MessageCircle,
   User,
   Settings,
   Shield,
   CreditCard,
-  Activity,
-  LogIn,
-  ShieldCheck,
-  Monitor,
-  Key,
-  FileText,
-  Search,
-  AlertTriangle,
-  File,
-  Image,
-  Video,
-  Archive,
-  Inbox,
-  Send,
-  Edit,
-  Trash,
-  UserCheck,
-  Lock,
-  FileCheck,
   Heart,
-  Code
+  SlidersHorizontal,
+  ShoppingCart,
+  ShoppingBag,
+  TicketPercent,
+  Bell
 } from "lucide-react";
 
 export const MENU_SIDEBAR_MAIN: MenuConfig = [
-  
   {
-    title: 'Dashboard',
+    heading: 'Overview',
     children: [
       {
-        title: 'Dashboard',
+        title: 'Overview',
         path: '/',
         icon: BarChart3
       },
-
       {
         title: 'Sales Analytics',
         path: '/sales-analytics',
@@ -74,32 +53,25 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
         path: '/customer-insights',
         icon: UserRoundCog
       }
-      
     ],
   },
   {
-    title: 'User Management',
-    children: [
-      {
-        title: 'User Management',
-        path: '/users',
-        icon: Users
-      },
-      
-    ],
-  },
-  {
-    title: 'Category Management',
+    heading: 'Catalog',
     children: [
       {
         title: 'Categories',
         path: '/categories',
         icon: Grid
       },
+      {
+        title: 'Products',
+        path: '/products',
+        icon: ClipboardList
+      },
     ],
   },
   {
-    title: 'Variant Management',
+    heading: 'Variant',
     children: [
       {
         title: 'Flavors',
@@ -109,116 +81,105 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
       {
         title: 'Sizes',
         path: '/sizes',
-        icon: BarChart3
+        icon: SlidersHorizontal
       },
-      
     ],
   },
   {
-    title:"Product Management",
-    children:[
+    heading: 'Sales',
+    children: [
       {
-        title: 'Products',
-        path: '/products',
-        icon: ClipboardList
+        title: 'Orders',
+        path: '/orders',
+        icon: ShoppingCart
+      },
+      {
+        title: 'Carts',
+        path: '/carts',
+        icon: ShoppingBag
+      },
+      {
+        title: 'Payments',
+        path: '/payments',
+        icon: CreditCard
       },
     ],
   },
   {
-    title: 'Review Management',
+    heading: 'Marketing',
+    children: [
+      {
+        title: 'Coupons',
+        path: '/coupons',
+        icon: TicketPercent
+      },
+      {
+        title: 'Campaigns',
+        path: '/campaigns',
+        icon: Megaphone
+      },
+    ],
+  },
+  {
+    heading: 'Engagement',
     children: [
       {
         title: 'Reviews',
         path: '/reviews',
         icon: MessageCircle
-      }
-    ],
-  },
-  {
-    title: 'Wishlist Management',
-    children: [
+      },
       {
-        title: 'Wishlist',
+        title: 'Wishlists',
         path: '/wishlists',
         icon: Heart
-      }
-    ],
-  },
-  {
-    title: 'Cart Management',
-    children: [
-      {
-        title: 'Carts',
-        path: '/carts',
-        icon: FileText
-      }
-    ],
-  },
-  {
-    title: 'Order Management',
-    children: [
-      {
-        title: 'Orders',
-        path: '/orders',
-        icon: FileText
-      }
-    ],
-  },
-  {
-    title: 'Coupon Management',
-    children: [
-      {
-        title: 'Coupons',
-        path: '/coupons',
-        icon: Code
-      }
-    ],
-  },
-  {
-    title: 'Payment Management',
-    children: [
-      {
-        title: 'Payments',
-        path: '/payments',
-        icon: CreditCard
-      }
-    ],
-  },
-  {
-    title: 'Campaign Management',
-    children: [
-      {
-        title: 'Campaigns',
-        path: '/campaigns',
-        icon: Megaphone
-      }
-    ],
-  },
-  {
-    title: 'Account',
-    children: [
-      {
-        title: 'Profile Settings',
-        path: '/account/profile',
-        icon: User
-      },
-      {
-        title: 'Preferences',
-        path: '/account/preferences',
-        icon: Settings
-      },
-      {
-        title: 'Security',
-        path: '/account/security',
-        icon: Shield
-      },
-      {
-        title: 'Billing',
-        path: '/account/billing',
-        icon: CreditCard
       },
     ],
   },
+  {
+    heading: 'Notifications',
+    children: [
+      {
+        title: 'Notifications',
+        path: '/notifications',
+        icon: Bell
+      },
+    ],
+  },
+  {
+    heading: 'User Management',
+    children: [
+      {
+        title: 'Users',
+        path: '/users',
+        icon: Users
+      },
+    ],
+  },
+  // {
+  //   heading: 'Your Account',
+  //   children: [
+  //     {
+  //       title: 'Profile',
+  //       path: '/account/profile',
+  //       icon: User
+  //     },
+  //     {
+  //       title: 'Preferences',
+  //       path: '/account/preferences',
+  //       icon: Settings
+  //     },
+  //     {
+  //       title: 'Security',
+  //       path: '/account/security',
+  //       icon: Shield
+  //     },
+  //     {
+  //       title: 'Billing',
+  //       path: '/account/billing',
+  //       icon: CreditCard
+  //     },
+  //   ],
+  // },
 ];
 
 export const MENU_SIDEBAR_RESOURCES: MenuConfig = [

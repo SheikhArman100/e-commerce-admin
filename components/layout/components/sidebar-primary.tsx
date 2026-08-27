@@ -1,165 +1,87 @@
 import { useEffect, useState } from 'react';
-import { toAbsoluteUrl } from '@/lib/helpers';
 import { cn } from '@/lib/utils';
 import { useLayoutStore } from '@/stores/layoutStore';
+import { MENU_SIDEBAR_MAIN } from '@/config/layout-14.config';
+import { MenuConfig, MenuItem } from '@/config/types';
 import {
   BarChart3,
-  Bell,
-  CheckSquare,
   FolderCode,
-  Grid,
-  Mails,
-  NotepadText,
-  ScrollText,
-  Settings,
-  ShieldUser,
-  UserCircle,
-  Users,
-  User,
-  Clock,
-  Shield,
-  Building2,
-  LogOut,
-  Download,
-  ExternalLink,
-  Zap,
-  Target,
-  ClipboardList,
+  ShoppingCart,
   Heart,
-  FileText,
-  Code,
-  CreditCard,
+  Users,
+  UserCircle,
   Megaphone,
+  SlidersHorizontal,
+  Bell,
+  type LucideIcon,
 } from 'lucide-react';
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-  AvatarIndicator,
-  AvatarStatus,
-} from '@/components/ui/avatar';
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Badge } from '@/components/ui/badge';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 
-const menuItems = [
-  {
-    icon: BarChart3,
-    tooltip: 'Dashboard',
-    path: '/',
-    rootPath: '/'
-  },
-  {
-    icon: Users,
-    tooltip: 'User Management',
-    path: '/users',
-    rootPath: '/users'
-  },
-  {
-    icon: Grid,
-    tooltip: 'Category Management',
-    path: '/categories',
-    rootPath: '/categories'
-  },
-  {
-    icon: FolderCode,
-    tooltip: 'Variant Management',
-    path: '/flavors',
-    rootPath: '/flavors'
-  },
-  {
-    icon: ClipboardList,
-    tooltip: 'Product Management',
-    path: '/products',
-    rootPath: '/products'
-  },
-  {
-    icon: Mails,
-    tooltip: 'Review Management',
-    path: '/reviews',
-    rootPath: '/reviews'
-  },
-  {
-    icon: Heart,
-    tooltip: 'Wishlist Management',
-    path: '/wishlists',
-    rootPath: '/wishlists'
-  },
-  {
-    icon: FileText,
-    tooltip: 'Cart Management',
-    path: '/carts',
-    rootPath: '/carts'
-  },
-  {
-    icon: Target,
-    tooltip: 'Order Management',
-    path: '/orders',
-    rootPath: '/orders'
-  },
-  {
-    icon: Code,
-    tooltip: 'Coupon Management',
-    path: '/coupons',
-    rootPath: '/coupons'
-  },
-  {
-    icon: CreditCard,
-    tooltip: 'Payment Management',
-    path: '/payments',
-    rootPath: '/payments'
-  },
-  {
-    icon: Megaphone,
-    tooltip: 'Campaign Management',
-    path: '/campaigns',
-    rootPath: '/campaigns'
-  },
-  {
-    icon: Settings,
-    tooltip: 'Account',
-    path: '#',
-    rootPath: '#',
-  },
-];
+// Representational icon shown on the primary (rail) sidebar for each top-level group.
+const GROUP_ICONS: Record<string, LucideIcon> = {
+  Overview: BarChart3,
+  Catalog: FolderCode,
+  Variant: SlidersHorizontal,
+  Sales: ShoppingCart,
+  Marketing: Megaphone,
+  Engagement: Heart,
+  Notifications: Bell,
+  'User Management': Users,
+  'Your Account': UserCircle,
+};
+
+type PrimaryItem = {
+  heading: string;
+  icon: LucideIcon;
+  children: MenuConfig;
+};
+
+function buildPrimaryItems(): PrimaryItem[] {
+  return MENU_SIDEBAR_MAIN.map((group) => {
+    const heading = group.heading || group.title || '';
+    const icon = GROUP_ICONS[heading] || (group.children?.[0]?.icon as LucideIcon | undefined);
+    return {
+      heading,
+      icon: icon || FolderCode,
+      children: group.children || [],
+    };
+  });
+}
+
+// Static config-derived items; kept at module scope so the auto-select effect
+// has a stable identity and doesn't re-run on every render.
+const PRIMARY_ITEMS = buildPrimaryItems();
+
+function isChildActive(child: MenuItem, pathname: string): boolean {
+  if (child.path) {
+    if (child.path === '/') return child.path === pathname;
+    return pathname.startsWith(child.path);
+  }
+  if (child.children) return child.children.some((c) => isChildActive(c, pathname));
+  return false;
+}
 
 export function SidebarPrimary() {
   const pathname = usePathname();
-  const [selectedMenuItem, setSelectedMenuItem] = useState(menuItems[1]);
+  const [selectedItem, setSelectedItem] = useState<PrimaryItem>(PRIMARY_ITEMS[0]);
   const setSelectedPrimaryItem = useLayoutStore((state) => state.setSelectedPrimaryItem);
 
+  // Auto-select the group whose child matches the current route.
   useEffect(() => {
-    menuItems.forEach((item) => {
-      if (
-        item.rootPath === pathname ||
-        (item.rootPath && pathname.includes(item.rootPath)) ||
-        // Special handling for variant management paths
-        (item.tooltip === 'Variant Management' && (
-          pathname.includes('/sizes') ||
-          pathname.includes('/flavors')
-        ))
-      ) {
-        setSelectedMenuItem(item);
-        setSelectedPrimaryItem(item.tooltip);
-      }
-    });
+    const match = PRIMARY_ITEMS.find((group) =>
+      group.children.some((child) => isChildActive(child, pathname)),
+    );
+    if (match) {
+      setSelectedItem(match);
+      setSelectedPrimaryItem(match.heading);
+    }
   }, [pathname, setSelectedPrimaryItem]);
 
   return (
@@ -167,35 +89,31 @@ export function SidebarPrimary() {
       {/* Navigation */}
       <ScrollArea className="grow w-full h-[calc(100vh-13rem)] lg:h-[calc(100vh-5.5rem)]">
         <div className="grow gap-1 shrink-0 flex items-center flex-col">
-          {menuItems.map((item, index) => (
+          {PRIMARY_ITEMS.map((item, index) => (
             <Tooltip key={index}>
               <TooltipTrigger asChild>
-                <Button
-                  asChild
-                  variant="ghost"
-                  mode="icon"
-                  {...(item === selectedMenuItem
-                    ? { 'data-state': 'open' }
-                    : {})}
+                <Link
+                  href={item.children[0]?.path || '#'}
+                  onClick={() => {
+                    setSelectedItem(item);
+                    setSelectedPrimaryItem(item.heading);
+                  }}
                   className={cn(
-                    'shrink-0 rounded-md size-9',
-                    'data-[state=open]:bg-primary data-[state=open]:text-primary-foreground',
-                    'hover:text-foreground',
+                    'flex items-center justify-center rounded-md px-2 py-2.5 w-full',
+                    'shrink-0',
+                    item === selectedItem
+                      ? 'bg-primary text-primary-foreground'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-muted',
                   )}
                 >
-                  <Link href={item.path}>
-                    <item.icon className="size-4.5!" />
-                  </Link>
-                </Button>
+                  <item.icon className="size-4.5! shrink-0" />
+                </Link>
               </TooltipTrigger>
-              <TooltipContent side="right">{item.tooltip}</TooltipContent>
+              <TooltipContent side="right">{item.heading}</TooltipContent>
             </Tooltip>
           ))}
         </div>
       </ScrollArea>
-
-      {/* Footer */}
-      
     </div>
   );
 }

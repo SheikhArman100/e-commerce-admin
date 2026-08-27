@@ -22,8 +22,10 @@ export function SidebarPrimaryMenu() {
     [pathname],
   );
 
-  // Find the menu group for the selected primary item
-  const selectedGroup = MENU_SIDEBAR_MAIN.find(item => item.title === selectedPrimaryItem);
+  // Find the menu group for the selected primary item (matched by heading)
+  const selectedGroup = MENU_SIDEBAR_MAIN.find(
+    (item) => (item.heading || item.title) === selectedPrimaryItem,
+  );
 
   if (!selectedGroup) return null;
 
@@ -41,7 +43,7 @@ export function SidebarPrimaryMenu() {
     >
       <AccordionMenuGroup>
         <AccordionMenuLabel>
-          {selectedGroup.title}
+          {selectedGroup.heading || selectedGroup.title}
         </AccordionMenuLabel>
         {selectedGroup.children?.map((child, index) => {
           return (
