@@ -222,6 +222,11 @@ html {
     max-width: 1300px; 
   }
 }
+@media (min-width: 1800px) { 
+  .container-fluid {
+    max-width: 1550px; 
+  }
+}
 
 /* Metronic Configs */
 @import './config.metronic.css';
