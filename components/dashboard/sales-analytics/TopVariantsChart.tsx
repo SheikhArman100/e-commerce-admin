@@ -1,6 +1,7 @@
-'use client';
+﻿'use client';
 
 import dynamic from 'next/dynamic';
+import { formatTaka } from '@/lib/currency';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp } from 'lucide-react';
 import { TopVariant } from '@/types/dashboard.types';
@@ -15,12 +16,7 @@ interface TopVariantsChartProps {
 }
 
 const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
+  return formatTaka(amount, 0);
 };
 
 const formatNumber = (num: number) => {
@@ -155,7 +151,7 @@ export default function TopVariantsChart({ data, isLoading }: TopVariantsChartPr
     },
     yaxis: {
       title: {
-        text: 'Revenue ($)',
+        text: 'Revenue (à§³)',
         style: {
           color: '#475569',
           fontSize: '14px',

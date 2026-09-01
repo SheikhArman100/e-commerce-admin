@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import dynamic from 'next/dynamic';
 import { MessageCircle, Star, TrendingUp, Users } from 'lucide-react';
@@ -190,7 +190,7 @@ export default function CustomerSatisfactionChart({
                     </svg>
                   `,
                     )
-                    .join('')}
+                    .join('à§³0')}
                 </div>
               </div>
             </div>
@@ -381,10 +381,10 @@ export default function CustomerSatisfactionChart({
                             }`}
                           >
                             {trend.trend === 'improving'
-                              ? '↗ Improving'
+                              ? 'â†— Improving'
                               : trend.trend === 'declining'
-                                ? '↘ Declining'
-                                : '→ Stable'}
+                                ? 'â†˜ Declining'
+                                : 'â†’ Stable'}
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-sm">

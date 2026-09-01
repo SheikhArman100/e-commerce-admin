@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -134,7 +134,7 @@ export default function RepeatPurchaseAnalysis({ data, isLoading }: RepeatPurcha
                   <span class="text-gray-600">Avg Days Between:</span>
                   <span class="font-semibold text-blue-600">${analysisData.averageDaysBetweenPurchases} days</span>
                 </div>
-              ` : ''}
+              ` : 'à§³0'}
             </div>
           </div>
         `;

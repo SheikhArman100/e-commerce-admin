@@ -1,6 +1,7 @@
-'use client';
+﻿'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatTaka } from '@/lib/currency';
 import { Badge } from '@/components/ui/badge';
 import { DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
@@ -14,21 +15,16 @@ interface ProfitabilityMetricsTableProps {
 }
 
 const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
+  return formatTaka(amount, 0);
 };
 
 const formatShortCurrency = (amount: number) => {
   if (amount >= 1000000) {
-    return `$${(amount / 1000000).toFixed(1)}M`;
+    return `à§³${(amount / 1000000).toFixed(1)}M`;
   } else if (amount >= 1000) {
-    return `$${(amount / 1000).toFixed(0)}K`;
+    return `à§³${(amount / 1000).toFixed(0)}K`;
   }
-  return `$${amount.toFixed(0)}`;
+  return `à§³${amount.toFixed(0)}`;
 };
 
 // Define colors for the segments

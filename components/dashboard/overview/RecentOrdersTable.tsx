@@ -1,6 +1,7 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
+import { formatTaka } from '@/lib/currency';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -15,12 +16,7 @@ interface RecentOrdersTableProps {
 
 export default function RecentOrdersTable({ data, isLoading }: RecentOrdersTableProps) {
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    }).format(amount);
+    return formatTaka(amount, 2);
   };
 
   const getStatusColor = (status: string) => {
@@ -41,15 +37,15 @@ export default function RecentOrdersTable({ data, isLoading }: RecentOrdersTable
   const getStatusIcon = (status: string) => {
     switch (status.toLowerCase()) {
       case 'delivered':
-        return '✅';
+        return 'âœ…';
       case 'shipped':
-        return '🚚';
+        return 'ðŸšš';
       case 'pending':
-        return '⏳';
+        return 'â³';
       case 'cancelled':
-        return '❌';
+        return 'âŒ';
       default:
-        return '📦';
+        return 'ðŸ“¦';
     }
   };
 
@@ -120,7 +116,7 @@ export default function RecentOrdersTable({ data, isLoading }: RecentOrdersTable
                     </Badge>
                   </div>
                   <div className="text-xs text-slate-600">
-                    {order.customerName} • {formatDistanceToNow(new Date(order.date), { addSuffix: true })}
+                    {order.customerName} â€¢ {formatDistanceToNow(new Date(order.date), { addSuffix: true })}
                   </div>
                 </div>
 

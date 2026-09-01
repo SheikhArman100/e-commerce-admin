@@ -1,6 +1,7 @@
-'use client';
+﻿'use client';
 
 import dynamic from 'next/dynamic';
+import { formatTaka } from '@/lib/currency';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PieChart, Package } from 'lucide-react';
 import { CategoryProductAnalysis } from '@/types/dashboard.types';
@@ -15,12 +16,7 @@ interface CategoryAnalysisChartProps {
 }
 
 const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
+  return formatTaka(amount, 0);
 };
 
 const formatNumber = (num: number) => {

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -48,7 +48,7 @@ export default function CustomerInsightsKPIs({ data, isLoading }: CustomerInsigh
     },
     {
       title: 'Average CLV',
-      value: `$${(data.customerLifetimeValue?.[0]?.averageOrderValue || 0).toFixed(2)}`,
+      value: `à§³${(data.customerLifetimeValue?.[0]?.averageOrderValue || 0).toFixed(2)}`,
       icon: DollarSign,
       color: 'text-slate-600',
       bgColor: 'bg-slate-50'

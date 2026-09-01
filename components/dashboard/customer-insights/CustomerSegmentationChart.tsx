@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -95,11 +95,11 @@ export default function CustomerSegmentationChart({ data, isLoading }: CustomerS
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">Avg Order Value:</span>
-                <span class="font-semibold text-green-600">$${segment.averageOrderValue.toFixed(2)}</span>
+                <span class="font-semibold text-green-600">à§³${segment.averageOrderValue.toFixed(2)}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">Total Revenue:</span>
-                <span class="font-semibold text-blue-600">$${segment.totalRevenue.toLocaleString()}</span>
+                <span class="font-semibold text-blue-600">à§³${segment.totalRevenue.toLocaleString()}</span>
               </div>
             </div>
           </div>
@@ -136,7 +136,7 @@ export default function CustomerSegmentationChart({ data, isLoading }: CustomerS
     },
     yaxis: {
       title: {
-        text: 'Revenue ($)',
+        text: 'Revenue (à§³)',
         style: {
           color: '#475569',
         },
@@ -157,7 +157,7 @@ export default function CustomerSegmentationChart({ data, isLoading }: CustomerS
         fontFamily: 'inherit',
       },
       y: {
-        formatter: (val: number) => `$${val.toLocaleString()}`
+        formatter: (val: number) => `à§³${val.toLocaleString()}`
       }
     }
   };
@@ -266,7 +266,7 @@ export default function CustomerSegmentationChart({ data, isLoading }: CustomerS
             <DollarSign className="h-6 w-6 text-blue-600" />
             <div>
               <div className="text-2xl font-bold text-blue-600">
-                {isLoading ? <Skeleton className="h-8 w-20" /> : `$${chartData.reduce((sum, item) => sum + item.totalRevenue, 0).toLocaleString()}`}
+                {isLoading ? <Skeleton className="h-8 w-20" /> : `à§³${chartData.reduce((sum, item) => sum + item.totalRevenue, 0).toLocaleString()}`}
               </div>
               <div className="text-sm text-gray-600">Total Revenue</div>
             </div>

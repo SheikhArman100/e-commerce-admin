@@ -1,6 +1,7 @@
-'use client';
+﻿'use client';
 
 import dynamic from 'next/dynamic';
+import { formatTaka } from '@/lib/currency';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from 'lucide-react';
 import { DailyTrend } from '@/types/dashboard.types';
@@ -107,7 +108,7 @@ export default function DailyTrendChart({ data, isLoading }: DailyTrendChartProp
     yaxis: [
       {
         title: {
-          text: 'Revenue ($)',
+          text: 'Revenue (à§³)',
           style: {
             color: '#475569',
             fontSize: '14px',
@@ -119,12 +120,7 @@ export default function DailyTrendChart({ data, isLoading }: DailyTrendChartProp
             colors: '#475569',
           },
           formatter: (value) => {
-            return new Intl.NumberFormat('en-US', {
-              style: 'currency',
-              currency: 'USD',
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            }).format(value);
+            return formatTaka(value, 0);
           },
         },
       },
@@ -157,12 +153,7 @@ export default function DailyTrendChart({ data, isLoading }: DailyTrendChartProp
       y: [
         {
           formatter: (value) => {
-            return new Intl.NumberFormat('en-US', {
-              style: 'currency',
-              currency: 'USD',
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            }).format(value);
+            return formatTaka(value, 0);
           },
         },
         {

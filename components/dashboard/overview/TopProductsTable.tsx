@@ -1,6 +1,7 @@
-'use client';
+﻿'use client';
 
 import Image from 'next/image';
+import { formatTaka } from '@/lib/currency';
 import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,12 +16,7 @@ interface TopProductsTableProps {
 
 export default function TopProductsTable({ data, isLoading }: TopProductsTableProps) {
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
+    return formatTaka(amount, 0);
   };
 
   const formatNumber = (num: number) => {

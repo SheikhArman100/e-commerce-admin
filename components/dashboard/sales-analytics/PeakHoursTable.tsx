@@ -1,6 +1,7 @@
-'use client';
+﻿'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatTaka } from '@/lib/currency';
 import { Clock } from 'lucide-react';
 import { PeakHour } from '@/types/dashboard.types';
 
@@ -10,12 +11,7 @@ interface PeakHoursTableProps {
 }
 
 const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
+  return formatTaka(amount, 0);
 };
 
 const formatNumber = (num: number) => {

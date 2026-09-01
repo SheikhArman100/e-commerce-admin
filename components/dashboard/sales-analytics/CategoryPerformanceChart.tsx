@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import dynamic from 'next/dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -90,7 +90,7 @@ export default function CategoryPerformanceChart({ data, isLoading }: CategoryPe
         const item = sortedData[dataPointIndex];
 
         if (seriesIndex === 0) {
-          return `$${(item.revenue / 1000).toFixed(0)}K`;
+          return `à§³${(item.revenue / 1000).toFixed(0)}K`;
         } else {
           return `${item.orders}`;
         }
@@ -169,7 +169,7 @@ export default function CategoryPerformanceChart({ data, isLoading }: CategoryPe
           const item = sortedData[dataPointIndex];
           
           if (seriesIndex === 0) {
-            return `$${item.revenue.toLocaleString('en-US', { minimumFractionDigits: 2 })} (${val.toFixed(1)}%)`;
+            return `à§³${item.revenue.toLocaleString('en-US', { minimumFractionDigits: 2 })} (${val.toFixed(1)}%)`;
           } else {
             return `${item.orders} orders (${val.toFixed(1)}%)`;
           }
@@ -191,7 +191,7 @@ export default function CategoryPerformanceChart({ data, isLoading }: CategoryPe
                   <span class="text-sm text-slate-600">Revenue:</span>
                 </div>
                 <div class="text-right">
-                  <div class="text-slate-800 font-semibold">$${item.revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+                  <div class="text-slate-800 font-semibold">à§³${item.revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
                   <div class="text-xs text-slate-500">${revenuePercent.toFixed(1)}% of total</div>
                 </div>
               </div>
@@ -212,7 +212,7 @@ export default function CategoryPerformanceChart({ data, isLoading }: CategoryPe
                 </div>
                 <div class="flex items-center justify-between text-sm">
                   <span class="text-slate-600">Avg Order Value:</span>
-                  <span class="font-semibold text-emerald-700">$${avgOrderValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                  <span class="font-semibold text-emerald-700">à§³${avgOrderValue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                 </div>
               </div>
             </div>

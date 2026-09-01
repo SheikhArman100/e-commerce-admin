@@ -1,6 +1,7 @@
-'use client';
+﻿'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { formatTaka } from '@/lib/currency';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Package, AlertTriangle } from 'lucide-react';
@@ -12,12 +13,7 @@ interface StockAnalysisTableProps {
 }
 
 const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
+  return formatTaka(amount, 0);
 };
 
 const formatNumber = (num: number) => {
@@ -27,7 +23,7 @@ const formatNumber = (num: number) => {
 const getReorderStatus = (currentStock: number, reorderPoint: number) => {
   if (currentStock === 0) {
     return {
-      text: '🚨 OUT OF STOCK',
+      text: 'ðŸš¨ OUT OF STOCK',
       color: 'bg-red-100 text-red-800 border-red-200',
       action: 'Restock Immediately',
       urgency: 'critical'
@@ -38,7 +34,7 @@ const getReorderStatus = (currentStock: number, reorderPoint: number) => {
 
   if (ratio <= 1) {
     return {
-      text: '⚠️ CRITICAL',
+      text: 'âš ï¸ CRITICAL',
       color: 'bg-red-100 text-red-800 border-red-200',
       action: 'Order Today',
       urgency: 'high'
@@ -47,7 +43,7 @@ const getReorderStatus = (currentStock: number, reorderPoint: number) => {
 
   if (ratio <= 1.5) {
     return {
-      text: '🟡 LOW',
+      text: 'ðŸŸ¡ LOW',
       color: 'bg-orange-100 text-orange-800 border-orange-200',
       action: 'Order Soon',
       urgency: 'medium'
@@ -55,7 +51,7 @@ const getReorderStatus = (currentStock: number, reorderPoint: number) => {
   }
 
   return {
-    text: '✅ SAFE',
+    text: 'âœ… SAFE',
     color: 'bg-green-100 text-green-800 border-green-200',
     action: 'Monitor',
     urgency: 'low'
@@ -65,7 +61,7 @@ const getReorderStatus = (currentStock: number, reorderPoint: number) => {
 const getSalesVelocity = (turnoverRate: number) => {
   if (turnoverRate === 0) {
     return {
-      text: '💤 NOT SELLING',
+      text: 'ðŸ’¤ NOT SELLING',
       color: 'bg-gray-100 text-gray-800 border-gray-200',
       insight: 'Consider promotion or removal',
       performance: 'poor'
@@ -74,7 +70,7 @@ const getSalesVelocity = (turnoverRate: number) => {
 
   if (turnoverRate < 0.5) {
     return {
-      text: '🐌 SLOW',
+      text: 'ðŸŒ SLOW',
       color: 'bg-blue-100 text-blue-800 border-blue-200',
       insight: 'Needs marketing boost',
       performance: 'low'
@@ -83,7 +79,7 @@ const getSalesVelocity = (turnoverRate: number) => {
 
   if (turnoverRate < 1.2) {
     return {
-      text: '✅ NORMAL',
+      text: 'âœ… NORMAL',
       color: 'bg-green-100 text-green-800 border-green-200',
       insight: 'Performing well',
       performance: 'good'
@@ -92,7 +88,7 @@ const getSalesVelocity = (turnoverRate: number) => {
 
   if (turnoverRate < 2.5) {
     return {
-      text: '🚀 FAST',
+      text: 'ðŸš€ FAST',
       color: 'bg-orange-100 text-orange-800 border-orange-200',
       insight: 'High demand - ensure stock',
       performance: 'high'
@@ -100,7 +96,7 @@ const getSalesVelocity = (turnoverRate: number) => {
   }
 
   return {
-    text: '🔥 HOT',
+    text: 'ðŸ”¥ HOT',
     color: 'bg-red-100 text-red-800 border-red-200',
     insight: 'Bestseller - prioritize restocking',
     performance: 'excellent'

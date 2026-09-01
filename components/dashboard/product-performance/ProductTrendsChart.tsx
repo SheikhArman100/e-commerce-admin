@@ -1,6 +1,7 @@
-'use client';
+﻿'use client';
 
 import dynamic from 'next/dynamic';
+import { formatTaka } from '@/lib/currency';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, TrendingDown, BarChart3, Package } from 'lucide-react';
@@ -16,12 +17,7 @@ interface ProductTrendsCardsProps {
 }
 
 const formatCurrency = (amount: number) => {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
-  }).format(amount);
+  return formatTaka(amount, 0);
 };
 
 const getGrowthIcon = (growthRate: number) => {
@@ -139,7 +135,7 @@ export default function ProductTrendsCards({ data, isLoading }: ProductTrendsCar
     },
     yaxis: {
       title: {
-        text: 'Revenue ($)',
+        text: 'Revenue (à§³)',
         style: {
           color: '#475569',
           fontSize: '14px',
@@ -209,8 +205,8 @@ export default function ProductTrendsCards({ data, isLoading }: ProductTrendsCar
       },
       formatter: function(seriesName, opts) {
         const item = series[opts.seriesIndex];
-        const trendIcon = item.growthRate > 0 ? '↑' : item.growthRate < 0 ? '↓' : '→';
-        const growthText = `${item.growthRate > 0 ? '+' : ''}${item.growthRate.toFixed(1)}%`;
+        const trendIcon = item.growthRate > 0 ? 'â†‘' : item.growthRate < 0 ? 'â†“' : 'â†’';
+        const growthText = `${item.growthRate > 0 ? '+' : 'à§³0'}${item.growthRate.toFixed(1)}%`;
         return `${seriesName} ${trendIcon} ${growthText}`;
       },
     },
@@ -252,7 +248,7 @@ export default function ProductTrendsCards({ data, isLoading }: ProductTrendsCar
         <div className="flex flex-wrap gap-2 mt-2">
           {series.filter(item => item.isHighGrowth).map((item, index) => (
             <Badge key={index} variant="destructive" className="text-xs">
-              🔥 {item.name}: +{item.growthRate.toFixed(1)}%
+              ðŸ”¥ {item.name}: +{item.growthRate.toFixed(1)}%
             </Badge>
           ))}
         </div>

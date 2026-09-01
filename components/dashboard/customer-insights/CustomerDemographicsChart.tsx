@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import dynamic from 'next/dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -94,7 +94,7 @@ export default function CustomerDemographicsChart({ data, isLoading }: CustomerD
     },
     yaxis: {
       title: {
-        text: 'Average Order Value ($)',
+        text: 'Average Order Value (à§³)',
         style: {
           color: '#475569',
         },
@@ -157,7 +157,7 @@ export default function CustomerDemographicsChart({ data, isLoading }: CustomerD
         </div>
         <div className="p-4 bg-purple-50 rounded-lg">
           <div className="text-2xl font-bold text-purple-600">
-            {isLoading ? <Skeleton className="h-8 w-16 mx-auto" /> : `$${(chartData.reduce((sum, item) => sum + (item.averageOrderValue * item.percentage), 0) / 100).toFixed(2)}`}
+            {isLoading ? <Skeleton className="h-8 w-16 mx-auto" /> : `à§³${(chartData.reduce((sum, item) => sum + (item.averageOrderValue * item.percentage), 0) / 100).toFixed(2)}`}
           </div>
           <div className="text-sm text-gray-600 mt-1">Weighted Avg AOV</div>
         </div>

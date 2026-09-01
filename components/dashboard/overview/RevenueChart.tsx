@@ -1,6 +1,7 @@
-'use client';
+﻿'use client';
 
 import dynamic from 'next/dynamic';
+import { formatTaka } from '@/lib/currency';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RevenueTrend } from '@/types/dashboard.types';
 
@@ -40,7 +41,7 @@ export default function RevenueChart({ data, isLoading, period = 'yearly' }: Rev
 
     switch (period) {
       case 'yearly':
-        // Format: "YYYY-MM" → "Jan 2025", "Feb 2025", etc.
+        // Format: "YYYY-MM" â†’ "Jan 2025", "Feb 2025", etc.
         const [year, month] = dateStr.split('-');
         const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -48,7 +49,7 @@ export default function RevenueChart({ data, isLoading, period = 'yearly' }: Rev
 
       case 'monthly':
       case 'weekly':
-        // Format: "YYYY-MM-DD" → "15 Jan", "16 Jan", etc.
+        // Format: "YYYY-MM-DD" â†’ "15 Jan", "16 Jan", etc.
         const date = new Date(dateStr);
         return date.toLocaleDateString('en-US', {
           day: 'numeric',
@@ -56,7 +57,7 @@ export default function RevenueChart({ data, isLoading, period = 'yearly' }: Rev
         });
 
       case 'daily':
-        // Format: "YYYY-MM-DD HH:mm:ss" → "11:00", "13:00", etc.
+        // Format: "YYYY-MM-DD HH:mm:ss" â†’ "11:00", "13:00", etc.
         const timeStr = dateStr.split(' ')[1]; // Get "HH:mm:ss" part
         if (timeStr) {
           const [hours] = timeStr.split(':');
@@ -133,7 +134,7 @@ export default function RevenueChart({ data, isLoading, period = 'yearly' }: Rev
     yaxis: [
       {
         title: {
-          text: 'Revenue ($)',
+          text: 'Revenue (à§³)',
           style: {
             color: '#000000',
             fontSize: '14px',
@@ -145,12 +146,7 @@ export default function RevenueChart({ data, isLoading, period = 'yearly' }: Rev
             colors: '#000000',
           },
           formatter: (value) => {
-            return new Intl.NumberFormat('en-US', {
-              style: 'currency',
-              currency: 'USD',
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            }).format(value);
+            return formatTaka(value, 0);
           },
         },
       },
@@ -179,12 +175,7 @@ export default function RevenueChart({ data, isLoading, period = 'yearly' }: Rev
       y: [
         {
           formatter: (value) => {
-            return new Intl.NumberFormat('en-US', {
-              style: 'currency',
-              currency: 'USD',
-              minimumFractionDigits: 0,
-              maximumFractionDigits: 0,
-            }).format(value);
+            return formatTaka(value, 0);
           },
         },
         {

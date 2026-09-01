@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -112,7 +112,7 @@ export default function CustomerLifetimeValue({ data, isLoading }: CustomerLifet
     },
     yaxis: {
       title: {
-        text: 'Total Spent ($)',
+        text: 'Total Spent (à§³)',
         style: {
           color: '#475569',
         },
@@ -121,7 +121,7 @@ export default function CustomerLifetimeValue({ data, isLoading }: CustomerLifet
         style: {
           colors: '#475569',
         },
-        formatter: (val: number) => `$${val.toFixed(0)}`
+        formatter: (val: number) => `à§³${val.toFixed(0)}`
       },
     },
     colors: ['#10b981', '#f59e0b', '#ef4444', '#64748b'], // Green for High, Amber for Medium, Red for Low, Slate for New
@@ -143,7 +143,7 @@ export default function CustomerLifetimeValue({ data, isLoading }: CustomerLifet
             <div class="font-bold text-gray-800 mb-2">${customer.customerName}</div>
             <div class="space-y-1 text-sm text-gray-600">
               <div>Total Orders: <span class="font-semibold">${customer.x}</span></div>
-              <div>Total Spent: <span class="font-semibold">$${customer.y.toFixed(2)}</span></div>
+              <div>Total Spent: <span class="font-semibold">à§³${customer.y.toFixed(2)}</span></div>
               <div>Segment: <span class="font-semibold capitalize">${customer.segment}</span></div>
             </div>
           </div>
@@ -208,7 +208,7 @@ export default function CustomerLifetimeValue({ data, isLoading }: CustomerLifet
             <DollarSign className="h-6 w-6 text-green-600" />
             <div>
               <div className="text-2xl font-bold text-green-600">
-                {isLoading ? <Skeleton className="h-8 w-20" /> : `$${(chartData.reduce((sum, item) => sum + item.totalSpent, 0) / chartData.length).toFixed(2)}`}
+                {isLoading ? <Skeleton className="h-8 w-20" /> : `à§³${(chartData.reduce((sum, item) => sum + item.totalSpent, 0) / chartData.length).toFixed(2)}`}
               </div>
               <div className="text-sm text-gray-600">Avg CLV</div>
             </div>

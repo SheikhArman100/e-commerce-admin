@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -216,7 +216,7 @@ export default function CustomerAcquisitionChart({ data, isLoading }: CustomerAc
                             <span className={`px-2 py-1 rounded-full text-xs ${
                               growthRate >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                             }`}>
-                              {growthRate >= 0 ? '+' : ''}{growthRate.toFixed(1)}%
+                              {growthRate >= 0 ? '+' : 'à§³0'}{growthRate.toFixed(1)}%
                             </span>
                           ) : (
                             <span className="text-gray-500">-</span>
