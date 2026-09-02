@@ -134,8 +134,8 @@ export default function UpdateSizePage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <TextInput
-                    label="Size Name"
-                    placeholder="Enter size name"
+                    label="Size Name(in Pound)"
+                    placeholder="Enter size name(e.g. 1, 1.5, 3)"
                     name="name"
                     register={register}
                     errors={errors.name?.message}

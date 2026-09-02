@@ -12,7 +12,7 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Loader2, ChevronUp, ChevronDown, Eye } from 'lucide-react';
+import { Loader2, ChevronUp, ChevronDown, Eye, Pencil } from 'lucide-react';
 
 import { formatDateTime } from '@/lib/helpers';
 import { ScreenLoader } from '@/components/screen-loader';
@@ -196,15 +196,26 @@ export default function SizesTable() {
                       {formatDateTime(size.createdAt)}
                     </TableCell>
                     <TableCell>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        asChild
-                      >
-                        <Link href={`/sizes/${size.id}`}>
-                          <Eye className="w-4 h-4" />
-                        </Link>
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          asChild
+                        >
+                          <Link href={`/sizes/${size.id}`} title="View size">
+                            <Eye className="w-4 h-4" />
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          asChild
+                        >
+                          <Link href={`/sizes/${size.id}/update-size`} title="Edit size">
+                            <Pencil className="w-4 h-4" />
+                          </Link>
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))

@@ -129,7 +129,7 @@ export default function SizeDetailsPage() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          <Button asChild variant="outline">
+          <Button asChild variant="primary">
             <Link href={`/sizes/${sizeId}/update-size`}>
               <Edit className="w-4 h-4 mr-2" />
               Edit Size
