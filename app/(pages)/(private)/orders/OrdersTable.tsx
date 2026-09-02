@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { IOrder, OrderStatus } from '@/types/order.types';
 import { formatDateTime } from '@/lib/helpers';
+import { formatTaka } from '@/lib/currency';
 import { useOrders } from '@/hooks/useOrders';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
@@ -34,12 +35,16 @@ const getStatusColor = (status: OrderStatus) => {
   switch (status) {
     case OrderStatus.PENDING:
       return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    case OrderStatus.SHIPPED:
+    case OrderStatus.PAID:
       return 'bg-blue-100 text-blue-800 border-blue-200';
+    case OrderStatus.SHIPPED:
+      return 'bg-indigo-100 text-indigo-800 border-indigo-200';
     case OrderStatus.DELIVERED:
       return 'bg-green-100 text-green-800 border-green-200';
     case OrderStatus.CANCELLED:
       return 'bg-red-100 text-red-800 border-red-200';
+    case OrderStatus.FAILED:
+      return 'bg-rose-100 text-rose-800 border-rose-200';
     default:
       return 'bg-gray-100 text-gray-800 border-gray-200';
   }
@@ -268,9 +273,9 @@ export default function OrdersTable() {
                         />
                       </Avatar>
                       <div>
-                        <p className="font-medium text-sm">
+                        <Link href={`/orders/${order.id}`}  className="font-medium hover:text-blue-800 hover:underline block truncate">
                           {order.user.name}
-                        </p>
+                        </Link>
                         <p className="text-xs text-muted-foreground">
                           {order.user.email}
                         </p>
@@ -284,7 +289,7 @@ export default function OrdersTable() {
                   </TableCell>
                   <TableCell>
                     <span className="font-medium">
-                      ${order.totalAmount.toFixed(2)}
+                      {formatTaka(order.totalAmount, 2)}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -320,7 +325,7 @@ export default function OrdersTable() {
 
       {orders.length > 0 && (
         <div className="flex flex-col md:flex-row justify-between items-center mt-4 gap-3">
-          <div className="text-sm font-medium text-gray-600 flex items-center gap-2">
+          <div className=" text-sm font-medium text-gray-600 flex items-center gap-2">
             Showing
             <input
               type="number"
@@ -343,7 +348,10 @@ export default function OrdersTable() {
             />
             of {totalCount} Records
           </div>
+          <div>
+
           <PaginationTable count={totalCount} limit={limit} />
+          </div>
         </div>
       )}
     </div>

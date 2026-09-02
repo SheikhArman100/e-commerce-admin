@@ -106,9 +106,11 @@ export interface IOrderItem {
 // Order status enum
 export enum OrderStatus {
   PENDING = 'Pending',
+  PAID = 'Paid',
   SHIPPED = 'Shipped',
   DELIVERED = 'Delivered',
-  CANCELLED = 'Cancelled'
+  CANCELLED = 'Cancelled',
+  FAILED = 'Failed'
 }
 
 // Frontend interface (processed data)

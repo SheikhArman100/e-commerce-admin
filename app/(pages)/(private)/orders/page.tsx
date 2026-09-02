@@ -15,9 +15,11 @@ import { OrderStatus } from '@/types/order.types';
 
 const orderStatusFilters = [
   { value: OrderStatus.PENDING, label: 'Pending', color: '#eab308' },
-  { value: OrderStatus.SHIPPED, label: 'Shipped', color: '#3b82f6' },
+  { value: OrderStatus.PAID, label: 'Paid', color: '#3b82f6' },
+  { value: OrderStatus.SHIPPED, label: 'Shipped', color: '#6366f1' },
   { value: OrderStatus.DELIVERED, label: 'Delivered', color: '#10b981' },
   { value: OrderStatus.CANCELLED, label: 'Cancelled', color: '#ef4444' },
+  { value: OrderStatus.FAILED, label: 'Failed', color: '#f43f5e' },
 ];
 
 export default function OrdersPage() {

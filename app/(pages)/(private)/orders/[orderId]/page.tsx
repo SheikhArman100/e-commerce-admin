@@ -4,7 +4,7 @@ import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, Edit, Package, Truck, CheckCircle, Clock } from 'lucide-react';
+import { ArrowLeft, Edit, Package, Truck, CheckCircle, Clock, CreditCard, XCircle } from 'lucide-react';
 import { formatDateTime } from '@/lib/helpers';
 
 import {
@@ -30,6 +30,7 @@ import { useOrder, useUpdateOrderStatus } from '@/hooks/useOrders';
 import { ScreenLoader } from '@/components/screen-loader';
 import ProfileImage from '@/components/ProfileImage';
 import { OrderStatus } from '@/types/order.types';
+import { formatTaka } from '@/lib/currency';
 import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 
@@ -37,12 +38,16 @@ const getStatusIcon = (status: OrderStatus) => {
   switch (status) {
     case OrderStatus.PENDING:
       return <Clock className="w-4 h-4" />;
+    case OrderStatus.PAID:
+      return <CreditCard className="w-4 h-4" />;
     case OrderStatus.SHIPPED:
       return <Truck className="w-4 h-4" />;
     case OrderStatus.DELIVERED:
       return <CheckCircle className="w-4 h-4" />;
     case OrderStatus.CANCELLED:
-      return <Package className="w-4 h-4" />; // Could use a different icon like XCircle if available
+      return <Package className="w-4 h-4" />;
+    case OrderStatus.FAILED:
+      return <XCircle className="w-4 h-4" />;
     default:
       return <Package className="w-4 h-4" />;
   }
@@ -52,12 +57,16 @@ const getStatusColor = (status: OrderStatus) => {
   switch (status) {
     case OrderStatus.PENDING:
       return 'bg-yellow-100 text-yellow-800 border-yellow-200';
-    case OrderStatus.SHIPPED:
+    case OrderStatus.PAID:
       return 'bg-blue-100 text-blue-800 border-blue-200';
+    case OrderStatus.SHIPPED:
+      return 'bg-indigo-100 text-indigo-800 border-indigo-200';
     case OrderStatus.DELIVERED:
       return 'bg-green-100 text-green-800 border-green-200';
     case OrderStatus.CANCELLED:
       return 'bg-red-100 text-red-800 border-red-200';
+    case OrderStatus.FAILED:
+      return 'bg-rose-100 text-rose-800 border-rose-200';
     default:
       return 'bg-gray-100 text-gray-800 border-gray-200';
   }
@@ -163,9 +172,11 @@ export default function OrderDetailPage() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={OrderStatus.PENDING}>Pending</SelectItem>
+                <SelectItem value={OrderStatus.PAID}>Paid</SelectItem>
                 <SelectItem value={OrderStatus.SHIPPED}>Shipped</SelectItem>
                 <SelectItem value={OrderStatus.DELIVERED}>Delivered</SelectItem>
                 <SelectItem value={OrderStatus.CANCELLED}>Cancelled</SelectItem>
+                <SelectItem value={OrderStatus.FAILED}>Failed</SelectItem>
               </SelectContent>
             </Select>
 
@@ -245,7 +256,7 @@ export default function OrderDetailPage() {
                           • {item.sizeName || item.productFlavorSize.size?.name}Pound
                         </p>
                         <div className="flex items-center gap-4 mt-2 text-sm">
-                          <span>Price: ${item.price.toFixed(2)}</span>
+                          <span>Price: {formatTaka(item.price, 2)}</span>
                           <span>Quantity: {item.quantity}</span>
                           {/* <span>Stock: {item.productFlavorSize.stock}</span> */}
                         </div>
@@ -253,7 +264,7 @@ export default function OrderDetailPage() {
 
                       <div className="text-right">
                         <span className="font-medium">
-                          ${(item.price * item.quantity).toFixed(2)}
+                          {formatTaka(item.price * item.quantity, 2)}
                         </span>
                       </div>
                     </div>
@@ -340,7 +351,7 @@ export default function OrderDetailPage() {
                 </div>
                 <div className="flex justify-between text-lg font-semibold">
                   <span>Total Amount:</span>
-                  <span>${order.totalAmount.toFixed(2)}</span>
+                  <span>{formatTaka(order.totalAmount, 2)}</span>
                 </div>
                 <Separator />
                 <div>
