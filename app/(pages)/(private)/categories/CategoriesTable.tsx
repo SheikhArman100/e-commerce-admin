@@ -14,7 +14,8 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, ChevronUp, ChevronDown, Eye } from 'lucide-react';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Loader2, ChevronUp, ChevronDown, Eye, Pencil } from 'lucide-react';
 
 import ProfileImage from '@/components/ProfileImage';
 import { formatDateTime } from '@/lib/helpers';
@@ -57,26 +58,38 @@ export default function CategoriesTable() {
 
   const renderSkeletonRow = (index: number) => (
     <TableRow key={`skeleton-${index}`}>
-      <TableCell className="font-medium">
+      {/* Name */}
+      <TableCell className="font-medium w-[200px]">
         <div className="flex items-center space-x-2">
-          <div className="h-8 w-8 bg-gray-200 rounded-full animate-pulse"></div>
-          <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+          <Skeleton className="h-8 w-8 rounded-full" />
+          <Skeleton className="h-4 w-20" />
         </div>
       </TableCell>
-      <TableCell>
-        <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+      {/* Slug */}
+      <TableCell className="w-[200px]">
+        <Skeleton className="h-4 w-full" />
       </TableCell>
-      <TableCell>
-        <div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div>
+      {/* Order */}
+      <TableCell className="w-[150px]">
+        <Skeleton className="h-4 w-12" />
       </TableCell>
-      <TableCell className="hidden md:table-cell">
-        <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+      {/* Status */}
+      <TableCell className="w-[150px]">
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-2 w-2 rounded-full" />
+          <Skeleton className="h-4 w-12" />
+        </div>
       </TableCell>
-      <TableCell className="hidden md:table-cell">
-        <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+      {/* Created Date */}
+      <TableCell className="w-[200px]">
+        <Skeleton className="h-4 w-24" />
       </TableCell>
-      <TableCell>
-        <div className="h-8 w-16 bg-gray-200 rounded animate-pulse"></div>
+      {/* Actions */}
+      <TableCell className="w-[100px]">
+        <div className="flex items-center gap-1">
+          <Skeleton className="h-8 w-8" />
+          <Skeleton className="h-8 w-8" />
+        </div>
       </TableCell>
     </TableRow>
   );
@@ -230,15 +243,28 @@ export default function CategoriesTable() {
                       {formatDateTime(category.createdAt)}
                     </TableCell>
                     <TableCell>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        asChild
-                      >
-                        <Link href={`/categories/${category.id}`}>
-                          <Eye className="w-4 h-4" />
-                        </Link>
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          asChild
+                          title="View category"
+                        >
+                          <Link href={`/categories/${category.id}`}>
+                            <Eye className="w-4 h-4" />
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          asChild
+                          title="Edit category"
+                        >
+                          <Link href={`/categories/${category.id}/update-category`}>
+                            <Pencil className="w-4 h-4" />
+                          </Link>
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
