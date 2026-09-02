@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Users, Repeat, DollarSign, TrendingUp } from 'lucide-react';
 import { CustomerInsightsResponse } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 interface CustomerInsightsKPIsProps {
   data: CustomerInsightsResponse | undefined;
@@ -36,6 +37,7 @@ export default function CustomerInsightsKPIs({ data, isLoading }: CustomerInsigh
       title: 'Total Customers',
       value: data.customerAcquisition?.newCustomers || 0,
       icon: Users,
+      description: 'Number of new customers acquired in the selected period.',
       color: 'text-slate-600',
       bgColor: 'bg-slate-50'
     },
@@ -43,20 +45,23 @@ export default function CustomerInsightsKPIs({ data, isLoading }: CustomerInsigh
       title: 'Repeat Purchase Rate',
       value: `${data.repeatPurchaseAnalysis?.repeatPercentage || 0}%`,
       icon: Repeat,
+      description: 'Share of customers who placed more than one order.',
       color: 'text-slate-600',
       bgColor: 'bg-slate-50'
     },
     {
       title: 'Average CLV',
-      value: `à§³${(data.customerLifetimeValue?.[0]?.averageOrderValue || 0).toFixed(2)}`,
+      value: `৳${(data.customerLifetimeValue?.[0]?.averageOrderValue || 0).toFixed(2)}`,
       icon: DollarSign,
+      description: 'Average lifetime value - spend per customer.',
       color: 'text-slate-600',
       bgColor: 'bg-slate-50'
     },
     {
       title: 'Customer Satisfaction',
-      value: `${data.customerSatisfaction?.overallRating || 0}/5.0`,
+      value: `${(data.customerSatisfaction?.overallRating || 0).toFixed(1)}/5.0`,
       icon: TrendingUp,
+      description: 'Average review rating across all products.',
       color: 'text-slate-600',
       bgColor: 'bg-slate-50'
     }
@@ -68,7 +73,10 @@ export default function CustomerInsightsKPIs({ data, isLoading }: CustomerInsigh
         <Card key={index} className="hover:shadow-lg transition-shadow duration-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-gray-600">{kpi.title}</CardTitle>
-            <kpi.icon className={`h-4 w-4 ${kpi.color}`} />
+            <div className="flex items-center gap-1.5">
+              <CardInfo description={kpi.description} />
+              <kpi.icon className={`h-4 w-4 ${kpi.color}`} />
+            </div>
           </CardHeader>
           <CardContent>
             {isLoading ? (

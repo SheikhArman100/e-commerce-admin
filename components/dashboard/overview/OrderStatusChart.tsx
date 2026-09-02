@@ -3,6 +3,7 @@
 import dynamic from 'next/dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { OrderStatusDistribution } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -150,6 +151,7 @@ export default function OrderStatusChart({ data, isLoading, period }: OrderStatu
         <CardTitle className="text-lg font-semibold text-slate-800">
           Order Status Distribution
         </CardTitle>
+<CardInfo description="Breakdown of orders by their current status (pending, processing, shipped, delivered,cancelled)." />
       </CardHeader>
       <CardContent className="space-y-6 bg-white/40 rounded-b-lg">
         <div className="flex justify-center">

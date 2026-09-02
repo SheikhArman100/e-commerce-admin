@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Clock, Calendar, MapPin, ShoppingCart, TrendingUp, Package } from 'lucide-react';
 import { CustomerBehavior as CustomerBehaviorType } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 interface CustomerBehaviorChartProps {
   data: CustomerBehaviorType | undefined;
@@ -73,7 +74,10 @@ export default function CustomerBehaviorChart({ data, isLoading }: CustomerBehav
           <CardHeader className="bg-white/60 rounded-t-lg pb-2">
             <div className=" w-full flex items-center justify-between">
               <CardTitle className="text-sm font-medium text-slate-700">Avg Time Between Purchases</CardTitle>
-              <Clock className="h-5 w-5 text-slate-600" />
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Average days between consecutive orders per customer." />
+                <Clock className="h-5 w-5 text-slate-600" />
+              </div>
             </div>
           </CardHeader>
           <CardContent className="bg-white/40 rounded-b-lg">
@@ -88,7 +92,10 @@ export default function CustomerBehaviorChart({ data, isLoading }: CustomerBehav
           <CardHeader className="bg-white/60 rounded-t-lg pb-2">
             <div className=" w-full flex items-center justify-between">
               <CardTitle className="text-sm font-medium text-slate-700">Preferred Purchase Day</CardTitle>
-              <Calendar className="h-5 w-5 text-slate-600" />
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Most popular day of week for placing orders." />
+                <Calendar className="h-5 w-5 text-slate-600" />
+              </div>
             </div>
           </CardHeader>
           <CardContent className="bg-white/40 rounded-b-lg">
@@ -103,7 +110,10 @@ export default function CustomerBehaviorChart({ data, isLoading }: CustomerBehav
           <CardHeader className="bg-white/60 rounded-t-lg pb-2">
             <div className=" w-full flex items-center justify-between">
               <CardTitle className="text-sm font-medium text-slate-700">Preferred Purchase Hour</CardTitle>
-              <Clock className="h-5 w-5 text-slate-600" />
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Hour of day when most orders occur." />
+                <Clock className="h-5 w-5 text-slate-600" />
+              </div>
             </div>
           </CardHeader>
           <CardContent className="bg-white/40 rounded-b-lg">
@@ -118,7 +128,10 @@ export default function CustomerBehaviorChart({ data, isLoading }: CustomerBehav
           <CardHeader className="bg-white/60 rounded-t-lg pb-2">
             <div className=" w-full flex items-center justify-between">
               <CardTitle className="text-sm font-medium text-slate-700">Average Cart Size</CardTitle>
-              <ShoppingCart className="h-5 w-5 text-slate-600" />
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Average number of items per order." />
+                <ShoppingCart className="h-5 w-5 text-slate-600" />
+              </div>
             </div>
           </CardHeader>
           <CardContent className="bg-white/40 rounded-b-lg">
@@ -133,7 +146,10 @@ export default function CustomerBehaviorChart({ data, isLoading }: CustomerBehav
           <CardHeader className="bg-white/60 rounded-t-lg pb-2">
             <div className=" w-full flex items-center justify-between">
               <CardTitle className="text-sm font-medium text-slate-700">Order Frequency</CardTitle>
-              <TrendingUp className="h-5 w-5 text-slate-600" />
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Average number of orders placed per customer per year." />
+                <TrendingUp className="h-5 w-5 text-slate-600" />
+              </div>
             </div>
           </CardHeader>
           <CardContent className="bg-white/40 rounded-b-lg">
@@ -148,7 +164,10 @@ export default function CustomerBehaviorChart({ data, isLoading }: CustomerBehav
           <CardHeader className="bg-white/60 rounded-t-lg pb-2">
             <div className=" w-full flex items-center justify-between">
               <CardTitle className="text-sm font-medium text-slate-700">Cart Abandonment Rate</CardTitle>
-              <Package className="h-5 w-5 text-slate-600" />
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Share of carts started but never converted to an order." />
+                <Package className="h-5 w-5 text-slate-600" />
+              </div>
             </div>
           </CardHeader>
           <CardContent className="bg-white/40 rounded-b-lg">
@@ -172,6 +191,7 @@ export default function CustomerBehaviorChart({ data, isLoading }: CustomerBehav
               <MapPin className="h-5 w-5 text-blue-500" />
               Top Categories
             </CardTitle>
+<CardInfo description="Most frequently purchased product categories." />
           </CardHeader>
           <CardContent>
             {isLoading ? (
@@ -203,6 +223,7 @@ export default function CustomerBehaviorChart({ data, isLoading }: CustomerBehav
         {/* Additional Insights */}
         <Card>
           <CardHeader>
+<CardInfo description="Summary of purchase timing, shopping patterns,and customer loyalty." />
             <CardTitle>Customer Behavior Insights</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">

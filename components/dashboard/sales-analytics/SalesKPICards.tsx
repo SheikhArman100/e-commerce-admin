@@ -10,6 +10,7 @@ import {
   Clock
 } from 'lucide-react';
 import { SalesAnalyticsResponse } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 interface SalesKPICardsProps {
   data: SalesAnalyticsResponse;
@@ -57,9 +58,12 @@ export default function SalesKPICards({ data, isLoading }: SalesKPICardsProps) {
           <CardTitle className="text-sm font-medium text-slate-700">
             Average Order Value
           </CardTitle>
-          <div className="p-2.5 rounded-xl bg-emerald-100 shadow-sm">
-            <DollarSign className="h-4 w-4 text-emerald-600" />
-          </div>
+          <div className="flex items-center gap-2">
+                <CardInfo description="Average spend per order in the selected period." />
+                <div className="p-2.5 rounded-xl bg-emerald-100 shadow-sm">
+                  <DollarSign className="h-4 w-4 text-emerald-600" />
+                </div>
+              </div>
         </CardHeader>
         <CardContent className="bg-white/60 rounded-lg p-3">
           <div className="text-2xl font-bold text-slate-800">
@@ -73,9 +77,12 @@ export default function SalesKPICards({ data, isLoading }: SalesKPICardsProps) {
           <CardTitle className="text-sm font-medium text-slate-700">
             Sales Velocity
           </CardTitle>
-          <div className="p-2.5 rounded-xl bg-blue-100 shadow-sm">
-            <Zap className="h-4 w-4 text-blue-600" />
-          </div>
+          <div className="flex items-center gap-2">
+                <CardInfo description="Number of orders per day within the selected period." />
+                <div className="p-2.5 rounded-xl bg-blue-100 shadow-sm">
+                  <Zap className="h-4 w-4 text-blue-600" />
+                </div>
+              </div>
         </CardHeader>
         <CardContent className="bg-white/60 rounded-lg p-3">
           <div className="text-2xl font-bold text-slate-800">
@@ -89,9 +96,12 @@ export default function SalesKPICards({ data, isLoading }: SalesKPICardsProps) {
           <CardTitle className="text-sm font-medium text-slate-700">
             Growth Rate
           </CardTitle>
-          <div className="p-2.5 rounded-xl bg-amber-100 shadow-sm">
-            <TrendingUp className="h-4 w-4 text-amber-700" />
-          </div>
+          <div className="flex items-center gap-2">
+                <CardInfo description="Percentage change in revenue compared to the previous equivalent period." />
+                <div className="p-2.5 rounded-xl bg-amber-100 shadow-sm">
+                  <TrendingUp className="h-4 w-4 text-amber-700" />
+                </div>
+              </div>
         </CardHeader>
         <CardContent className="bg-white/60 rounded-lg p-3">
           <div className="text-2xl font-bold text-slate-800">
@@ -105,9 +115,12 @@ export default function SalesKPICards({ data, isLoading }: SalesKPICardsProps) {
           <CardTitle className="text-sm font-medium text-slate-700">
             Peak Sales Hour
           </CardTitle>
-          <div className="p-2.5 rounded-xl bg-violet-100 shadow-sm">
-            <Clock className="h-4 w-4 text-violet-700" />
-          </div>
+          <div className="flex items-center gap-2">
+                <CardInfo description="Hour of day with the highest sales revenue." />
+                <div className="p-2.5 rounded-xl bg-violet-100 shadow-sm">
+                  <Clock className="h-4 w-4 text-violet-700" />
+                </div>
+              </div>
         </CardHeader>
         <CardContent className="bg-white/60 rounded-lg p-3">
           <div className="text-2xl font-bold text-slate-800">

@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Clock, Eye, Truck } from 'lucide-react';
 import { RecentOrder } from '@/types/dashboard.types';
 import { formatDistanceToNow } from 'date-fns';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 interface RecentOrdersTableProps {
   data: RecentOrder[];
@@ -37,15 +38,15 @@ export default function RecentOrdersTable({ data, isLoading }: RecentOrdersTable
   const getStatusIcon = (status: string) => {
     switch (status.toLowerCase()) {
       case 'delivered':
-        return 'âœ…';
+        return '✅';
       case 'shipped':
-        return 'ðŸšš';
+        return '🚚';
       case 'pending':
-        return 'â³';
+        return '⏳';
       case 'cancelled':
-        return 'âŒ';
+        return '❌';
       default:
-        return 'ðŸ“¦';
+        return '📦';
     }
   };
 
@@ -82,17 +83,20 @@ export default function RecentOrdersTable({ data, isLoading }: RecentOrdersTable
           <Clock className="h-5 w-5 text-slate-600" />
           Recent Orders
         </CardTitle>
-        {data.length > 0 && (
-          <div className="">
-            <Link
-              href="/orders"
-              className="text-sm text-slate-600 hover:underline flex items-center gap-1"
-            >
-              View all orders
+        <div className="flex items-center gap-2">
+          <CardInfo description="Latest orders with customer, status, and amount details." />
+          {data.length > 0 && (
+            <div className="">
+              <Link
+                href="/orders"
+                className="text-sm text-slate-600 hover:underline flex items-center gap-1"
+              >
+                View all orders
 
-            </Link>
-          </div>
-        )}
+              </Link>
+            </div>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="bg-white/40 rounded-b-lg">
         <div className="space-y-3">
@@ -116,7 +120,7 @@ export default function RecentOrdersTable({ data, isLoading }: RecentOrdersTable
                     </Badge>
                   </div>
                   <div className="text-xs text-slate-600">
-                    {order.customerName} â€¢ {formatDistanceToNow(new Date(order.date), { addSuffix: true })}
+                    {order.customerName} • {formatDistanceToNow(new Date(order.date), { addSuffix: true })}
                   </div>
                 </div>
 
@@ -143,3 +147,5 @@ export default function RecentOrdersTable({ data, isLoading }: RecentOrdersTable
     </Card>
   );
 }
+
+

@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Trophy, Package } from 'lucide-react';
 import { ProductRanking } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 interface PerformanceRankingsTableProps {
   data: ProductRanking[];
@@ -91,6 +92,7 @@ export default function PerformanceRankingsTable({ data, isLoading }: Performanc
           <Trophy className="h-5 w-5 text-slate-600" />
           Top Performing Products
         </CardTitle>
+<CardInfo description="Products ranked by revenue with order counts,and categories." />
       </CardHeader>
       <CardContent className="bg-white/40 rounded-b-lg py-0">
         <Table>

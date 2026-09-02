@@ -1,9 +1,11 @@
 ﻿'use client';
 
+import dynamic from 'next/dynamic';
+import { formatTaka } from '@/lib/currency';
+import CardInfo from '@/components/dashboard/CardInfo';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Users, DollarSign, TrendingUp } from 'lucide-react';
-import dynamic from 'next/dynamic';
 import { CustomerSegmentation as CustomerSegmentationType } from '@/types/dashboard.types';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
@@ -18,23 +20,43 @@ interface CustomerSegmentationChartProps {
 export default function CustomerSegmentationChart({ data, isLoading }: CustomerSegmentationChartProps) {
   const chartData = data;
 
-  if (!chartData) {
+    if (!chartData) {
     return (
       <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Customer Segments</h3>
-          <Skeleton className="h-80 w-full" />
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Segment Performance</h3>
-          <Skeleton className="h-80 w-full" />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg">
+            <CardTitle className="flex items-center gap-2 text-slate-800">
+              Customer Segments
+            </CardTitle>
+            <CardInfo description="Pie chart showing customer distribution by value segment." />
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <Skeleton className="h-80 w-full" />
+          </CardContent>
+        </Card>
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg">
+            <CardTitle className="flex items-center gap-2 text-slate-800">
+              Segment Performance
+            </CardTitle>
+            <CardInfo description="Customer count and revenue by value segment." />
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <Skeleton className="h-80 w-full" />
+          </CardContent>
+        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="p-4 bg-gray-50 rounded-lg">
-              <Skeleton className="h-8 w-16 mb-2" />
-              <Skeleton className="h-4 w-24" />
-            </div>
+            <Card key={i} className="border-slate-200 bg-slate-50/80 shadow-sm">
+              <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+                <CardTitle className="text-sm font-medium text-slate-700">
+                  <Skeleton className="h-8 w-16" />
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="bg-white/40 rounded-b-lg">
+                <Skeleton className="h-4 w-24" />
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
@@ -95,11 +117,11 @@ export default function CustomerSegmentationChart({ data, isLoading }: CustomerS
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">Avg Order Value:</span>
-                <span class="font-semibold text-green-600">à§³${segment.averageOrderValue.toFixed(2)}</span>
+                                <span class="font-semibold text-green-600">${formatTaka(segment.averageOrderValue, 2)}</span>
               </div>
               <div class="flex justify-between">
                 <span class="text-gray-600">Total Revenue:</span>
-                <span class="font-semibold text-blue-600">à§³${segment.totalRevenue.toLocaleString()}</span>
+                                <span class="font-semibold text-blue-600">${formatTaka(segment.totalRevenue, 0)}</span>
               </div>
             </div>
           </div>
@@ -136,7 +158,7 @@ export default function CustomerSegmentationChart({ data, isLoading }: CustomerS
     },
     yaxis: {
       title: {
-        text: 'Revenue (à§³)',
+        text: 'Revenue (৳)',
         style: {
           color: '#475569',
         },
@@ -157,7 +179,7 @@ export default function CustomerSegmentationChart({ data, isLoading }: CustomerS
         fontFamily: 'inherit',
       },
       y: {
-        formatter: (val: number) => `à§³${val.toLocaleString()}`
+                formatter: (val: number) => formatTaka(val, 0)
       }
     }
   };
@@ -173,15 +195,22 @@ export default function CustomerSegmentationChart({ data, isLoading }: CustomerS
 
   return (
     <div className="space-y-6">
-      {/* Customer Segments Pie Chart */}
-      <div>
-        {/* <h3 className="text-lg font-semibold text-gray-800 mb-4">Customer Segments</h3> */}
-        {isLoading ? (
-          <Skeleton className="h-80 w-full" />
-        ) : (
-          <ReactApexChart options={pieOptions} series={pieOptions.series} type="pie" height={350} />
-        )}
-      </div>
+            {/* Customer Segments Pie Chart */}
+      <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+        <CardHeader className="bg-white/60 rounded-t-lg">
+          <CardTitle className="flex items-center gap-2 text-slate-800">
+            Customer Segments
+          </CardTitle>
+          <CardInfo description="Pie chart showing customer distribution by value segment (High, Medium, Low)." />
+        </CardHeader>
+        <CardContent className="bg-white/40 rounded-b-lg pt-4">
+          {isLoading ? (
+            <Skeleton className="h-80 w-full" />
+          ) : (
+            <ReactApexChart options={pieOptions} series={pieOptions.series} type="pie" height={350} />
+          )}
+        </CardContent>
+      </Card>
 
       {/* Revenue Contribution */}
       {/* <div>
@@ -248,41 +277,56 @@ export default function CustomerSegmentationChart({ data, isLoading }: CustomerS
         )}
       </div> */}
 
-      {/* Summary Statistics */}
+            {/* Summary Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="p-4 bg-green-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <Users className="h-6 w-6 text-green-600" />
-            <div>
-              <div className="text-2xl font-bold text-green-600">
-                {isLoading ? <Skeleton className="h-8 w-20" /> : chartData.reduce((sum, item) => sum + item.customerCount, 0).toLocaleString()}
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Total Customers</CardTitle>
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Total number of unique customers across all segments." />
+                <Users className="h-5 w-5 text-green-600" />
               </div>
-              <div className="text-sm text-gray-600">Total Customers</div>
             </div>
-          </div>
-        </div>
-        <div className="p-4 bg-blue-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <DollarSign className="h-6 w-6 text-blue-600" />
-            <div>
-              <div className="text-2xl font-bold text-blue-600">
-                {isLoading ? <Skeleton className="h-8 w-20" /> : `à§³${chartData.reduce((sum, item) => sum + item.totalRevenue, 0).toLocaleString()}`}
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-green-600">
+              {isLoading ? <Skeleton className="h-8 w-20" /> : chartData.reduce((sum, item) => sum + item.customerCount, 0).toLocaleString()}
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Total Revenue</CardTitle>
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Total revenue generated by all customer segments." />
+                <DollarSign className="h-5 w-5 text-blue-600" />
               </div>
-              <div className="text-sm text-gray-600">Total Revenue</div>
             </div>
-          </div>
-        </div>
-        <div className="p-4 bg-purple-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <TrendingUp className="h-6 w-6 text-purple-600" />
-            <div>
-              <div className="text-2xl font-bold text-purple-600">
-                {isLoading ? <Skeleton className="h-8 w-20" /> : (chartData.reduce((sum, item) => sum + (item.averageOrderValue * item.percentage), 0) / 100).toFixed(2)}
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-blue-600">
+              {isLoading ? <Skeleton className="h-8 w-20" /> : formatTaka(chartData.reduce((sum, item) => sum + item.totalRevenue, 0), 0)}
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Weighted Avg Order Value</CardTitle>
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Average order value weighted by segment percentage." />
+                <TrendingUp className="h-5 w-5 text-purple-600" />
               </div>
-              <div className="text-sm text-gray-600">Weighted Avg Order Value</div>
             </div>
-          </div>
-        </div>
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-purple-600">
+              {isLoading ? <Skeleton className="h-8 w-20" /> : formatTaka((chartData.reduce((sum, item) => sum + (item.averageOrderValue * item.percentage), 0) / 100), 2)}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

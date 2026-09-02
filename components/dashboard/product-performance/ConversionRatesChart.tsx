@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3, TrendingUp } from 'lucide-react';
 import { ProductConversion } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
@@ -412,6 +413,7 @@ export default function ConversionRatesChart({ data, isLoading }: ConversionRate
           <BarChart3 className="h-5 w-5 text-slate-600" />
           Product Conversion Rates
         </CardTitle>
+<CardInfo description="Distribution of cart-to-purchase conversion rates across products." />
       </CardHeader>
 
       <CardContent className="p-6">

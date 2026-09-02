@@ -15,7 +15,7 @@ export default function FilterControls({ filters, onFiltersChange }: FilterContr
     { value: 'daily', label: 'Last 24 Hours', color: 'text-blue-600' },
     { value: 'weekly', label: 'Last 7 Days', color: 'text-indigo-600' },
     { value: 'monthly', label: 'Last 30 Days', color: 'text-purple-600' },
-    { value: 'yearly', label: 'Last Year', color: 'text-emerald-600' },
+    { value: 'yearly', label: 'Last 12 Months', color: 'text-emerald-600' },
   ];
 
   const handlePeriodChange = (period: string) => {

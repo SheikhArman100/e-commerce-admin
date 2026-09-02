@@ -1,10 +1,11 @@
 ﻿'use client';
 
+import dynamic from 'next/dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Users, Repeat, TrendingUp, Calendar } from 'lucide-react';
-import dynamic from 'next/dynamic';
+import { TrendingUp, Calendar } from 'lucide-react';
 import { RepeatPurchaseAnalysis as RepeatPurchaseAnalysisType } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -21,16 +22,29 @@ export default function RepeatPurchaseAnalysis({ data, isLoading }: RepeatPurcha
   if (!analysisData) {
     return (
       <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Customer Purchase Behavior</h3>
-          <Skeleton className="h-80 w-full" />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg">
+            <CardTitle className="flex items-center gap-2 text-slate-800">
+              Customer Purchase Behavior
+            </CardTitle>
+            <CardInfo description="Breakdown of one-time versus repeat customers with purchase behavior metrics." />
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <Skeleton className="h-80 w-full" />
+          </CardContent>
+        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="p-4 bg-gray-50 rounded-lg">
-              <Skeleton className="h-8 w-16 mb-2" />
-              <Skeleton className="h-4 w-24" />
-            </div>
+            <Card key={i} className="border-slate-200 bg-slate-50/80 shadow-sm">
+              <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+                <CardTitle className="text-sm font-medium text-slate-700">
+                  <Skeleton className="h-8 w-16" />
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="bg-white/40 rounded-b-lg">
+                <Skeleton className="h-4 w-24" />
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
@@ -134,7 +148,7 @@ export default function RepeatPurchaseAnalysis({ data, isLoading }: RepeatPurcha
                   <span class="text-gray-600">Avg Days Between:</span>
                   <span class="font-semibold text-blue-600">${analysisData.averageDaysBetweenPurchases} days</span>
                 </div>
-              ` : 'à§³0'}
+                            ` : '-'}
             </div>
           </div>
         `;
@@ -181,44 +195,58 @@ export default function RepeatPurchaseAnalysis({ data, isLoading }: RepeatPurcha
 
   return (
     <div className="space-y-6">
-      {/* Repeat Purchase Donut Chart */}
-      <div>
-        {/* <h3 className="text-lg font-semibold text-gray-800 mb-4">Customer Purchase Behavior</h3> */}
-        {isLoading ? (
-          <Skeleton className="h-80 w-full" />
-        ) : (
-          <ReactApexChart options={donutOptions} series={donutOptions.series} type="donut" height={350} />
-        )}
-      </div>
+            {/* Repeat Purchase Donut Chart */}
+      <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+        <CardHeader className="bg-white/60 rounded-t-lg">
+          <CardTitle className="flex items-center gap-2 text-slate-800">
+            Customer Purchase Behavior
+          </CardTitle>
+          <CardInfo description="Breakdown of one-time versus repeat customers with purchase behavior metrics." />
+        </CardHeader>
+        <CardContent className="bg-white/40 rounded-b-lg pt-4">
+          {isLoading ? (
+            <Skeleton className="h-80 w-full" />
+          ) : (
+            <ReactApexChart options={donutOptions} series={donutOptions.series} type="donut" height={350} />
+          )}
+        </CardContent>
+      </Card>
 
-      {/* Key Metrics */}
-      <div className="grid grid-cols-2 gap-4">
-        
-        <div className="p-4 bg-purple-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <TrendingUp className="h-6 w-6 text-purple-600" />
-            <div>
-              <div className="text-2xl font-bold text-purple-600">
-                {isLoading ? <Skeleton className="h-8 w-16" /> : analysisData.averageOrdersPerRepeatCustomer.toFixed(1)}
+            {/* Key Metrics */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Avg Orders per Repeat Customer</CardTitle>
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Average number of orders placed by repeat customers." />
+                <TrendingUp className="h-5 w-5 text-purple-600" />
               </div>
-              <div className="text-sm text-gray-600">Avg Orders per Repeat Customer</div>
             </div>
-          </div>
-        </div>
-        <div className="p-4 bg-orange-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <Calendar className="h-6 w-6 text-orange-600" />
-            <div>
-              <div className="text-2xl font-bold text-orange-600">
-                {isLoading ? <Skeleton className="h-8 w-16" /> : analysisData.averageDaysBetweenPurchases}
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-purple-600">
+              {isLoading ? <Skeleton className="h-8 w-16" /> : analysisData.averageOrdersPerRepeatCustomer.toFixed(1)}
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Avg Days Between Purchases</CardTitle>
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Average days between repeat purchases." />
+                <Calendar className="h-5 w-5 text-orange-600" />
               </div>
-              <div className="text-sm text-gray-600">Avg Days Between Purchases</div>
             </div>
-          </div>
-        </div>
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-orange-600">
+              {isLoading ? <Skeleton className="h-8 w-16" /> : `${analysisData.averageDaysBetweenPurchases} days`}
+            </div>
+          </CardContent>
+        </Card>
       </div>
-
-      
     </div>
   );
 }

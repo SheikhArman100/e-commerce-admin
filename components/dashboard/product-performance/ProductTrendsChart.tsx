@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, TrendingDown, BarChart3, Package } from 'lucide-react';
 import { ProductTrend } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -135,7 +136,7 @@ export default function ProductTrendsCards({ data, isLoading }: ProductTrendsCar
     },
     yaxis: {
       title: {
-        text: 'Revenue (à§³)',
+        text: 'Revenue (৳)',
         style: {
           color: '#475569',
           fontSize: '14px',
@@ -147,13 +148,13 @@ export default function ProductTrendsCards({ data, isLoading }: ProductTrendsCar
           colors: '#475569',
           fontSize: '12px',
         },
-        formatter: (value) => {
+          formatter: (value) => {
           if (value >= 1000000) {
-            return '$' + (value / 1000000).toFixed(1) + 'M';
+            return formatTaka(value / 1000000, 1) + 'M';
           } else if (value >= 1000) {
-            return '$' + (value / 1000).toFixed(1) + 'K';
+            return formatTaka(value / 1000, 1) + 'K';
           }
-          return '$' + value.toFixed(0);
+          return formatTaka(value, 0);
         },
       },
     },
@@ -205,8 +206,8 @@ export default function ProductTrendsCards({ data, isLoading }: ProductTrendsCar
       },
       formatter: function(seriesName, opts) {
         const item = series[opts.seriesIndex];
-        const trendIcon = item.growthRate > 0 ? 'â†‘' : item.growthRate < 0 ? 'â†“' : 'â†’';
-        const growthText = `${item.growthRate > 0 ? '+' : 'à§³0'}${item.growthRate.toFixed(1)}%`;
+        const trendIcon = item.growthRate > 0 ? '↑' : item.growthRate < 0 ? '↓' : '→';
+        const growthText = `${item.growthRate > 0 ? '+' : '-0'}${item.growthRate.toFixed(1)}%`;
         return `${seriesName} ${trendIcon} ${growthText}`;
       },
     },
@@ -247,11 +248,11 @@ export default function ProductTrendsCards({ data, isLoading }: ProductTrendsCar
         </CardTitle>
         <div className="flex flex-wrap gap-2 mt-2">
           {series.filter(item => item.isHighGrowth).map((item, index) => (
-            <Badge key={index} variant="destructive" className="text-xs">
-              ðŸ”¥ {item.name}: +{item.growthRate.toFixed(1)}%
+            <Badge key={index} variant="destructive" className="text-xs">🔥 {item.name}: +{item.growthRate.toFixed(1)}%
             </Badge>
           ))}
         </div>
+<CardInfo description="Revenue growth comparison between current and previous periods per product." />
       </CardHeader>
       <CardContent className="bg-white/40 rounded-b-lg pt-4">
         <div className="h-[450px]">

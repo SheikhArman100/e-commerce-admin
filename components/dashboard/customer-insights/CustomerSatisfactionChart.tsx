@@ -1,6 +1,8 @@
 ﻿'use client';
 
 import dynamic from 'next/dynamic';
+import { formatTaka } from '@/lib/currency';
+import CardInfo from '@/components/dashboard/CardInfo';
 import { MessageCircle, Star, TrendingUp, Users } from 'lucide-react';
 import { CustomerSatisfaction as CustomerSatisfactionType } from '@/types/dashboard.types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -21,27 +23,43 @@ export default function CustomerSatisfactionChart({
 }: CustomerSatisfactionChartProps) {
   const satisfactionData = data;
 
-  if (!satisfactionData) {
+    if (!satisfactionData) {
     return (
       <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
-            Customer Satisfaction Trends
-          </h3>
-          <Skeleton className="h-80 w-full" />
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">
-            Rating Distribution
-          </h3>
-          <Skeleton className="h-80 w-full" />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg">
+            <CardTitle className="flex items-center gap-2 text-slate-800">
+              Customer Satisfaction Trends
+            </CardTitle>
+            <CardInfo description="Historical customer satisfaction rating trend over time." />
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <Skeleton className="h-80 w-full" />
+          </CardContent>
+        </Card>
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg">
+            <CardTitle className="flex items-center gap-2 text-slate-800">
+              Rating Distribution
+            </CardTitle>
+            <CardInfo description="Horizontal bar chart showing the number of reviews for each star rating." />
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <Skeleton className="h-80 w-full" />
+          </CardContent>
+        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="p-4 bg-gray-50 rounded-lg">
-              <Skeleton className="h-8 w-16 mb-2" />
-              <Skeleton className="h-4 w-24" />
-            </div>
+            <Card key={i} className="border-slate-200 bg-slate-50/80 shadow-sm">
+              <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+                <CardTitle className="text-sm font-medium text-slate-700">
+                  <Skeleton className="h-8 w-16" />
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="bg-white/40 rounded-b-lg">
+                <Skeleton className="h-4 w-24" />
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
@@ -190,7 +208,7 @@ export default function CustomerSatisfactionChart({
                     </svg>
                   `,
                     )
-                    .join('à§³0')}
+                                        .join('')}
                 </div>
               </div>
             </div>
@@ -236,87 +254,112 @@ export default function CustomerSatisfactionChart({
         )}
       </div> */}
 
-      {/* Rating Distribution */}
-      <div>
-        {/* <h3 className="text-lg font-semibold text-gray-800 mb-4">
-          Rating Distribution
-        </h3> */}
-        {isLoading ? (
-          <Skeleton className="h-80 w-full" />
-        ) : (
-          <ReactApexChart
-            options={barOptions}
-            series={barOptions.series}
-            type="bar"
-            height={350}
-          />
-        )}
-      </div>
+            {/* Rating Distribution */}
+      <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+        <CardHeader className="bg-white/60 rounded-t-lg">
+          <CardTitle className="flex items-center gap-2 text-slate-800">
+            Rating Distribution
+          </CardTitle>
+          <CardInfo description="Horizontal bar chart showing the number of reviews for each star rating." />
+        </CardHeader>
+        <CardContent className="bg-white/40 rounded-b-lg pt-4">
+          {isLoading ? (
+            <Skeleton className="h-80 w-full" />
+          ) : (
+            <ReactApexChart
+              options={barOptions}
+              series={barOptions.series}
+              type="bar"
+              height={350}
+            />
+          )}
+        </CardContent>
+      </Card>
 
-      {/* Satisfaction Overview */}
+            {/* Satisfaction Overview */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="p-4 bg-yellow-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <Star className="h-6 w-6 text-yellow-600" />
-            <div>
-              <div className="text-2xl font-bold text-yellow-600">
-                {isLoading ? (
-                  <Skeleton className="h-8 w-12" />
-                ) : (
-                  satisfactionData.overallRating.toFixed(2)
-                )}
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Overall Rating</CardTitle>
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Average review rating across all products." />
+                <Star className="h-5 w-5 text-yellow-600" />
               </div>
-              <div className="text-sm text-gray-600">Overall Rating</div>
             </div>
-          </div>
-        </div>
-        <div className="p-4 bg-blue-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <MessageCircle className="h-6 w-6 text-blue-600" />
-            <div>
-              <div className="text-2xl font-bold text-blue-600">
-                {isLoading ? (
-                  <Skeleton className="h-8 w-16" />
-                ) : (
-                  satisfactionData.totalReviews.toLocaleString()
-                )}
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-yellow-600">
+              {isLoading ? (
+                <Skeleton className="h-8 w-12" />
+              ) : (
+                satisfactionData.overallRating.toFixed(2)
+              )}
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Total Reviews</CardTitle>
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Total number of reviews received." />
+                <MessageCircle className="h-5 w-5 text-blue-600" />
               </div>
-              <div className="text-sm text-gray-600">Total Reviews</div>
             </div>
-          </div>
-        </div>
-        <div className="p-4 bg-green-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <TrendingUp className="h-6 w-6 text-green-600" />
-            <div>
-              <div className="text-2xl font-bold text-green-600">
-                {isLoading ? (
-                  <Skeleton className="h-8 w-16" />
-                ) : (
-                  `${((satisfactionData.ratingDistribution['5'] / satisfactionData.totalReviews) * 100).toFixed(1)}%`
-                )}
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-blue-600">
+              {isLoading ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                satisfactionData.totalReviews.toLocaleString()
+              )}
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">5-Star Rating</CardTitle>
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Percentage of reviews that gave a 5-star rating." />
+                <TrendingUp className="h-5 w-5 text-green-600" />
               </div>
-              <div className="text-sm text-gray-600">5-Star Rating</div>
             </div>
-          </div>
-        </div>
-        <div className="p-4 bg-purple-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <Users className="h-6 w-6 text-purple-600" />
-            <div>
-              <div className="text-2xl font-bold text-purple-600">
-                {isLoading ? (
-                  <Skeleton className="h-8 w-16" />
-                ) : (
-                  satisfactionData.ratingDistribution['3'] +
-                  satisfactionData.ratingDistribution['4'] +
-                  satisfactionData.ratingDistribution['5']
-                )}
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-green-600">
+              {isLoading ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                `${((satisfactionData.ratingDistribution['5'] / satisfactionData.totalReviews) * 100).toFixed(1)}%`
+              )}
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Positive Reviews</CardTitle>
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Total number of 3, 4, and 5-star reviews." />
+                <Users className="h-5 w-5 text-purple-600" />
               </div>
-              <div className="text-sm text-gray-600">Positive Reviews</div>
             </div>
-          </div>
-        </div>
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-purple-600">
+              {isLoading ? (
+                <Skeleton className="h-8 w-16" />
+              ) : (
+                satisfactionData.ratingDistribution['3'] +
+                satisfactionData.ratingDistribution['4'] +
+                satisfactionData.ratingDistribution['5']
+              )}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Monthly Trend Table */}
@@ -374,17 +417,17 @@ export default function CustomerSatisfactionChart({
                           <span
                             className={`px-2 py-1 rounded-full text-xs ${
                               trend.trend === 'improving'
-                                ? 'bg-green-100 text-green-800'
+                                ? '↗'
                                 : trend.trend === 'declining'
-                                  ? 'bg-red-100 text-red-800'
-                                  : 'bg-gray-100 text-gray-800'
+                                  ? '↘'
+                                  : '→'
                             }`}
                           >
                             {trend.trend === 'improving'
-                              ? 'â†— Improving'
+                              ? '↗ Improving'
                               : trend.trend === 'declining'
-                                ? 'â†˜ Declining'
-                                : 'â†’ Stable'}
+                                ? '↘ Declining'
+                                : '→ Stable'}
                           </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-sm">

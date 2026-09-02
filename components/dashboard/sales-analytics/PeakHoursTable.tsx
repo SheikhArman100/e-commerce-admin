@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatTaka } from '@/lib/currency';
 import { Clock } from 'lucide-react';
 import { PeakHour } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 interface PeakHoursTableProps {
   data: PeakHour[];
@@ -50,6 +51,7 @@ export default function PeakHoursTable({ data, isLoading }: PeakHoursTableProps)
           <Clock className="h-5 w-5 text-slate-600" />
           Peak Sales Hours
         </CardTitle>
+<CardInfo description="Top 3 hours with the most peak revenue and orders." />
       </CardHeader>
       <CardContent className="bg-white/40 rounded-b-lg">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

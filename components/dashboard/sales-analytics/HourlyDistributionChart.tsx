@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Clock } from 'lucide-react';
 import { HourlyDistribution } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -125,7 +126,7 @@ export default function HourlyDistributionChart({ data, isLoading }: HourlyDistr
             <div class="space-y-1">
               <div class="text-sm flex justify-between gap-3">
                 <span class="text-emerald-600 font-medium">Revenue:</span> 
-                <span class="text-slate-700">à§³${item.revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+                <span class="text-slate-700">৳${item.revenue.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
               </div>
               <div class="text-sm flex justify-between gap-3">
                 <span class="text-indigo-600 font-medium">Orders:</span> 
@@ -146,7 +147,7 @@ export default function HourlyDistributionChart({ data, isLoading }: HourlyDistr
         formatter: (value, timestamp, opts) => {
           const hour = parseInt(value.split(':')[0]);
           // Show every other hour for cleaner labels
-          return hour % 2 === 0 ? value : 'à§³0';
+          return hour % 2 === 0 ? value : '-0';
         },
         style: {
           colors: '#475569',
@@ -221,6 +222,7 @@ export default function HourlyDistributionChart({ data, isLoading }: HourlyDistr
           <Clock className="h-5 w-5 text-slate-600" />
           Hourly Sales Distribution
         </CardTitle>
+<CardInfo description="Revenue and order concentration across the 24 hours of the day." />
       </CardHeader>
       <CardContent className="bg-white/40 rounded-b-lg pt-4">
         <ReactApexChart

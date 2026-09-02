@@ -5,6 +5,7 @@ import { formatTaka } from '@/lib/currency';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { TrendingUp } from 'lucide-react';
 import { TopVariant } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -151,7 +152,7 @@ export default function TopVariantsChart({ data, isLoading }: TopVariantsChartPr
     },
     yaxis: {
       title: {
-        text: 'Revenue (à§³)',
+        text: 'Revenue (৳)',
         style: {
           color: '#475569',
           fontSize: '14px',
@@ -280,6 +281,7 @@ export default function TopVariantsChart({ data, isLoading }: TopVariantsChartPr
           <TrendingUp className="h-5 w-5 text-slate-600" />
           Top Product Variants
         </CardTitle>
+<CardInfo description="Revenue performance of product flavor/size variants." />
       </CardHeader>
       <CardContent className="bg-white/40 rounded-b-lg pt-4">
         <div className="h-[450px]">

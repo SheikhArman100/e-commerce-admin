@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import CardInfo from '@/components/dashboard/CardInfo';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Users } from 'lucide-react';
 
@@ -20,17 +21,29 @@ export default function CustomerDemographicsChart({ data, isLoading }: CustomerD
   if (!chartData) {
     return (
       <div className="space-y-6">
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <Users className="h-5 w-5 text-blue-600" />
-            <h3 className="text-lg font-semibold text-gray-800">Age Group Distribution</h3>
-          </div>
-          <Skeleton className="h-80 w-full" />
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Average Order Value by Age Group</h3>
-          <Skeleton className="h-80 w-full" />
-        </div>
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg">
+            <CardTitle className="flex items-center gap-2 text-slate-800">
+              <Users className="h-5 w-5 text-blue-600" />
+              Age Group Distribution
+            </CardTitle>
+            <CardInfo description="Donut chart showing customer distribution across age groups." />
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <Skeleton className="h-80 w-full" />
+          </CardContent>
+        </Card>
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg">
+            <CardTitle className="flex items-center gap-2 text-slate-800">
+              Average Order Value by Age Group
+            </CardTitle>
+            <CardInfo description="Bar chart comparing average order value across age groups." />
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <Skeleton className="h-80 w-full" />
+          </CardContent>
+        </Card>
         <div className="grid grid-cols-3 gap-4 text-center">
           {[...Array(3)].map((_, i) => (
             <div key={i} className="p-4 bg-gray-50 rounded-lg">
@@ -94,7 +107,7 @@ export default function CustomerDemographicsChart({ data, isLoading }: CustomerD
     },
     yaxis: {
       title: {
-        text: 'Average Order Value (à§³)',
+        text: 'Average Order Value (৳)',
         style: {
           color: '#475569',
         },
@@ -119,27 +132,39 @@ export default function CustomerDemographicsChart({ data, isLoading }: CustomerD
   return (
     <div className="space-y-6">
       {/* Age Group Distribution */}
-      <div>
-        <div className="flex items-center gap-2 mb-4">
-          <Users className="h-5 w-5 text-blue-600" />
-          <h3 className="text-lg font-semibold text-gray-800">Age Group Distribution</h3>
-        </div>
-        {isLoading ? (
-          <Skeleton className="h-80 w-full" />
-        ) : (
-          <ReactApexChart options={donutOptions} series={donutOptions.series} type="donut" height={300} />
-        )}
-      </div>
+      <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+        <CardHeader className="bg-white/60 rounded-t-lg">
+          <CardTitle className="flex items-center gap-2 text-slate-800">
+            <Users className="h-5 w-5 text-blue-600" />
+            Age Group Distribution
+          </CardTitle>
+          <CardInfo description="Donut chart showing customer distribution across age groups." />
+        </CardHeader>
+        <CardContent className="bg-white/40 rounded-b-lg">
+          {isLoading ? (
+            <Skeleton className="h-80 w-full" />
+          ) : (
+            <ReactApexChart options={donutOptions} series={donutOptions.series} type="donut" height={300} />
+          )}
+        </CardContent>
+      </Card>
 
       {/* Average Order Value by Age Group */}
-      <div>
-        <h3 className="text-lg font-semibold text-gray-800 mb-4">Average Order Value by Age Group</h3>
-        {isLoading ? (
-          <Skeleton className="h-80 w-full" />
-        ) : (
-          <ReactApexChart options={barOptions} series={barOptions.series} type="bar" height={300} />
-        )}
-      </div>
+      <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+        <CardHeader className="bg-white/60 rounded-t-lg">
+          <CardTitle className="flex items-center gap-2 text-slate-800">
+            Average Order Value by Age Group
+          </CardTitle>
+          <CardInfo description="Bar chart comparing average order value across age groups." />
+        </CardHeader>
+        <CardContent className="bg-white/40 rounded-b-lg">
+          {isLoading ? (
+            <Skeleton className="h-80 w-full" />
+          ) : (
+            <ReactApexChart options={barOptions} series={barOptions.series} type="bar" height={300} />
+          )}
+        </CardContent>
+      </Card>
 
       {/* Summary Statistics */}
       <div className="grid grid-cols-3 gap-4 text-center">
@@ -157,7 +182,7 @@ export default function CustomerDemographicsChart({ data, isLoading }: CustomerD
         </div>
         <div className="p-4 bg-purple-50 rounded-lg">
           <div className="text-2xl font-bold text-purple-600">
-            {isLoading ? <Skeleton className="h-8 w-16 mx-auto" /> : `à§³${(chartData.reduce((sum, item) => sum + (item.averageOrderValue * item.percentage), 0) / 100).toFixed(2)}`}
+            {isLoading ? <Skeleton className="h-8 w-16 mx-auto" /> : `৳${(chartData.reduce((sum, item) => sum + (item.averageOrderValue * item.percentage), 0) / 100).toFixed(2)}`}
           </div>
           <div className="text-sm text-gray-600 mt-1">Weighted Avg AOV</div>
         </div>

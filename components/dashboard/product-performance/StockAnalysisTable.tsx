@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Package, AlertTriangle } from 'lucide-react';
 import { ProductStockAnalysis } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 interface StockAnalysisTableProps {
   data: ProductStockAnalysis[];
@@ -23,7 +24,7 @@ const formatNumber = (num: number) => {
 const getReorderStatus = (currentStock: number, reorderPoint: number) => {
   if (currentStock === 0) {
     return {
-      text: 'ðŸš¨ OUT OF STOCK',
+      text: '🚨OUT OF STOCK',
       color: 'bg-red-100 text-red-800 border-red-200',
       action: 'Restock Immediately',
       urgency: 'critical'
@@ -34,7 +35,7 @@ const getReorderStatus = (currentStock: number, reorderPoint: number) => {
 
   if (ratio <= 1) {
     return {
-      text: 'âš ï¸ CRITICAL',
+      text: '⚠️CRITICAL',
       color: 'bg-red-100 text-red-800 border-red-200',
       action: 'Order Today',
       urgency: 'high'
@@ -43,7 +44,7 @@ const getReorderStatus = (currentStock: number, reorderPoint: number) => {
 
   if (ratio <= 1.5) {
     return {
-      text: 'ðŸŸ¡ LOW',
+      text: '🟡LOW',
       color: 'bg-orange-100 text-orange-800 border-orange-200',
       action: 'Order Soon',
       urgency: 'medium'
@@ -51,7 +52,7 @@ const getReorderStatus = (currentStock: number, reorderPoint: number) => {
   }
 
   return {
-    text: 'âœ… SAFE',
+    text: '✅SAFE',
     color: 'bg-green-100 text-green-800 border-green-200',
     action: 'Monitor',
     urgency: 'low'
@@ -61,7 +62,7 @@ const getReorderStatus = (currentStock: number, reorderPoint: number) => {
 const getSalesVelocity = (turnoverRate: number) => {
   if (turnoverRate === 0) {
     return {
-      text: 'ðŸ’¤ NOT SELLING',
+      text: '💤NOT SELLING',
       color: 'bg-gray-100 text-gray-800 border-gray-200',
       insight: 'Consider promotion or removal',
       performance: 'poor'
@@ -70,7 +71,7 @@ const getSalesVelocity = (turnoverRate: number) => {
 
   if (turnoverRate < 0.5) {
     return {
-      text: 'ðŸŒ SLOW',
+      text: '🟡LOW',
       color: 'bg-blue-100 text-blue-800 border-blue-200',
       insight: 'Needs marketing boost',
       performance: 'low'
@@ -79,7 +80,7 @@ const getSalesVelocity = (turnoverRate: number) => {
 
   if (turnoverRate < 1.2) {
     return {
-      text: 'âœ… NORMAL',
+      text: '✅NORMAL',
       color: 'bg-green-100 text-green-800 border-green-200',
       insight: 'Performing well',
       performance: 'good'
@@ -88,7 +89,7 @@ const getSalesVelocity = (turnoverRate: number) => {
 
   if (turnoverRate < 2.5) {
     return {
-      text: 'ðŸš€ FAST',
+      text: '🚀FAST',
       color: 'bg-orange-100 text-orange-800 border-orange-200',
       insight: 'High demand - ensure stock',
       performance: 'high'
@@ -96,7 +97,7 @@ const getSalesVelocity = (turnoverRate: number) => {
   }
 
   return {
-    text: 'ðŸ”¥ HOT',
+    text: '🔥HOT',
     color: 'bg-red-100 text-red-800 border-red-200',
     insight: 'Bestseller - prioritize restocking',
     performance: 'excellent'
@@ -151,6 +152,7 @@ export default function StockAnalysisTable({ data, isLoading }: StockAnalysisTab
           <Package className="h-5 w-5 text-slate-600" />
           Inventory Health Check
         </CardTitle>
+<CardInfo description="Current inventory health, reorder status,and sales velocity per product." />
       </CardHeader>
       <CardContent className="bg-white/40 rounded-b-lg">
         <Table>

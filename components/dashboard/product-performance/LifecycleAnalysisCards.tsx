@@ -6,6 +6,7 @@ import { Clock, TrendingUp, BarChart3, AlertTriangle, Target, TrendingDown } fro
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { ProductLifecycle } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 import { useMemo } from 'react';
 
 interface LifecycleAnalysisCardsProps {
@@ -166,6 +167,7 @@ export default function LifecycleAnalysisCards({ data, isLoading }: LifecycleAna
           <Target className="h-5 w-5 text-slate-600" />
           Product Lifecycle Matrix
         </CardTitle>
+<CardInfo description="Product position by age and sales consistency to infer its lifecycle stage (new, growing, mature,declining)." />
       </CardHeader>
       <CardContent className="bg-white rounded-b-lg p-6">
         <div className="space-y-6">

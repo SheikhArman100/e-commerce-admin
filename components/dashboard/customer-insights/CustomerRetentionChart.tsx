@@ -1,10 +1,11 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { TrendingUp, Users, Calendar } from 'lucide-react';
-import dynamic from 'next/dynamic';
 import { CustomerRetention as CustomerRetentionType } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -18,38 +19,50 @@ interface CustomerRetentionChartProps {
 export default function CustomerRetentionChart({ data, isLoading }: CustomerRetentionChartProps) {
   const retentionData = data;
 
-  if (!retentionData) {
+    if (!retentionData) {
     return (
       <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Cohort Analysis</h3>
-          <Skeleton className="h-96 w-full" />
-        </div>
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Retention Rate Trend</h3>
-          <Skeleton className="h-64 w-full" />
-        </div>
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg">
+            <CardTitle className="flex items-center gap-2 text-slate-800">
+              Cohort Analysis
+            </CardTitle>
+            <CardInfo description="Heatmap of customer retention rates across cohorts for their first four months." />
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <Skeleton className="h-96 w-full" />
+          </CardContent>
+        </Card>
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg">
+            <CardTitle className="flex items-center gap-2 text-slate-800">
+              Retention Rate Trend
+            </CardTitle>
+            <CardInfo description="Historical retention rate trend over time." />
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <Skeleton className="h-64 w-full" />
+          </CardContent>
+        </Card>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="p-4 bg-gray-50 rounded-lg">
-              <Skeleton className="h-8 w-16 mb-2" />
-              <Skeleton className="h-4 w-24" />
-            </div>
+            <Card key={i} className="border-slate-200 bg-slate-50/80 shadow-sm">
+              <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+                <CardTitle className="text-sm font-medium text-slate-700">
+                  <Skeleton className="h-8 w-16" />
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="bg-white/40 rounded-b-lg">
+                <Skeleton className="h-4 w-24" />
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
     );
   }
 
-  // Prepare data for cohort analysis heatmap
-  const cohortData = retentionData.cohortAnalysis.map((cohort: any) => [
-    cohort.month0,
-    cohort.month1,
-    cohort.month2,
-    cohort.month3
-  ]);
-
-  const heatmapOptions = {
+    const heatmapOptions = {
     chart: {
       type: 'heatmap' as const,
       height: 350,
@@ -192,15 +205,22 @@ export default function CustomerRetentionChart({ data, isLoading }: CustomerRete
 
   return (
     <div className="space-y-6">
-      {/* Cohort Analysis Heatmap */}
-      <div>
-        {/* <h3 className="text-lg font-semibold text-gray-800 mb-4">Cohort Analysis</h3> */}
-        {isLoading ? (
-          <Skeleton className="h-96 w-full" />
-        ) : (
-          <ReactApexChart options={heatmapOptions} series={heatmapOptions.series} type="heatmap" height={350} />
-        )}
-      </div>
+            {/* Cohort Analysis Heatmap */}
+      <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+        <CardHeader className="bg-white/60 rounded-t-lg">
+          <CardTitle className="flex items-center gap-2 text-slate-800">
+            Cohort Analysis
+          </CardTitle>
+          <CardInfo description="Heatmap of customer retention rates across cohorts for their first four months." />
+        </CardHeader>
+        <CardContent className="bg-white/40 rounded-b-lg pt-4">
+          {isLoading ? (
+            <Skeleton className="h-96 w-full" />
+          ) : (
+            <ReactApexChart options={heatmapOptions} series={heatmapOptions.series} type="heatmap" height={350} />
+          )}
+        </CardContent>
+      </Card>
 
       {/* Retention Trend */}
       {/* <div>
@@ -212,41 +232,56 @@ export default function CustomerRetentionChart({ data, isLoading }: CustomerRete
         )}
       </div> */}
 
-      {/* Key Metrics */}
+            {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="p-4 bg-green-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <TrendingUp className="h-6 w-6 text-green-600" />
-            <div>
-              <div className="text-2xl font-bold text-green-600">
-                {isLoading ? <Skeleton className="h-8 w-16" /> : `${retentionData.retentionRate}%`}
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Overall Retention Rate</CardTitle>
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Percentage of customers retained over the selected period." />
+                <TrendingUp className="h-5 w-5 text-green-600" />
               </div>
-              <div className="text-sm text-gray-600">Overall Retention Rate</div>
             </div>
-          </div>
-        </div>
-        <div className="p-4 bg-red-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <Users className="h-6 w-6 text-red-600" />
-            <div>
-              <div className="text-2xl font-bold text-red-600">
-                {isLoading ? <Skeleton className="h-8 w-16" /> : `${retentionData.churnRate}%`}
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-green-600">
+              {isLoading ? <Skeleton className="h-8 w-16" /> : `${retentionData.retentionRate}%`}
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Churn Rate</CardTitle>
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Percentage of customers lost during the selected period." />
+                <Users className="h-5 w-5 text-red-600" />
               </div>
-              <div className="text-sm text-gray-600">Churn Rate</div>
             </div>
-          </div>
-        </div>
-        <div className="p-4 bg-blue-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <Calendar className="h-6 w-6 text-blue-600" />
-            <div>
-              <div className="text-2xl font-bold text-blue-600">
-                {isLoading ? <Skeleton className="h-8 w-16" /> : retentionData.averageCustomerLifespan}
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-red-600">
+              {isLoading ? <Skeleton className="h-8 w-16" /> : `${retentionData.churnRate}%`}
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Avg Customer Lifespan (Days)</CardTitle>
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Average number of days a customer remains active." />
+                <Calendar className="h-5 w-5 text-blue-600" />
               </div>
-              <div className="text-sm text-gray-600">Avg Customer Lifespan (Days)</div>
             </div>
-          </div>
-        </div>
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-blue-600">
+              {isLoading ? <Skeleton className="h-8 w-16" /> : `${retentionData.averageCustomerLifespan} days`}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
       {/* Summary */}

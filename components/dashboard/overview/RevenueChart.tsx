@@ -4,6 +4,7 @@ import dynamic from 'next/dynamic';
 import { formatTaka } from '@/lib/currency';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { RevenueTrend } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 // Dynamically import ApexCharts to avoid SSR issues
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
@@ -41,7 +42,7 @@ export default function RevenueChart({ data, isLoading, period = 'yearly' }: Rev
 
     switch (period) {
       case 'yearly':
-        // Format: "YYYY-MM" â†’ "Jan 2025", "Feb 2025", etc.
+        // Format: "YYYY-MM" → "Jan 2025", "Feb 2025", etc.
         const [year, month] = dateStr.split('-');
         const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
                            'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -49,7 +50,7 @@ export default function RevenueChart({ data, isLoading, period = 'yearly' }: Rev
 
       case 'monthly':
       case 'weekly':
-        // Format: "YYYY-MM-DD" â†’ "15 Jan", "16 Jan", etc.
+        // Format: "YYYY-MM-DD" → "15 Jan", "16 Jan", etc.
         const date = new Date(dateStr);
         return date.toLocaleDateString('en-US', {
           day: 'numeric',
@@ -57,7 +58,7 @@ export default function RevenueChart({ data, isLoading, period = 'yearly' }: Rev
         });
 
       case 'daily':
-        // Format: "YYYY-MM-DD HH:mm:ss" â†’ "11:00", "13:00", etc.
+        // Format: "YYYY-MM-DD HH:mm:ss" → "11:00", "13:00", etc.
         const timeStr = dateStr.split(' ')[1]; // Get "HH:mm:ss" part
         if (timeStr) {
           const [hours] = timeStr.split(':');
@@ -134,7 +135,7 @@ export default function RevenueChart({ data, isLoading, period = 'yearly' }: Rev
     yaxis: [
       {
         title: {
-          text: 'Revenue (à§³)',
+          text: 'Revenue (৳)',
           style: {
             color: '#000000',
             fontSize: '14px',
@@ -245,6 +246,7 @@ export default function RevenueChart({ data, isLoading, period = 'yearly' }: Rev
             ({data.length} {period === 'daily' ? 'hours' : period === 'weekly' || period === 'monthly' ? 'days' : 'months'})
           </span>
         </CardTitle>
+<CardInfo description="Daily, weekly, monthly or yearly trend of revenue and order count over time." />
       </CardHeader>
       <CardContent className="flex-1 bg-white/40 rounded-b-lg">
         <div className="h-80">

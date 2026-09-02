@@ -10,6 +10,7 @@ import {
   Award
 } from 'lucide-react';
 import { ProductPerformanceResponse } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 interface ProductPerformanceKPICardsProps {
   data: ProductPerformanceResponse;
@@ -69,8 +70,11 @@ export default function ProductPerformanceKPICards({ data, isLoading }: ProductP
           <CardTitle className="text-sm font-medium text-slate-700">
             Total Revenue
           </CardTitle>
-          <div className="p-2.5 rounded-xl bg-emerald-100 shadow-sm">
-            <DollarSign className="h-4 w-4 text-emerald-600" />
+          <div className="flex items-center gap-2">
+            <CardInfo description="Total revenue generated across all products in the selected period." />
+            <div className="p-2.5 rounded-xl bg-emerald-100 shadow-sm">
+              <DollarSign className="h-4 w-4 text-emerald-600" />
+            </div>
           </div>
         </CardHeader>
         <CardContent className="bg-white/60 rounded-lg p-3">
@@ -89,8 +93,11 @@ export default function ProductPerformanceKPICards({ data, isLoading }: ProductP
           <CardTitle className="text-sm font-medium text-slate-700">
             Total Orders
           </CardTitle>
-          <div className="p-2.5 rounded-xl bg-blue-100 shadow-sm">
-            <ShoppingCart className="h-4 w-4 text-blue-600" />
+          <div className="flex items-center gap-2">
+            <CardInfo description="Total units ordered across all products." />
+            <div className="p-2.5 rounded-xl bg-blue-100 shadow-sm">
+              <ShoppingCart className="h-4 w-4 text-blue-600" />
+            </div>
           </div>
         </CardHeader>
         <CardContent className="bg-white/60 rounded-lg p-3">
@@ -109,8 +116,11 @@ export default function ProductPerformanceKPICards({ data, isLoading }: ProductP
           <CardTitle className="text-sm font-medium text-slate-700">
             Avg Order Value
           </CardTitle>
-          <div className="p-2.5 rounded-xl bg-purple-100 shadow-sm">
-            <TrendingUp className="h-4 w-4 text-purple-600" />
+          <div className="flex items-center gap-2">
+            <CardInfo description="Average revenue per order." />
+            <div className="p-2.5 rounded-xl bg-purple-100 shadow-sm">
+              <TrendingUp className="h-4 w-4 text-purple-600" />
+            </div>
           </div>
         </CardHeader>
         <CardContent className="bg-white/60 rounded-lg p-3">
@@ -129,8 +139,11 @@ export default function ProductPerformanceKPICards({ data, isLoading }: ProductP
           <CardTitle className="text-sm font-medium text-slate-700">
             Top Product
           </CardTitle>
-          <div className="p-2.5 rounded-xl bg-yellow-100 shadow-sm">
-            <Award className="h-4 w-4 text-yellow-600" />
+          <div className="flex items-center gap-2">
+            <CardInfo description="The single product generating the most revenue." />
+            <div className="p-2.5 rounded-xl bg-yellow-100 shadow-sm">
+              <Award className="h-4 w-4 text-yellow-600" />
+            </div>
           </div>
         </CardHeader>
         <CardContent className="bg-white/60 rounded-lg p-3">
@@ -149,8 +162,11 @@ export default function ProductPerformanceKPICards({ data, isLoading }: ProductP
           <CardTitle className="text-sm font-medium text-slate-700">
             Best Category
           </CardTitle>
-          <div className="p-2.5 rounded-xl bg-green-100 shadow-sm">
-            <Package className="h-4 w-4 text-green-600" />
+          <div className="flex items-center gap-2">
+            <CardInfo description="The product category with the highest total revenue." />
+            <div className="p-2.5 rounded-xl bg-green-100 shadow-sm">
+              <Package className="h-4 w-4 text-green-600" />
+            </div>
           </div>
         </CardHeader>
         <CardContent className="bg-white/60 rounded-lg p-3">

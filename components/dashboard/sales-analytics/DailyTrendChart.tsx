@@ -5,6 +5,7 @@ import { formatTaka } from '@/lib/currency';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from 'lucide-react';
 import { DailyTrend } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -108,7 +109,7 @@ export default function DailyTrendChart({ data, isLoading }: DailyTrendChartProp
     yaxis: [
       {
         title: {
-          text: 'Revenue (à§³)',
+          text: 'Revenue (৳)',
           style: {
             color: '#475569',
             fontSize: '14px',
@@ -221,6 +222,7 @@ export default function DailyTrendChart({ data, isLoading }: DailyTrendChartProp
           <Calendar className="h-5 w-5 text-slate-600" />
           Daily Sales Trend (Last 7 Days)
         </CardTitle>
+<CardInfo description="Daily revenue and order volume for the last 7 days." />
       </CardHeader>
       <CardContent className="bg-white/40 rounded-b-lg">
         <div className="h-80">

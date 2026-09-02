@@ -7,6 +7,7 @@ import { DollarSign, TrendingUp, TrendingDown } from 'lucide-react';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, LabelList } from 'recharts';
 import { ProductProfitability } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 import { useMemo } from 'react';
 
 interface ProfitabilityMetricsTableProps {
@@ -20,11 +21,11 @@ const formatCurrency = (amount: number) => {
 
 const formatShortCurrency = (amount: number) => {
   if (amount >= 1000000) {
-    return `à§³${(amount / 1000000).toFixed(1)}M`;
+    return `৳${(amount / 1000000).toFixed(1)}M`;
   } else if (amount >= 1000) {
-    return `à§³${(amount / 1000).toFixed(0)}K`;
+    return `৳${(amount / 1000).toFixed(0)}K`;
   }
-  return `à§³${amount.toFixed(0)}`;
+  return `৳${amount.toFixed(0)}`;
 };
 
 // Define colors for the segments
@@ -234,6 +235,7 @@ export default function ProfitabilityMetricsChart({ data, isLoading }: Profitabi
           <DollarSign className="h-5 w-5 text-slate-600" />
           Revenue Breakdown: Cost vs Profit
         </CardTitle>
+<CardInfo description="Breakdown of product revenue into cost of goods and profit,with profit margin." />
       </CardHeader>
       <CardContent className="bg-white rounded-b-lg p-6">
         <div className="space-y-6">

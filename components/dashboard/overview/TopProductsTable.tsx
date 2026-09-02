@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Trophy, TrendingUp, Package } from 'lucide-react';
 import { TopProduct } from '@/types/dashboard.types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 interface TopProductsTableProps {
   data: TopProduct[];
@@ -84,17 +85,20 @@ export default function TopProductsTable({ data, isLoading }: TopProductsTablePr
           <TrendingUp className="h-5 w-5 text-slate-600" />
           Top Products
         </CardTitle>
-        {data.length > 0 && (
-          <div className="">
-            <Link
-              href="/products"
-              className="text-sm hover:underline text-slate-600 flex items-center gap-1"
-            >
-              View all products
+        <div className="flex items-center gap-2">
+          <CardInfo description="Highest-earning products ranked by revenue." />
+          {data.length > 0 && (
+            <div className="">
+              <Link
+                href="/products"
+                className="text-sm hover:underline text-slate-600 flex items-center gap-1"
+              >
+                View all products
 
-            </Link>
-          </div>
-        )}
+              </Link>
+            </div>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="bg-white/40 rounded-b-lg">
         <div className="space-y-4 h-full">

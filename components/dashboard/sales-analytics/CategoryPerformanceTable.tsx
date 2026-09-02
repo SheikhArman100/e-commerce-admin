@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { formatTaka } from '@/lib/currency';
 import { Package } from 'lucide-react';
 import { CategoryPerformance } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 interface CategoryPerformanceTableProps {
   data: CategoryPerformance[];
@@ -55,6 +56,7 @@ export default function CategoryPerformanceTable({ data, isLoading }: CategoryPe
           <Package className="h-5 w-5 text-slate-600" />
           Category Performance
         </CardTitle>
+<CardInfo description="Revenue, order count,and share per product category." />
       </CardHeader>
       <CardContent className="bg-white/40 rounded-b-lg">
         <div className="space-y-3">

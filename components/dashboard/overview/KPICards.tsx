@@ -5,6 +5,7 @@ import { formatTaka } from '@/lib/currency';
 import { Badge } from '@/components/ui/badge';
 import { TrendingUp, TrendingDown, DollarSign, Package, ShoppingCart, Users } from 'lucide-react';
 import { DashboardMetrics } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 interface KPICardsProps {
   metrics: DashboardMetrics;
@@ -28,6 +29,7 @@ export default function KPICards({ metrics, isLoading }: KPICardsProps) {
       icon: DollarSign,
       iconBg: 'bg-emerald-100',
       iconText: 'text-emerald-700',
+      description: 'Total revenue generated from all orders within the selected period.',
     },
     {
       title: 'Total Orders',
@@ -36,6 +38,7 @@ export default function KPICards({ metrics, isLoading }: KPICardsProps) {
       icon: ShoppingCart,
       iconBg: 'bg-blue-100',
       iconText: 'text-blue-700',
+      description: 'Number of orders placed during the selected period.',
     },
     {
       title: 'Total Products',
@@ -44,6 +47,7 @@ export default function KPICards({ metrics, isLoading }: KPICardsProps) {
       icon: Package,
       iconBg: 'bg-violet-100',
       iconText: 'text-violet-700',
+      description: 'Total number of active products in the store.',
     },
     {
       title: 'Total Customers',
@@ -52,6 +56,7 @@ export default function KPICards({ metrics, isLoading }: KPICardsProps) {
       icon: Users,
       iconBg: 'bg-amber-100',
       iconText: 'text-amber-700',
+      description: 'Total number of customers who registered during the selected period.',
     },
   ];
 
@@ -86,8 +91,11 @@ export default function KPICards({ metrics, isLoading }: KPICardsProps) {
               <CardTitle className="text-sm font-medium text-slate-700">
                 {card.title}
               </CardTitle>
-              <div className={`p-2.5 rounded-xl ${card.iconBg} shadow-sm`}>
-                <Icon className={`h-4 w-4 ${card.iconText}`} />
+              <div className="flex items-center gap-2">
+                <CardInfo description={card.description} />
+                <div className={`p-2.5 rounded-xl ${card.iconBg} shadow-sm`}>
+                  <Icon className={`h-4 w-4 ${card.iconText}`} />
+                </div>
               </div>
             </CardHeader>
             <CardContent className="bg-white/60 rounded-lg p-3">

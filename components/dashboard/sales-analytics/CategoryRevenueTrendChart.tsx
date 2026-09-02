@@ -5,6 +5,7 @@ import { formatTaka } from '@/lib/currency';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { BarChart3 } from 'lucide-react';
 import { CategoryRevenueTrend, CategoryRevenueTrendData } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -281,6 +282,7 @@ export default function CategoryRevenueTrendChart({ data, isLoading }: CategoryR
           <BarChart3 className="h-5 w-5 text-slate-600" />
           Category Revenue Trends
         </CardTitle>
+<CardInfo description="Monthly revenue trend over time for the top categories." />
       </CardHeader>
       <CardContent className="bg-white/40 rounded-b-lg pt-6">
         {/* Custom Legend */}

@@ -5,6 +5,7 @@ import { formatTaka } from '@/lib/currency';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { PieChart, Package } from 'lucide-react';
 import { CategoryProductAnalysis } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -179,6 +180,7 @@ export default function CategoryAnalysisChart({ data, isLoading }: CategoryAnaly
           <PieChart className="h-5 w-5 text-slate-600" />
           Category Performance Overview
         </CardTitle>
+<CardInfo description="Revenue shareand product count by category with top product." />
       </CardHeader>
       <CardContent className="bg-white/40 rounded-b-lg pt-4">
         <div className="h-[450px]">

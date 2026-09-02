@@ -5,6 +5,7 @@ import { Star, MessageSquare } from 'lucide-react';
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from '@/components/ui/chart';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { ProductReviewAnalytics } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 import { useMemo } from 'react';
 
 // Custom tooltip component to show product breakdown
@@ -155,6 +156,7 @@ export default function ReviewAnalyticsChart({ data, isLoading }: ReviewAnalytic
           <Star className="h-5 w-5 text-slate-600" />
           Customer Satisfaction Metrics
         </CardTitle>
+<CardInfo description="Aggregated product review ratings and rating distribution across products." />
       </CardHeader>
       <CardContent className="bg-white/40 rounded-b-lg">
         <div className="space-y-6">

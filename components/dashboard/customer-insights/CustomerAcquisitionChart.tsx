@@ -1,10 +1,11 @@
 ﻿'use client';
 
+import dynamic from 'next/dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Users, TrendingUp, Globe, DollarSign } from 'lucide-react';
-import dynamic from 'next/dynamic';
+import { Users, TrendingUp, Globe } from 'lucide-react';
 import { CustomerAcquisition as CustomerAcquisitionType } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 const ReactApexChart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -18,19 +19,32 @@ interface CustomerAcquisitionChartProps {
 export default function CustomerAcquisitionChart({ data, isLoading }: CustomerAcquisitionChartProps) {
   const acquisitionData = data;
 
-  if (!acquisitionData) {
+    if (!acquisitionData) {
     return (
       <div className="space-y-6">
-        <div>
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Customer Acquisition Trends</h3>
-          <Skeleton className="h-80 w-full" />
-        </div>
-        <div className="grid grid-cols-2 gap-4">
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg">
+            <CardTitle className="flex items-center gap-2 text-slate-800">
+              Customer Acquisition Trends
+            </CardTitle>
+            <CardInfo description="New, returning and total customer acquisition trends over time." />
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <Skeleton className="h-80 w-full" />
+          </CardContent>
+        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[...Array(4)].map((_, i) => (
-            <div key={i} className="p-4 bg-gray-50 rounded-lg">
-              <Skeleton className="h-8 w-16 mb-2" />
-              <Skeleton className="h-4 w-24" />
-            </div>
+            <Card key={i} className="border-slate-200 bg-slate-50/80 shadow-sm">
+              <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+                <CardTitle className="text-sm font-medium text-slate-700">
+                  <Skeleton className="h-8 w-16" />
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="bg-white/40 rounded-b-lg">
+                <Skeleton className="h-4 w-24" />
+              </CardContent>
+            </Card>
           ))}
         </div>
       </div>
@@ -94,8 +108,7 @@ export default function CustomerAcquisitionChart({ data, isLoading }: CustomerAc
         fontFamily: 'inherit',
       },
       custom: function({ series, seriesIndex, dataPointIndex }: any) {
-        const trend = trendData[dataPointIndex];
-        const seriesNames = ['New Customers', 'Returning Customers', 'Total Customers'];
+                const trend = trendData[dataPointIndex];
         const colors = ['#3b82f6', '#10b981', '#6366f1'];
         
         return `
@@ -150,15 +163,22 @@ export default function CustomerAcquisitionChart({ data, isLoading }: CustomerAc
   
   return (
     <div className="space-y-6">
-      {/* Customer Acquisition Trend */}
-      <div>
-        {/* <h3 className="text-lg font-semibold text-gray-800 mb-4">Customer Acquisition Trends</h3> */}
-        {isLoading ? (
-          <Skeleton className="h-96 w-full" />
-        ) : (
-          <ReactApexChart options={trendOptions} series={trendOptions.series} type="line" height={350} />
-        )}
-      </div>
+            {/* Customer Acquisition Trend */}
+      <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+        <CardHeader className="bg-white/60 rounded-t-lg">
+          <CardTitle className="flex items-center gap-2 text-slate-800">
+            Customer Acquisition Trends
+          </CardTitle>
+          <CardInfo description="New, returning and total customer acquisition trends over time." />
+        </CardHeader>
+        <CardContent className="bg-white/40 rounded-b-lg pt-4">
+          {isLoading ? (
+            <Skeleton className="h-96 w-full" />
+          ) : (
+            <ReactApexChart options={trendOptions} series={trendOptions.series} type="line" height={350} />
+          )}
+        </CardContent>
+      </Card>
 
       {/* Customer Type Distribution */}
       {/* <div>
@@ -216,7 +236,7 @@ export default function CustomerAcquisitionChart({ data, isLoading }: CustomerAc
                             <span className={`px-2 py-1 rounded-full text-xs ${
                               growthRate >= 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                             }`}>
-                              {growthRate >= 0 ? '+' : 'à§³0'}{growthRate.toFixed(1)}%
+                                                        {growthRate >= 0 ? '+' : '-'}{growthRate.toFixed(1)}%
                             </span>
                           ) : (
                             <span className="text-gray-500">-</span>
@@ -232,41 +252,56 @@ export default function CustomerAcquisitionChart({ data, isLoading }: CustomerAc
         )}
       </div> */}
 
-      {/* Summary Statistics */}
+            {/* Summary Statistics */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="p-4 bg-blue-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <Users className="h-6 w-6 text-blue-600" />
-            <div>
-              <div className="text-2xl font-bold text-blue-600">
-                {isLoading ? <Skeleton className="h-8 w-16" /> : acquisitionData.newCustomers.toLocaleString()}
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">New Customers</CardTitle>
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Number of first-time customers acquired." />
+                <Users className="h-5 w-5 text-blue-600" />
               </div>
-              <div className="text-sm text-gray-600">New Customers</div>
             </div>
-          </div>
-        </div>
-        <div className="p-4 bg-green-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <TrendingUp className="h-6 w-6 text-green-600" />
-            <div>
-              <div className="text-2xl font-bold text-green-600">
-                {isLoading ? <Skeleton className="h-8 w-16" /> : `${acquisitionData.acquisitionRate}%`}
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-blue-600">
+              {isLoading ? <Skeleton className="h-8 w-16" /> : acquisitionData.newCustomers.toLocaleString()}
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Acquisition Rate</CardTitle>
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Percentage of new customers relative to total customers." />
+                <TrendingUp className="h-5 w-5 text-green-600" />
               </div>
-              <div className="text-sm text-gray-600">Acquisition Rate</div>
             </div>
-          </div>
-        </div>
-        <div className="p-4 bg-purple-50 rounded-lg">
-          <div className="flex items-center gap-3">
-            <Globe className="h-6 w-6 text-purple-600" />
-            <div>
-              <div className="text-2xl font-bold text-purple-600">
-                {isLoading ? <Skeleton className="h-8 w-16" /> : acquisitionData.returningCustomers.toLocaleString()}
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-green-600">
+              {isLoading ? <Skeleton className="h-8 w-16" /> : `${acquisitionData.acquisitionRate}%`}
+            </div>
+          </CardContent>
+        </Card>
+        <Card className="border-slate-200 bg-slate-50/80 shadow-sm">
+          <CardHeader className="bg-white/60 rounded-t-lg pb-2">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm font-medium text-slate-700">Returning Customers</CardTitle>
+              <div className="flex items-center gap-1.5">
+                <CardInfo description="Number of returning customers in the period." />
+                <Globe className="h-5 w-5 text-purple-600" />
               </div>
-              <div className="text-sm text-gray-600">Returning Customers</div>
             </div>
-          </div>
-        </div>
+          </CardHeader>
+          <CardContent className="bg-white/40 rounded-b-lg">
+            <div className="text-2xl font-bold text-purple-600">
+              {isLoading ? <Skeleton className="h-8 w-16" /> : acquisitionData.returningCustomers.toLocaleString()}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

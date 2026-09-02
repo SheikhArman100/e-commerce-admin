@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, Package, ShoppingCart } from 'lucide-react';
 import { LowStockItem } from '@/types/dashboard.types';
+import CardInfo from '@/components/dashboard/CardInfo';
 
 interface LowStockAlertsTableProps {
   data: LowStockItem[];
@@ -86,6 +87,7 @@ export default function LowStockAlertsTable({ data, isLoading }: LowStockAlertsT
           <AlertTriangle className="h-5 w-5 text-slate-600" />
           Low Stock Alerts
         </CardTitle>
+        <CardInfo description="Products whose combined stock is at or below the reorder threshold and need restocking." />
       </CardHeader>
       <CardContent className="bg-white/40 rounded-b-lg">
         <div className="space-y-3 h-full">
