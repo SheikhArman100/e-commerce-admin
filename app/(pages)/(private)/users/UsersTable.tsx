@@ -14,6 +14,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Loader2, ChevronUp, ChevronDown, Eye } from 'lucide-react';
 
 import ProfileImage from '@/components/ProfileImage';
@@ -61,29 +62,43 @@ export default function UsersTable() {
 
   const renderSkeletonRow = (index: number) => (
     <TableRow key={`skeleton-${index}`}>
-      <TableCell className="font-medium">
+      {/* Name */}
+      <TableCell className="font-medium w-[200px]">
         <div className="flex items-center space-x-2">
-          <div className="h-8 w-8 bg-gray-200 rounded-full animate-pulse"></div>
-          <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
+          <Skeleton className="h-8 w-8 rounded-full" />
+          <Skeleton className="h-4 w-20" />
         </div>
       </TableCell>
-      <TableCell>
-        <div className="h-4 bg-gray-200 rounded animate-pulse"></div>
+      {/* Email */}
+      <TableCell className="w-[250px]">
+        <Skeleton className="h-4 w-full" />
       </TableCell>
-      <TableCell>
-        <div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div>
+      {/* Phone */}
+      <TableCell className="w-[150px]">
+        <Skeleton className="h-4 w-24" />
       </TableCell>
-      <TableCell>
-        <div className="h-6 w-16 bg-gray-200 rounded-full animate-pulse"></div>
+      {/* Role */}
+      <TableCell className="w-[150px]">
+        <Skeleton className="h-6 w-16 rounded-full" />
       </TableCell>
-      <TableCell className="hidden md:table-cell">
-        <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+      {/* Status */}
+      <TableCell className="w-[150px]">
+        <div className="flex items-center gap-2">
+          <Skeleton className="h-2 w-2 rounded-full" />
+          <Skeleton className="h-4 w-12" />
+        </div>
       </TableCell>
-      <TableCell className="hidden md:table-cell">
-        <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
+      {/* Verification */}
+      <TableCell className="w-[150px]">
+        <Skeleton className="h-6 w-16 rounded-full" />
       </TableCell>
-      <TableCell>
-        <div className="h-8 w-16 bg-gray-200 rounded animate-pulse"></div>
+      {/* Created Date */}
+      <TableCell className="w-[200px]">
+        <Skeleton className="h-4 w-24" />
+      </TableCell>
+      {/* Actions */}
+      <TableCell className="w-[100px]">
+        <Skeleton className="h-8 w-16" />
       </TableCell>
     </TableRow>
   );
