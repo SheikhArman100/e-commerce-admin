@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, ChevronUp, ChevronDown, Eye } from 'lucide-react';
+import { Loader2, ChevronUp, ChevronDown, Eye, Pencil } from 'lucide-react';
 
 import { formatDateTime } from '@/lib/helpers';
 import { ScreenLoader } from '@/components/screen-loader';
@@ -221,15 +221,26 @@ export default function FlavorsTable() {
                       {formatDateTime(flavor.createdAt)}
                     </TableCell>
                     <TableCell>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        asChild
-                      >
-                        <Link href={`/flavors/${flavor.id}`}>
-                          <Eye className="w-4 h-4" />
-                        </Link>
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          asChild
+                        >
+                          <Link href={`/flavors/${flavor.id}`} title="View flavor">
+                            <Eye className="w-4 h-4" />
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          asChild
+                        >
+                          <Link href={`/flavors/${flavor.id}/update-flavor`} title="Edit flavor">
+                            <Pencil className="w-4 h-4" />
+                          </Link>
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
