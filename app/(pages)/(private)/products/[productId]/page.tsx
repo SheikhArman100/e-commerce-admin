@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { ArrowLeft, Edit, Package, Image as ImageIcon, DollarSign, Box } from 'lucide-react';
+import { ArrowLeft, Edit, Package, Image as ImageIcon, Banknote, Box } from 'lucide-react';
 import {
   Card,
   CardContent,
@@ -19,6 +19,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 import { useProduct } from '@/hooks/useProducts';
 import { formatDateTime } from '@/lib/helpers';
+import { formatTaka } from '@/lib/currency';
 import { ScreenLoader } from '@/components/screen-loader';
 
 export default function ProductDetailPage() {
@@ -114,7 +115,7 @@ export default function ProductDetailPage() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button variant="outline" asChild>
+          <Button variant="primary" asChild>
             <Link href={`/products/${product.id}/update-product`}>
               <Edit className="w-4 h-4 mr-2" />
               Edit Product
@@ -145,14 +146,14 @@ export default function ProductDetailPage() {
 
             <div className="flex items-center gap-3">
               <div className="p-2 bg-green-100 rounded-lg">
-                <DollarSign className="w-5 h-5 text-green-600" />
+                <Banknote className="w-5 h-5 text-green-600" />
               </div>
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Price Range</p>
                 <p className="font-semibold">
                   {minPrice === maxPrice
-                    ? `$${minPrice.toFixed(2)}`
-                    : `$${minPrice.toFixed(2)} - $${maxPrice.toFixed(2)}`
+                    ? formatTaka(minPrice, 2)
+                    : `${formatTaka(minPrice, 2)} - ${formatTaka(maxPrice, 2)}`
                   }
                 </p>
               </div>
@@ -267,7 +268,7 @@ export default function ProductDetailPage() {
                           <div className="flex justify-between items-center p-3 bg-gray-50 rounded-md">
                             <span className="font-medium">Unit Price</span>
                             <div className="text-right">
-                              <p className="font-semibold">${quantitySize.price.toFixed(2)}</p>
+                              <p className="font-semibold">{formatTaka(quantitySize.price, 2)}</p>
                               <p className="text-sm text-muted-foreground">
                                 Stock: {quantitySize.stock}
                               </p>
@@ -286,7 +287,7 @@ export default function ProductDetailPage() {
                               <div key={size.size?.id || `size-${Math.random()}`} className="flex justify-between items-center p-3 bg-gray-50 rounded-md">
                                 <span className="font-medium">{size.size?.name || 'N/A'}</span>
                                 <div className="text-right">
-                                  <p className="font-semibold">${size.price.toFixed(2)}</p>
+                                  <p className="font-semibold">{formatTaka(size.price, 2)}</p>
                                   <p className="text-sm text-muted-foreground">
                                     Stock: {size.stock}
                                   </p>

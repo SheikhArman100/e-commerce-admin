@@ -579,7 +579,7 @@ export default function CreateProductPage() {
                               ))}
                             </div>
                             <p className="text-xs text-muted-foreground">
-                              This product has multiple sizes (e.g., S, M, L t-shirts). Customers choose a size and quantity.
+                              This product has multiple sizes (in Pound). Customers choose a size and quantity.
                             </p>
                           </div>
                         )}

@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { ChevronDown, ChevronUp, Eye, Loader2, Package } from 'lucide-react';
+import { ChevronDown, ChevronUp, Eye, Loader2, Package, Pencil } from 'lucide-react';
 import { IProduct } from '@/types/product.types';
 import { formatDateTime } from '@/lib/helpers';
 import { useProducts } from '@/hooks/useProducts';
@@ -20,7 +20,6 @@ import {
 } from '@/components/ui/table';
 import PaginationTable from '@/components/PaginationTable';
 import { ScreenLoader } from '@/components/screen-loader';
-import DeleteProductModal from '@/app/(pages)/(private)/products/DeleteProductModal';
 
 export default function ProductsTable() {
   const [sortBy, setSortBy] = useState<string>('createdAt');
@@ -271,8 +270,8 @@ export default function ProductsTable() {
                 const minPrice = allPrices.length > 0 ? Math.min(...allPrices) : 0;
                 const maxPrice = allPrices.length > 0 ? Math.max(...allPrices) : 0;
                 const priceRange = minPrice === maxPrice
-                  ? `$${minPrice.toFixed(2)}`
-                  : `$${minPrice.toFixed(2)} - $${maxPrice.toFixed(2)}`;
+                  ? `৳${minPrice.toFixed(2)}`
+                  : `৳${minPrice.toFixed(2)} - ৳${maxPrice.toFixed(2)}`;
 
                 return (
                   <TableRow key={product.id}>
@@ -333,13 +332,17 @@ export default function ProductsTable() {
                       {formatDateTime(product.createdAt)}
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" asChild>
+                      <div className="flex items-center gap-1">
+                        <Button variant="outline" size="sm" asChild title="View product">
                           <Link href={`/products/${product.id}`}>
                             <Eye className="w-4 h-4" />
                           </Link>
                         </Button>
-                        <DeleteProductModal product={product} />
+                        <Button variant="outline" size="sm" asChild title="Edit product">
+                          <Link href={`/products/${product.id}/update-product`}>
+                            <Pencil className="w-4 h-4" />
+                          </Link>
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>

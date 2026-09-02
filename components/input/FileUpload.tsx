@@ -158,11 +158,11 @@ export default function FileUpload({
                 {previews.map((previewUrl, index) => {
                   const file = Array.isArray(value) ? value[index] : value;
                   return (
-                    <div key={index} className="relative group">
+                    <div key={index} className="relative group w-full aspect-square">
                       <img
                         src={previewUrl}
                         alt={`Preview ${index + 1}`}
-                        className="w-full h-20 object-cover rounded-lg border"
+                        className="w-full h-full object-cover rounded-lg border"
                       />
                       {!disabled && (
                         <Button
@@ -188,7 +188,7 @@ export default function FileUpload({
                   <img
                     src={previews[0]}
                     alt="Preview"
-                    className="w-20 h-20 object-cover rounded-lg"
+                    className="w-24 h-24 object-cover rounded-lg aspect-square"
                   />
                   {!disabled && (
                     <Button
