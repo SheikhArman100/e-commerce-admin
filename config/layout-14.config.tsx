@@ -135,16 +135,16 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
       },
     ],
   },
-  {
-    heading: 'Notifications',
-    children: [
-      {
-        title: 'Notifications',
-        path: '/notifications',
-        icon: Bell
-      },
-    ],
-  },
+  // {
+  //   heading: 'Notifications',
+  //   children: [
+  //     {
+  //       title: 'Notifications',
+  //       path: '/notifications',
+  //       icon: Bell
+  //     },
+  //   ],
+  // },
   {
     heading: 'User Management',
     children: [

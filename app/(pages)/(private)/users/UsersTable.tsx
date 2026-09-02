@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button';
 import { Avatar } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Loader2, ChevronUp, ChevronDown, Eye } from 'lucide-react';
+import { Loader2, ChevronUp, ChevronDown, Eye, Pencil } from 'lucide-react';
 
 import ProfileImage from '@/components/ProfileImage';
 import { formatDateTime } from '@/lib/helpers';
@@ -98,7 +98,10 @@ export default function UsersTable() {
       </TableCell>
       {/* Actions */}
       <TableCell className="w-[100px]">
-        <Skeleton className="h-8 w-16" />
+        <div className="flex items-center gap-1">
+          <Skeleton className="h-8 w-8" />
+          <Skeleton className="h-8 w-8" />
+        </div>
       </TableCell>
     </TableRow>
   );
@@ -307,15 +310,28 @@ export default function UsersTable() {
                       {formatDateTime(user.createdAt)}
                     </TableCell>
                     <TableCell>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        asChild
-                      >
-                        <Link href={`/users/${user.id}`}>
-                          <Eye className="w-4 h-4" />
-                        </Link>
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          asChild
+                          title="View user"
+                        >
+                          <Link href={`/users/${user.id}`}>
+                            <Eye className="w-4 h-4" />
+                          </Link>
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          asChild
+                          title="Edit user"
+                        >
+                          <Link href={`/users/${user.id}/update-user`}>
+                            <Pencil className="w-4 h-4" />
+                          </Link>
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
