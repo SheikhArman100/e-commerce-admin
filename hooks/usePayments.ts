@@ -67,6 +67,10 @@ export const useUpdatePayment = () => {
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['payments'], refetchType: 'all' });
       queryClient.invalidateQueries({ queryKey: ['payment', variables.id], refetchType: 'all' });
+      // Manual PAID overrides also complete the related order (items, stock,
+      // status timeline) — refresh order data so the UI stays in sync.
+      queryClient.invalidateQueries({ queryKey: ['orders'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['order'], refetchType: 'all' });
       toast.success('Payment updated successfully!');
     },
     onError: (error: any) => {
@@ -87,12 +91,53 @@ export const useInitiateRefund = () => {
       );
       return response.data.data;
     },
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['payments'], refetchType: 'all' });
-      toast.success('Refund processed successfully!');
+      // Refund flips payment + order paymentStatus to REFUNDED — refresh the
+      // detail view and order data too. The refund response (incl. refund_ref_id)
+      // replaces gatewayResponse, so the payment detail must refetch.
+      queryClient.invalidateQueries({ queryKey: ['payment'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['orders'], refetchType: 'all' });
+      queryClient.invalidateQueries({ queryKey: ['order'], refetchType: 'all' });
+      toast.success('Refund initiated successfully via SSLCommerz!');
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || 'Failed to process refund');
     },
+  });
+};
+
+export interface RefundStatusResponse {
+  data: {
+    transactionId: string;
+    paymentStatus: string;
+    gatewayRefundStatus: any;
+  };
+  message: string;
+  statusCode: number;
+  success: boolean;
+}
+
+/**
+ * Query the gateway for the live status of a previously initiated refund.
+ * Backend: GET /payment/refund-status/:transactionId — reads refund_ref_id from
+ * the payment's gatewayResponse and asks SSLCommerz (op=val_ref).
+ */
+export const useRefundStatus = (transactionId: string | undefined) => {
+  const axiosPrivate = useAxiosPrivate();
+
+  return useQuery({
+    queryKey: ['refund-status', transactionId],
+    queryFn: async () => {
+      const response = await axiosPrivate.get<RefundStatusResponse>(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/payment/refund-status/${transactionId}`
+      );
+      return response.data.data;
+    },
+    enabled: !!transactionId,
+    // Refund status is a live gateway call — fetch on demand, don't auto-refetch
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
+    retry: false,
   });
 };

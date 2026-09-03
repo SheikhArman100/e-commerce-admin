@@ -28,8 +28,21 @@ export default function ManualOverrideDialog({ payment }: { payment: IPayment })
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<PaymentStatus>(payment.paymentStatus);
   const [bankTranId, setBankTranId] = useState(payment.bankTranId || '');
-  
+
   const updateMutation = useUpdatePayment();
+
+  // Manual override policy — must mirror ALLOWED_MANUAL_STATUS_CHANGES in the
+  // backend payment.service.ts (the API enforces it regardless). PAID/REFUNDED
+  // payments are frozen: refunds go through the gateway refund flow.
+  const ALLOWED_STATUS_CHANGES: Record<PaymentStatus, PaymentStatus[]> = {
+    PENDING: ['FAILED', 'CANCELLED', 'PAID'],
+    FAILED: ['CANCELLED', 'PAID'],
+    CANCELLED: ['PAID'],
+    PAID: [],
+    REFUNDED: [],
+  };
+  const allowedTargets = ALLOWED_STATUS_CHANGES[payment.paymentStatus] || [];
+  const statusLocked = allowedTargets.length === 0;
 
   const handleUpdate = async () => {
     try {
@@ -63,19 +76,44 @@ export default function ManualOverrideDialog({ payment }: { payment: IPayment })
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
             <Label htmlFor="status">Payment Status</Label>
-            <Select value={status} onValueChange={(val) => setStatus(val as PaymentStatus)}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="PENDING">PENDING</SelectItem>
-                <SelectItem value="PAID">PAID</SelectItem>
-                <SelectItem value="FAILED">FAILED</SelectItem>
-                <SelectItem value="CANCELLED">CANCELLED</SelectItem>
-                <SelectItem value="REFUNDED">REFUNDED</SelectItem>
-              </SelectContent>
-            </Select>
+            <p className="text-xs text-muted-foreground">
+              Current status: <span className="font-semibold text-foreground">{payment.paymentStatus}</span>
+            </p>
+            {statusLocked ? (
+              <div className="rounded-md border border-gray-200 bg-gray-50 p-3 text-xs text-gray-600 leading-relaxed">
+                This payment is <strong>{payment.paymentStatus}</strong> and its status can no longer
+                be overridden{payment.paymentStatus === 'PAID' ? ' — to return money, use the Refund flow' : ''}.
+                The Bank Transaction ID can still be corrected below.
+              </div>
+            ) : (
+              <Select
+                value={allowedTargets.includes(status) ? status : undefined}
+                onValueChange={(val) => setStatus(val as PaymentStatus)}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder={`Change from ${payment.paymentStatus}…`} />
+                </SelectTrigger>
+                <SelectContent>
+                  {/* Current status shown disabled so it's visible but not re-selectable */}
+                  <SelectItem value={payment.paymentStatus} disabled>
+                    {payment.paymentStatus} (current)
+                  </SelectItem>
+                  {allowedTargets.map((target) => (
+                    <SelectItem key={target} value={target}>{target}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
+          {status === 'PAID' && payment.paymentStatus !== 'PAID' && (
+            <div className="rounded-md border border-amber-200 bg-amber-50 p-3 text-xs text-amber-800 leading-relaxed">
+              <strong>Heads up:</strong> marking this payment PAID will also complete the related
+              order — order items are created from the saved cart snapshot, stock is decremented,
+              the customer's cart is cleared, and the order is marked Paid in its status timeline.
+              Only use this if you are certain the money was actually received (e.g. the gateway
+              callback was missed).
+            </div>
+          )}
           <div className="grid gap-2">
             <Label htmlFor="bankId">Bank Transaction ID</Label>
             <Input
@@ -88,9 +126,9 @@ export default function ManualOverrideDialog({ payment }: { payment: IPayment })
         </div>
         <DialogFooter>
           <Button variant="outline" onClick={() => setOpen(false)}>Cancel</Button>
-          <Button 
+          <Button
             onClick={handleUpdate}
-            disabled={updateMutation.isPending}
+            disabled={updateMutation.isPending || (!statusLocked && !allowedTargets.includes(status))}
           >
             {updateMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
             Save Changes

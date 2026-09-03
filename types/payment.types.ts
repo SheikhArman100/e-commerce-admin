@@ -8,8 +8,10 @@ export interface IPayment {
   amount: number;
   paymentStatus: PaymentStatus;
   paymentGateway?: string;
-  paymentMethod?: string;
+  paymentMethod?: string; // From list API: SSLCommerz card_type (e.g. BKASH, VISA)
   gatewayResponse?: any;
+  validationResponse?: any;
+  gatewayAuditLog?: any;
   createdAt: string;
   updatedAt: string;
   order?: {
@@ -19,6 +21,21 @@ export interface IPayment {
     status: string;
   };
 }
+
+/**
+ * Resolve how the customer actually paid. SSLCommerz returns `card_type` in its
+ * validation response (e.g. VISA, BKASH, DBBLNAGAD) — stored in
+ * `validationResponse` after a successful payment. In list responses the API
+ * provides it pre-extracted as `paymentMethod`. Fall back to the gateway
+ * name when neither is available (e.g. pending payments).
+ */
+export const getPaymentMethod = (payment: IPayment): string => {
+  const cardType =
+    payment.paymentMethod ||
+    (payment.validationResponse as any)?.card_type ||
+    (payment.gatewayResponse as any)?.card_type;
+  return cardType || payment.paymentGateway || 'UNKNOWN';
+};
 
 export interface PaymentFilters {
   searchTerm?: string;

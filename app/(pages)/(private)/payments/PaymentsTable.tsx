@@ -17,7 +17,7 @@ import { Loader2, ChevronUp, ChevronDown, Eye } from 'lucide-react';
 import { formatDateTime } from '@/lib/helpers';
 import { formatTaka } from '@/lib/currency';
 import { usePayments } from '@/hooks/usePayments';
-import { IPayment, PaymentFilters, PaymentStatus } from '@/types/payment.types';
+import { IPayment, PaymentFilters, PaymentStatus, getPaymentMethod } from '@/types/payment.types';
 import PaginationTable from '@/components/PaginationTable';
 import { Badge } from '@/components/ui/badge';
 
@@ -183,17 +183,22 @@ export default function PaymentsTable() {
               ? payments.map((payment) => (
                   <TableRow key={payment.id}>
                     <TableCell className="font-mono text-xs truncate">
-                      {payment.transactionId}
+                      <Link
+                        href={`/payments/${payment.id}`}
+                        className="text-blue-700 hover:text-blue-900 hover:underline"
+                        title={payment.transactionId}
+                      >
+                        {payment.transactionId}
+                      </Link>
                     </TableCell>
                     <TableCell className="font-medium">
                       {payment.order ? (
-                        <Link
-                          href={`/orders/${payment.order.id}`}
-                          className="font-mono text-sm hover:text-blue-800 hover:underline block truncate"
+                        <span
+                          className="font-mono text-sm block truncate"
                           title={payment.order.orderNumber}
                         >
                           {payment.order.orderNumber}
-                        </Link>
+                        </span>
                       ) : (
                         <span className="font-mono text-sm">#{payment.orderId}</span>
                       )}
@@ -205,7 +210,7 @@ export default function PaymentsTable() {
                       {getStatusBadge(payment.paymentStatus)}
                     </TableCell>
                     <TableCell className="text-sm font-medium text-muted-foreground uppercase">
-                      {payment.paymentGateway || 'N/A'}
+                      {getPaymentMethod(payment)}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">
                       {formatDateTime(payment.createdAt)}

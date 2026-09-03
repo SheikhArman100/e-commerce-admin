@@ -6,12 +6,101 @@ import { usePayment } from '@/hooks/usePayments';
 import { ScreenLoader } from '@/components/screen-loader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, CreditCard, Hash, DollarSign, Calendar, Clock, RotateCcw, ShieldAlert, FileJson } from 'lucide-react';
+import { ArrowLeft, CreditCard, Hash, DollarSign, Calendar, Clock, RotateCcw, ShieldAlert, FileJson, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 import { formatDateTime } from '@/lib/helpers';
+import { formatTaka } from '@/lib/currency';
 import { Badge } from '@/components/ui/badge';
+import { getPaymentMethod } from '@/types/payment.types';
 import RefundDialog from '../RefundDialog';
 import ManualOverrideDialog from '../ManualOverrideDialog';
+import { useRefundStatus } from '@/hooks/usePayments';
+
+/** Live gateway refund-status checker (SSLCommerz op=val_ref via backend). */
+function RefundStatusCard({ transactionId }: { transactionId: string }) {
+  const [enabled, setEnabled] = React.useState(false);
+  const [refreshing, setRefreshing] = React.useState(false); // fake 2s delay state
+  // isLoading = first fetch; isRefetching = Refresh button re-query. Combine so
+  // every gateway call shows buffering feedback.
+  const { data: refundStatus, isLoading, isRefetching, error, refetch } = useRefundStatus(transactionId);
+  const querying = isLoading || isRefetching;
+
+  const gateway = refundStatus?.gatewayRefundStatus;
+  const gatewayState = gateway?.status ?? gateway?.bank_txn_status;
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2 text-sm">
+          <RotateCcw className={`w-4 h-4 text-blue-600 ${querying ? 'animate-spin' : ''}`} />
+          Gateway Refund Status
+        </CardTitle>
+        <CardDescription className="text-xs">
+          Live status from SSLCommerz for the initiated refund
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-3">
+        {!enabled ? (
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full"
+            onClick={() => setEnabled(true)}
+          >
+            Check Refund Status
+          </Button>
+        ) : querying && !refundStatus ? (
+          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Loader2 className="w-4 h-4 animate-spin" /> Querying SSLCommerz...
+          </div>
+        ) : error && !refundStatus ? (
+          <div className="space-y-2">
+            <p className="text-xs text-red-600">
+              {(error as any)?.response?.data?.message || 'Failed to query refund status'}
+            </p>
+            <Button variant="outline" size="sm" className="w-full" onClick={() => refetch()}>
+              Retry
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Payment Status</span>
+              <span className="font-semibold">{refundStatus?.paymentStatus}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-muted-foreground">Gateway State</span>
+              <span className="font-semibold">{gatewayState ?? 'Unknown'}</span>
+            </div>
+            {gateway && (
+              <pre className="bg-slate-950 rounded-lg p-3 text-[10px] text-green-400 font-mono overflow-x-auto max-h-40">
+                {JSON.stringify(gateway, null, 2)}
+              </pre>
+            )}
+            <Button
+              variant="outline"
+              size="sm"
+              className="w-full"
+              onClick={() => {
+                // Fake 2s delay to simulate a slow gateway round-trip (for
+                // testing the buffering state) before the real refetch runs.
+                setRefreshing(true);
+                setTimeout(() => {
+                  setRefreshing(false);
+                  refetch();
+                }, 2000);
+              }}
+              disabled={querying || refreshing}
+            >
+              {(querying || refreshing) && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+              {(querying || refreshing) ? 'Refreshing...' : 'Refresh'}
+            </Button>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function PaymentDetailsPage() {
   const params = useParams();
@@ -102,9 +191,14 @@ export default function PaymentDetailsPage() {
 
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Payment Method</p>
-                <Badge variant="outline" className="uppercase font-bold tracking-wider">
-                  {payment.paymentMethod || 'UNKNOWN'}
+                <Badge variant="outline" className="uppercase font-bold tracking-wider" title="How the customer paid (from gateway validation response)">
+                  {getPaymentMethod(payment)}
                 </Badge>
+                {payment.bankTranId && (
+                  <p className="text-xs text-muted-foreground font-mono truncate max-w-[200px]" title={payment.bankTranId}>
+                    Bank Tran: {payment.bankTranId}
+                  </p>
+                )}
               </div>
 
               <div className="space-y-1">
@@ -163,9 +257,16 @@ export default function PaymentDetailsPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="text-xs text-blue-700 leading-relaxed uppercase font-medium">
-              Manual status overrides should be used sparingly. Initiating a refund will trigger the S2S Refund API via SSLCommerz.
+              Marking a payment PAID completes the order (items, stock, cart, timeline). Non-paid
+              status changes are record-keeping only. Refunds go through the SSLCommerz S2S API.
             </CardContent>
           </Card>
+
+          {/* Only after a refund has been initiated — gatewayResponse then holds
+              refund_response with refund_ref_id (required by the status query). */}
+          {(payment.gatewayResponse as any)?.refund_response?.refund_ref_id && (
+            <RefundStatusCard transactionId={payment.transactionId} />
+          )}
         </div>
       </div>
     </div>

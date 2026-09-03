@@ -65,13 +65,13 @@ export default function SearchFilter({
   const hasActiveSearch = searchParam && searchParam.trim() !== ''
 
   return (
-    <div className={`flex items-center  gap-2 ${className}`}>
+    <div className={`flex items-center  gap-2 w-full   ${className}`}>
       {/* <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Search className="w-4 h-4" />
         <span>Search:</span>
       </div> */}
 
-      <div className="relative w-full">
+      <div className="relative w-full max-w-[600px]">
         <Input
           type="text"
           placeholder={placeholder}
