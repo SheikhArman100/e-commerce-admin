@@ -7,12 +7,14 @@ export interface IPayment {
   orderId: number;
   amount: number;
   paymentStatus: PaymentStatus;
+  paymentGateway?: string;
   paymentMethod?: string;
   gatewayResponse?: any;
   createdAt: string;
   updatedAt: string;
   order?: {
     id: number;
+    orderNumber: string; // Human-friendly: ORD-YYYYMMDD-XXXXXX
     totalAmount: number;
     status: string;
   };
@@ -22,6 +24,7 @@ export interface PaymentFilters {
   searchTerm?: string;
   paymentStatus?: PaymentStatus | '';
   orderId?: string;
+  orderNumber?: string;
   minAmount?: number;
   maxAmount?: number;
   page?: number;

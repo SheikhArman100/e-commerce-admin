@@ -21,6 +21,7 @@ export const usePayments = (filters: PaymentFilters = {}) => {
       if (filters.searchTerm) params.append('searchTerm', filters.searchTerm);
       if (filters.paymentStatus) params.append('paymentStatus', filters.paymentStatus);
       if (filters.orderId) params.append('orderId', filters.orderId);
+      if (filters.orderNumber) params.append('orderNumber', filters.orderNumber);
       if (filters.minAmount !== undefined) params.append('minAmount', filters.minAmount.toString());
       if (filters.maxAmount !== undefined) params.append('maxAmount', filters.maxAmount.toString());
       if (filters.page) params.append('page', filters.page.toString());

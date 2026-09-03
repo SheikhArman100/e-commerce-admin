@@ -38,11 +38,7 @@ export default function PaymentsPage() {
               <div className="flex flex-col sm:flex-row flex-wrap gap-4 flex-1">
                 <SearchFilter
                   paramName="searchTerm"
-                  placeholder="Search Transaction / Bank ID"
-                />
-                <SearchFilter
-                  paramName="orderId"
-                  placeholder="Search by Order ID"
+                  placeholder="Search Transaction / Bank ID / Order Number"
                 />
                 <StatusFilter
                   filters={paymentStatusFilters}
