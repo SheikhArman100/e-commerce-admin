@@ -95,6 +95,9 @@ export default function OrdersTable() {
   const renderSkeletonRow = (index: number) => (
     <TableRow key={`skeleton-${index}`}>
       <TableCell>
+        <div className="h-4 w-28 bg-gray-200 rounded animate-pulse"></div>
+      </TableCell>
+      <TableCell>
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 bg-gray-200 rounded animate-pulse"></div>
           <div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div>
@@ -170,6 +173,22 @@ export default function OrdersTable() {
         <Table className="table-fixed">
           <TableHeader>
             <TableRow>
+              <TableHead
+                className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[190px]"
+                onClick={() => handleSort('orderNumber')}
+              >
+                <div className="flex items-center justify-between">
+                  <span>Order Number</span>
+                  <div className="flex flex-col">
+                    <ChevronUp
+                      className={`w-3 h-3 ${sortBy === 'orderNumber' && sortOrder === 'asc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`}
+                    />
+                    <ChevronDown
+                      className={`w-3 h-3 -mt-1 ${sortBy === 'orderNumber' && sortOrder === 'desc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`}
+                    />
+                  </div>
+                </div>
+              </TableHead>
               <TableHead
                 className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[200px]"
                 onClick={() => handleSort('user.name')}
@@ -263,6 +282,15 @@ export default function OrdersTable() {
               orders.map((order) => (
                 <TableRow key={order.id}>
                   <TableCell>
+                    <Link
+                      href={`/orders/${order.id}`}
+                      className="font-mono text-sm font-medium hover:text-blue-800 hover:underline block truncate"
+                      title={order.orderNumber}
+                    >
+                      {order.orderNumber}
+                    </Link>
+                  </TableCell>
+                  <TableCell>
                     <div className="flex items-center gap-2">
                       <Avatar className="h-8 w-8 rounded-full">
                         <ProfileImage
@@ -273,9 +301,9 @@ export default function OrdersTable() {
                         />
                       </Avatar>
                       <div>
-                        <Link href={`/orders/${order.id}`}  className="font-medium hover:text-blue-800 hover:underline block truncate">
+                        <p className="font-medium block truncate">
                           {order.user.name}
-                        </Link>
+                        </p>
                         <p className="text-xs text-muted-foreground">
                           {order.user.email}
                         </p>
@@ -311,7 +339,7 @@ export default function OrdersTable() {
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={8}
                   className="text-center py-8 text-muted-foreground h-80"
                 >
                   <ShoppingBag className="w-12 h-12 mx-auto mb-4 text-muted-foreground/50" />

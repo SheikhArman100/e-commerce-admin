@@ -1,6 +1,7 @@
 // Backend interface (raw API data)
 export interface IOrder {
   id: number;
+  orderNumber: string; // Human-friendly: ORD-YYYYMMDD-XXXXXX
   status: OrderStatus;
   totalAmount: number;
   createdAt: string;
@@ -37,6 +38,7 @@ export interface IOrder {
     };
   };
   items: IOrderItem[];
+  statusHistory?: IOrderStatusHistory[];
 }
 
 export interface IOrderItem {
@@ -148,6 +150,15 @@ export interface OrderItem {
     price: number;
     stock: number;
   };
+}
+
+// Order status timeline entry — one record per status change (with timestamp)
+export interface IOrderStatusHistory {
+  id: number;
+  orderId: number;
+  status: OrderStatus;
+  changedAt: string;
+  changedBy?: number | null;
 }
 
 // Request/Response types

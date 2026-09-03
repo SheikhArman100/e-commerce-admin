@@ -72,6 +72,16 @@ const getStatusColor = (status: OrderStatus) => {
   }
 };
 
+// Mirror of backend ALLOWED_STATUS_TRANSITIONS — one step at a time
+const ALLOWED_STATUS_TRANSITIONS: Record<OrderStatus, OrderStatus[]> = {
+  [OrderStatus.PENDING]: [OrderStatus.PAID, OrderStatus.CANCELLED, OrderStatus.FAILED],
+  [OrderStatus.PAID]: [OrderStatus.SHIPPED, OrderStatus.CANCELLED],
+  [OrderStatus.SHIPPED]: [OrderStatus.DELIVERED, OrderStatus.CANCELLED],
+  [OrderStatus.DELIVERED]: [],
+  [OrderStatus.CANCELLED]: [],
+  [OrderStatus.FAILED]: [OrderStatus.PAID], // Allow retry
+};
+
 export default function OrderDetailPage() {
   const params = useParams();
   const router = useRouter();
@@ -148,8 +158,8 @@ export default function OrderDetailPage() {
             <h1 className="text-xl sm:text-3xl font-bold tracking-tight">
               Order Details
             </h1>
-            <p className="text-muted-foreground">
-              Order #{order.id}
+            <p className="text-muted-foreground font-mono">
+              {order.orderNumber}
             </p>
           </div>
         </div>
@@ -171,12 +181,17 @@ export default function OrderDetailPage() {
                 <SelectValue placeholder="Change status" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value={OrderStatus.PENDING}>Pending</SelectItem>
-                <SelectItem value={OrderStatus.PAID}>Paid</SelectItem>
-                <SelectItem value={OrderStatus.SHIPPED}>Shipped</SelectItem>
-                <SelectItem value={OrderStatus.DELIVERED}>Delivered</SelectItem>
-                <SelectItem value={OrderStatus.CANCELLED}>Cancelled</SelectItem>
-                <SelectItem value={OrderStatus.FAILED}>Failed</SelectItem>
+                {/* Current status shown as a disabled option so the Select displays it */}
+                <SelectItem value={order.status} disabled>
+                  {order.status} (current)
+                </SelectItem>
+                {(
+                  ALLOWED_STATUS_TRANSITIONS[order.status] ?? []
+                ).map((nextStatus) => (
+                  <SelectItem key={nextStatus} value={nextStatus}>
+                    {nextStatus}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
 
@@ -282,6 +297,55 @@ export default function OrderDetailPage() {
 
         {/* Sidebar */}
         <div className="space-y-6">
+          {/* Order Status Timeline */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Order Timeline</CardTitle>
+              <CardDescription>
+                Status history with timestamps
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {order.statusHistory && order.statusHistory.length > 0 ? (
+                <ol className="relative border-l border-muted-foreground/20 ml-3 space-y-6">
+                  {order.statusHistory.map((entry, index) => {
+                    const isLast = index === order.statusHistory!.length - 1;
+                    return (
+                      <li key={entry.id} className="ml-4">
+                        <span
+                          className={`absolute -left-[9px] flex h-4 w-4 items-center justify-center rounded-full border-2 ${
+                            isLast
+                              ? 'bg-primary border-primary'
+                              : 'bg-background border-muted-foreground/40'
+                          }`}
+                        />
+                        <div className="flex items-center gap-2">
+                          <span className="flex items-center gap-1 text-sm font-medium">
+                            {getStatusIcon(entry.status)}
+                            {entry.status}
+                          </span>
+                          <Badge
+                            className={`${getStatusColor(entry.status)} border text-xs px-1.5 py-0`}
+                          >
+                            {isLast ? 'Current' : 'Done'}
+                          </Badge>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          {formatDateTime(entry.changedAt)}
+                        </p>
+                      </li>
+                    );
+                  })}
+                </ol>
+              ) : (
+                <div className="text-center py-4 text-muted-foreground">
+                  <Clock className="w-8 h-8 mx-auto mb-2 text-muted-foreground/50" />
+                  <p className="text-sm">No timeline recorded yet</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
           {/* Customer Information */}
           <Card>
             <CardHeader>
@@ -336,8 +400,8 @@ export default function OrderDetailPage() {
             <CardContent>
               <div className="space-y-3">
                 <div className="flex justify-between">
-                  <span>Order ID:</span>
-                  <span className="font-mono text-sm">{order.id}</span>
+                  <span>Order Number:</span>
+                  <span className="font-mono text-sm">{order.orderNumber}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Status:</span>

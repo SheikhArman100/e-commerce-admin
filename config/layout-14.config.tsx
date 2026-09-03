@@ -94,11 +94,6 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
         icon: ShoppingCart
       },
       {
-        title: 'Carts',
-        path: '/carts',
-        icon: ShoppingBag
-      },
-      {
         title: 'Payments',
         path: '/payments',
         icon: CreditCard
@@ -132,6 +127,11 @@ export const MENU_SIDEBAR_MAIN: MenuConfig = [
         title: 'Wishlists',
         path: '/wishlists',
         icon: Heart
+      },
+      {
+        title: 'Carts',
+        path: '/carts',
+        icon: ShoppingBag
       },
     ],
   },
