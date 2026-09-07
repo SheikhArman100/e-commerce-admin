@@ -23,6 +23,9 @@ export const useCoupons = (filters: CouponFilters = {}, options?: { enabled?: bo
       if (filters.isActive !== undefined && filters.isActive !== 'all' && filters.isActive !== '') {
         params.append('isActive', filters.isActive);
       }
+      if (filters.isFeatured !== undefined && filters.isFeatured !== 'all' && filters.isFeatured !== '') {
+        params.append('isFeatured', filters.isFeatured);
+      }
       if (filters.page) params.append('page', filters.page.toString());
       if (filters.limit) params.append('limit', filters.limit.toString());
       if (filters.sortBy) params.append('sortBy', filters.sortBy);

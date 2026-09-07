@@ -12,7 +12,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { Loader2, ChevronUp, ChevronDown, Eye, Edit, Trash2 } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Loader2, ChevronUp, ChevronDown, Eye, Pencil, Trash2 } from 'lucide-react';
 
 import { formatDateTime } from '@/lib/helpers';
 import { useCoupons, useDeleteCoupon } from '@/hooks/useCoupons';
@@ -34,6 +35,8 @@ export default function CouponsTable() {
   const limit = parseInt(searchParams.get('limit') || '10');
   const searchTerm = searchParams.get('searchTerm') || '';
   const isActive = searchParams.get('isActive') || '';
+  const isFeaturedParam = searchParams.get('isFeatured');
+  const isFeatured = isFeaturedParam === 'true' || isFeaturedParam === 'false' ? isFeaturedParam : undefined;
   const discountTypeParam = searchParams.get('discountType');
   
   // Explicitly type discountType to match CouponFilters
@@ -54,10 +57,11 @@ export default function CouponsTable() {
     limit,
     ...(searchTerm && { searchTerm }),
     ...(isActive && isActive !== 'all' && { isActive }),
+    ...(isFeatured && { isFeatured }),
     ...(discountType && { discountType }),
     sortBy,
     sortOrder,
-  }), [page, limit, searchTerm, isActive, discountType, sortBy, sortOrder]);
+  }), [page, limit, searchTerm, isActive, isFeatured, discountType, sortBy, sortOrder]);
 
   const { data: couponsData, isLoading, error } = useCoupons(filters);
 
@@ -65,13 +69,15 @@ export default function CouponsTable() {
     <TableRow key={`skeleton-${index}`}>
       <TableCell><div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div></TableCell>
       <TableCell><div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div></TableCell>
+      <TableCell><div className="h-4 w-12 bg-gray-200 rounded animate-pulse"></div></TableCell>
+      <TableCell><div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div></TableCell>
       <TableCell><div className="h-4 w-20 bg-gray-200 rounded animate-pulse"></div></TableCell>
       <TableCell><div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div></TableCell>
       <TableCell><div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div></TableCell>
-      <TableCell><div className="h-4 w-12 bg-gray-200 rounded animate-pulse"></div></TableCell>
+      <TableCell><div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div></TableCell>
       <TableCell><div className="h-4 w-12 bg-gray-200 rounded animate-pulse"></div></TableCell>
       <TableCell><div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div></TableCell>
-      <TableCell><div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div></TableCell>
+      <TableCell><div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div></TableCell>
     </TableRow>
   );
 
@@ -122,8 +128,8 @@ export default function CouponsTable() {
 
   return (
     <div>
-      <div className="rounded-md border">
-        <Table className="table-fixed">
+      <div className="rounded-md border overflow-x-auto">
+        <Table>
           <TableHeader>
             <TableRow>
               <TableHead
@@ -151,6 +157,8 @@ export default function CouponsTable() {
                   </div>
                 </div>
               </TableHead>
+
+              <TableHead className="w-[100px]">Featured</TableHead>
 
               <TableHead
                 className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[120px]"
@@ -181,7 +189,20 @@ export default function CouponsTable() {
               <TableHead className="w-[130px]">Min. Order</TableHead>
 
               <TableHead
-                className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[110px]"
+                className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[140px]"
+                onClick={() => handleSort('maxDiscountAmount')}
+              >
+                <div className="flex items-center justify-between">
+                  <span>Max Discount</span>
+                  <div className="flex flex-col">
+                    <ChevronUp className={`w-3 h-3 ${sortBy === 'maxDiscountAmount' && sortOrder === 'asc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
+                    <ChevronDown className={`w-3 h-3 -mt-1 ${sortBy === 'maxDiscountAmount' && sortOrder === 'desc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
+                  </div>
+                </div>
+              </TableHead>
+
+              <TableHead
+                className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[130px]"
                 onClick={() => handleSort('usedCount')}
               >
                 <div className="flex items-center justify-between">
@@ -194,7 +215,7 @@ export default function CouponsTable() {
               </TableHead>
 
               <TableHead
-                className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[110px]"
+                className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[130px]"
                 onClick={() => handleSort('usageLimit')}
               >
                 <div className="flex items-center justify-between">
@@ -207,7 +228,7 @@ export default function CouponsTable() {
               </TableHead>
 
               <TableHead
-                className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[220px]"
+                className="cursor-pointer select-none hover:bg-muted/50 transition-colors whitespace-nowrap"
                 onClick={() => handleSort('expiryDate')}
               >
                 <div className="flex items-center justify-between">
@@ -219,18 +240,7 @@ export default function CouponsTable() {
                 </div>
               </TableHead>
 
-              <TableHead
-                className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[220px]"
-                onClick={() => handleSort('createdAt')}
-              >
-                <div className="flex items-center justify-between">
-                  <span>Created At</span>
-                  <div className="flex flex-col">
-                    <ChevronUp className={`w-3 h-3 ${sortBy === 'createdAt' && sortOrder === 'asc' ? 'text-foreground' : 'text-foreground opacity-50'}`} />
-                    <ChevronDown className={`w-3 h-3 -mt-1 ${sortBy === 'createdAt' && sortOrder === 'desc' ? 'text-foreground' : 'text-muted-foreground opacity-50'}`} />
-                  </div>
-                </div>
-              </TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -253,28 +263,57 @@ export default function CouponsTable() {
                         <span className="text-sm font-medium">{coupon.isActive ? 'Active' : 'Inactive'}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-sm font-medium">
+                    <TableCell className="whitespace-nowrap">
+                      {coupon.isFeatured ? (
+                        <Badge className="bg-amber-100 text-amber-700 border border-amber-200 hover:bg-amber-100">
+                          ★ Featured
+                        </Badge>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-sm font-medium">
                       {coupon.discountType}
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="whitespace-nowrap">
                       <span className={coupon.discountType === 'PERCENTAGE' ? 'text-purple-600 font-medium' : 'text-green-600 font-medium'}>
                         {coupon.discountType === 'PERCENTAGE' ? `${coupon.discountValue}%` : `৳${coupon.discountValue.toFixed(2)}`}
                       </span>
                     </TableCell>
-                    <TableCell>৳{(coupon.minOrderAmount || 0).toFixed(2)}</TableCell>
+                    <TableCell className="whitespace-nowrap">৳{(coupon.minOrderAmount || 0).toFixed(2)}</TableCell>
+                    <TableCell className="whitespace-nowrap text-sm">
+                      {coupon.maxDiscountAmount ? `৳${coupon.maxDiscountAmount.toFixed(2)}` : '—'}
+                    </TableCell>
                     <TableCell className="font-medium text-center">{coupon.usedCount}</TableCell>
                     <TableCell className="text-center">
                       {coupon.usageLimit === 0 || !coupon.usageLimit ? '∞' : coupon.usageLimit}
                     </TableCell>
-                    <TableCell className="text-sm">{formatDateTime(coupon.expiryDate)}</TableCell>
-                    <TableCell className="text-muted-foreground text-sm">
-                      {formatDateTime(coupon.createdAt)}
+                    <TableCell className="text-sm whitespace-nowrap">
+                      {new Date(coupon.expiryDate).toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'short',
+                        day: 'numeric',
+                      })}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Button variant="outline" size="sm" asChild>
+                          <Link href={`/coupons/${coupon.id}`} title="View coupon">
+                            <Eye className="w-4 h-4" />
+                          </Link>
+                        </Button>
+                        <Button variant="outline" size="sm" asChild>
+                          <Link href={`/coupons/${coupon.id}/update-coupon`} title="Edit coupon">
+                            <Pencil className="w-4 h-4" />
+                          </Link>
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
               : (
                   <TableRow>
-                    <TableCell colSpan={9} className="text-center py-8 text-muted-foreground h-80">No coupons found</TableCell>
+                    <TableCell colSpan={11} className="text-center py-8 text-muted-foreground h-80">No coupons found</TableCell>
                   </TableRow>
                 )}
           </TableBody>

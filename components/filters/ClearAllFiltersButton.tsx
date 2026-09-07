@@ -39,6 +39,9 @@ export default function ClearAllFiltersButton() {
     searchParams.get('rating') ||
     searchParams.get('isHidden')|| 
     searchParams.get('discountType')
+    searchParams.get('isFeatured') ||
+    searchParams.get('minPrice') ||
+    searchParams.get('maxPrice')
 
   const handleClearAll = () => {
     const params = new URLSearchParams()

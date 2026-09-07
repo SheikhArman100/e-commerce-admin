@@ -19,6 +19,7 @@ import {
 } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Select,
   SelectContent,
@@ -28,6 +29,7 @@ import {
 } from '@/components/ui/select';
 import TextInput from '@/components/input/TextInput';
 import DateInput from '@/components/input/DateInput';
+import UserMultiSelect from '@/components/input/UserMultiSelect';
 import Link from 'next/link';
 
 type CreateCouponFormData = z.infer<typeof createCouponSchema>;
@@ -46,14 +48,18 @@ export default function CreateCouponPage() {
     resolver: zodResolver(createCouponSchema) as any,
     defaultValues: {
       code: '',
+      description: '',
       discountType: 'FIXED',
       discountValue: 0,
       isActive: true,
+      isFeatured: false,
+      targetType: 'ALL',
       expiryDate: new Date().toISOString().split('T')[0],
     },
   });
 
   const discountType = watch('discountType');
+  const targetType = watch('targetType');
 
   const handleCreateCoupon = async (data: CreateCouponFormData) => {
     try {
@@ -98,6 +104,21 @@ export default function CreateCouponPage() {
                   register={register}
                   errors={errors.code?.message}
                 />
+
+                <div className="space-y-2">
+                  <Label htmlFor="description">
+                    Description <span className="text-red-500">*</span>
+                  </Label>
+                  <Textarea
+                    id="description"
+                    placeholder="e.g. 10% off on all birthday cakes this month"
+                    rows={3}
+                    {...register('description')}
+                  />
+                  {errors.description && (
+                    <p className="text-xs text-red-500">{errors.description.message}</p>
+                  )}
+                </div>
 
                 <div className="space-y-2">
                   <Label>Discount Type</Label>
@@ -164,6 +185,70 @@ export default function CreateCouponPage() {
                   errors={errors.usageLimit?.message}
                 />
 
+                <TextInput
+                  label="Limit Per User (Optional)"
+                  type="number"
+                  placeholder="Unlimited per user"
+                  name="limitPerUser"
+                  register={register}
+                  errors={errors.limitPerUser?.message}
+                />
+
+                <div className="space-y-2">
+                  <Label>Target Audience</Label>
+                  <Controller
+                    name="targetType"
+                    control={control}
+                    render={({ field }) => (
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Who can use this coupon?" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="ALL">All users</SelectItem>
+                          <SelectItem value="NEW_USERS">New users (no orders yet)</SelectItem>
+                          <SelectItem value="INACTIVE_USERS">Inactive users (no recent orders)</SelectItem>
+                          <SelectItem value="SPECIFIC_USERS">Specific customers</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                  />
+                  {errors.targetType && <p className="text-xs text-red-500">{errors.targetType.message}</p>}
+                </div>
+
+                {targetType === 'INACTIVE_USERS' && (
+                  <TextInput
+                    label="Inactive Days (no order within N days)"
+                    type="number"
+                    placeholder="365"
+                    name="inactiveDays"
+                    register={register}
+                    errors={errors.inactiveDays?.message}
+                  />
+                )}
+
+                {targetType === 'SPECIFIC_USERS' && (
+                  <div className="space-y-2 md:col-span-2">
+                    <Label>
+                      Target Customers <span className="text-red-500">*</span>
+                    </Label>
+                    <Controller
+                      name="targetUserIds"
+                      control={control}
+                      render={({ field }) => (
+                        <UserMultiSelect
+                          value={(field.value as number[]) || []}
+                          onChange={field.onChange}
+                          placeholder="Select target customers"
+                        />
+                      )}
+                    />
+                    {errors.targetUserIds && (
+                      <p className="text-xs text-red-500">{errors.targetUserIds.message}</p>
+                    )}
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <Label>Status</Label>
                   <div className="flex items-center space-x-2">
@@ -175,6 +260,20 @@ export default function CreateCouponPage() {
                       )}
                     />
                     <Label className="text-sm font-normal">Active</Label>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Featured</Label>
+                  <div className="flex items-center space-x-2">
+                    <Controller
+                      name="isFeatured"
+                      control={control}
+                      render={({ field }) => (
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                      )}
+                    />
+                    <Label className="text-sm font-normal">★ Highlight on storefront</Label>
                   </div>
                 </div>
               </div>

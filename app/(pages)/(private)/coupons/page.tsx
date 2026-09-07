@@ -23,6 +23,11 @@ const discountTypeFilters = [
   { value: 'PERCENTAGE', label: 'Percentage', color: '#8b5cf6' },
 ];
 
+const featuredFilters = [
+  { value: 'true', label: 'Featured', color: '#f59e0b' },
+  { value: 'false', label: 'Not Featured', color: '#6b7280' },
+];
+
 export default function CouponsPage() {
   return (
     <div className="space-y-6">
@@ -46,14 +51,14 @@ export default function CouponsPage() {
 
       <Card>
         <CardContent>
-          {/* Filters */}
+          {/* Filters — search on its own full-width row, status filters below */}
           <div className="flex flex-col gap-4 mb-6 pt-6">
+            <SearchFilter
+              paramName="searchTerm"
+              placeholder="Search coupons by code"
+            />
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
-                <SearchFilter
-                  paramName="searchTerm"
-                  placeholder="Search coupons by code"
-                />
                 <StatusFilter
                   filters={activeStatusFilters}
                   paramName="isActive"
@@ -63,6 +68,11 @@ export default function CouponsPage() {
                   filters={discountTypeFilters}
                   paramName="discountType"
                   placeholder="Filter by type"
+                />
+                <StatusFilter
+                  filters={featuredFilters}
+                  paramName="isFeatured"
+                  placeholder="Filter by featured"
                 />
               </div>
               <ClearAllFiltersButton />

@@ -65,7 +65,7 @@ export default function SearchFilter({
   const hasActiveSearch = searchParam && searchParam.trim() !== ''
 
   return (
-    <div className={`flex items-center  gap-2 w-full   ${className}`}>
+    <div className={`flex items-center gap-2 w-full ${className}`}>
       {/* <div className="flex items-center gap-2 text-sm text-muted-foreground">
         <Search className="w-4 h-4" />
         <span>Search:</span>

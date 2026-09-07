@@ -29,26 +29,51 @@ const dateValidator = z
   });
 
 // Coupon Management Validation Schemas
+// Target audience: comma-separated user IDs (textarea input) → number[]
+const targetUserIdsValidator = z.preprocess(
+  (val) => {
+    if (typeof val !== 'string') return val;
+    const ids = val.split(',').map((s) => Number(s.trim())).filter((n) => Number.isInteger(n) && n > 0);
+    return ids.length ? ids : undefined;
+  },
+  z.array(z.number().int().positive()).optional()
+);
+
 export const createCouponSchema = z.object({
   code: codeValidator,
+  description: z
+    .string({ error: 'Description is required' })
+    .min(1, 'Description is required')
+    .trim(),
   discountType: discountTypeValidator,
   discountValue: discountValueValidator,
   minOrderAmount: amountValidator,
   maxDiscountAmount: amountValidator,
   expiryDate: dateValidator,
+  targetType: z.enum(['ALL', 'NEW_USERS', 'INACTIVE_USERS', 'SPECIFIC_USERS']).optional().default('ALL'),
+  inactiveDays: z.coerce.number().int().min(1).optional(),
+  targetUserIds: targetUserIdsValidator,
   usageLimit: z.coerce.number().int().min(0).optional(),
+  limitPerUser: z.coerce.number().int().min(0).optional(),
   isActive: z.boolean().optional().default(true),
+  isFeatured: z.boolean().optional().default(false),
 });
 
 export const updateCouponSchema = z.object({
   code: codeValidator.optional(),
+  description: z.string().min(1, 'Description cannot be empty').optional(),
   discountType: discountTypeValidator.optional(),
   discountValue: z.preprocess((val) => (typeof val === 'string' ? Number(val) : val), z.number().positive()).optional(),
   minOrderAmount: z.preprocess((val) => (typeof val === 'string' ? Number(val) : val), z.number().min(0)).optional(),
   maxDiscountAmount: z.preprocess((val) => (typeof val === 'string' ? Number(val) : val), z.number().min(0)).optional(),
   expiryDate: dateValidator.optional(),
+  targetType: z.enum(['ALL', 'NEW_USERS', 'INACTIVE_USERS', 'SPECIFIC_USERS']).optional(),
+  inactiveDays: z.preprocess((val) => (val === '' || val === null ? undefined : Number(val)), z.number().int().min(1)).optional(),
+  targetUserIds: targetUserIdsValidator,
   usageLimit: z.preprocess((val) => (typeof val === 'string' ? Number(val) : val), z.number().int().min(0)).optional(),
+  limitPerUser: z.preprocess((val) => (typeof val === 'string' ? Number(val) : val), z.number().int().min(0)).optional(),
   isActive: z.boolean().optional(),
+  isFeatured: z.boolean().optional(),
 });
 
 export const couponFiltersSchema = z.object({

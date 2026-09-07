@@ -6,9 +6,10 @@ import { useCoupon, useDeleteCoupon } from '@/hooks/useCoupons';
 import { ScreenLoader } from '@/components/screen-loader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, Edit, Trash2, Calendar, Ticket, DollarSign, Percent, User, Clock } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Calendar, Ticket, DollarSign, Percent, User, Clock, AlertTriangle, Hourglass } from 'lucide-react';
 import Link from 'next/link';
 import { formatDateTime } from '@/lib/helpers';
+import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
 
 export default function CouponDetailsPage() {
@@ -77,6 +78,41 @@ export default function CouponDetailsPage() {
             <CardDescription>Main parameters and logic for this discount</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
+            {/* Description — full width above the grid */}
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-muted-foreground">Description</p>
+              <p className="text-sm leading-relaxed">{coupon.description || '—'}</p>
+            </div>
+
+            {/* Usage progress — how much of the total quota is consumed */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <p className="font-medium text-muted-foreground">Usage Progress</p>
+                <span className="font-semibold">
+                  {coupon.usedCount}{coupon.usageLimit ? ` / ${coupon.usageLimit}` : ''} used
+                </span>
+              </div>
+              {coupon.usageLimit ? (
+                <>
+                  <div className="h-2 rounded-full bg-gray-100 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        coupon.usedCount >= coupon.usageLimit ? 'bg-red-500' : 'bg-blue-600'
+                      }`}
+                      style={{ width: `${Math.min((coupon.usedCount / coupon.usageLimit) * 100, 100)}%` }}
+                    />
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {coupon.usedCount >= coupon.usageLimit
+                      ? 'Usage limit reached — coupon can no longer be redeemed'
+                      : `${coupon.usageLimit - coupon.usedCount} redemptions remaining`}
+                  </p>
+                </>
+              ) : (
+                <p className="text-xs text-muted-foreground">No total usage limit</p>
+              )}
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Discount Type</p>
@@ -116,10 +152,53 @@ export default function CouponDetailsPage() {
               </div>
 
               <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Limit Per User</p>
+                <p className="font-semibold text-lg">{coupon.limitPerUser === 0 || !coupon.limitPerUser ? 'Unlimited' : coupon.limitPerUser}</p>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Target Audience</p>
+                <p className="font-semibold text-lg">
+                  {coupon.targetType === 'NEW_USERS' && 'New users only'}
+                  {coupon.targetType === 'INACTIVE_USERS' && `Inactive users (${coupon.inactiveDays ?? 365}+ days)`}
+                  {coupon.targetType === 'SPECIFIC_USERS' && `Specific customers (${coupon.targetUsers?.length ?? 0})`}
+                  {(!coupon.targetType || coupon.targetType === 'ALL') && 'All users'}
+                </p>
+              </div>
+
+              {/* Allow-list for SPECIFIC_USERS coupons */}
+              {coupon.targetType === 'SPECIFIC_USERS' && (coupon.targetUsers?.length ?? 0) > 0 && (
+                <div className="space-y-2 sm:col-span-2">
+                  <p className="text-sm font-medium text-muted-foreground">Targeted Customers</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {coupon.targetUsers!.map((t) => (
+                      <Link key={t.userId} href={`/users/${t.userId}`}>
+                        <Badge variant="outline" className="hover:bg-muted">
+                          <User className="w-3 h-3 mr-1" />
+                          User #{t.userId}
+                        </Badge>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="space-y-1">
                 <p className="text-sm font-medium text-muted-foreground">Current Status</p>
                 <span className={`px-2 py-1 rounded-full text-xs font-bold ${coupon.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
                   {coupon.isActive ? 'ACTIVE' : 'INACTIVE'}
                 </span>
+              </div>
+
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-muted-foreground">Featured</p>
+                {coupon.isFeatured ? (
+                  <span className="px-2 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-700">
+                    ★ FEATURED
+                  </span>
+                ) : (
+                  <span className="text-sm text-muted-foreground">Not featured</span>
+                )}
               </div>
             </div>
           </CardContent>
@@ -135,6 +214,29 @@ export default function CouponDetailsPage() {
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Expiry Date</p>
                 <p className="font-semibold">{formatDateTime(coupon.expiryDate)}</p>
+                {/* Live expiry state */}
+                {(() => {
+                  const daysLeft = Math.ceil((new Date(coupon.expiryDate).getTime() - Date.now()) / (24 * 60 * 60 * 1000));
+                  if (daysLeft < 0) {
+                    return (
+                      <Badge className="mt-1 gap-1 bg-red-100 text-red-700 border border-red-200">
+                        <AlertTriangle className="w-3 h-3" /> Expired
+                      </Badge>
+                    );
+                  }
+                  if (daysLeft <= 7) {
+                    return (
+                      <Badge className="mt-1 gap-1 bg-amber-100 text-amber-700 border border-amber-200">
+                        <Hourglass className="w-3 h-3" /> Expires in {daysLeft} day{daysLeft === 1 ? '' : 's'}
+                      </Badge>
+                    );
+                  }
+                  return (
+                    <Badge className="mt-1 gap-1 bg-green-100 text-green-700 border border-green-200">
+                      Valid · {daysLeft} days left
+                    </Badge>
+                  );
+                })()}
               </div>
             </div>
 

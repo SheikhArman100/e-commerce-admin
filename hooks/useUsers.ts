@@ -13,7 +13,7 @@ import {
   UserStats,
 } from '@/types/user.types';
 
-export const useUsers = (filters: UserFilters = {}) => {
+export const useUsers = (filters: UserFilters = {}, options?: { enabled?: boolean }) => {
   const axiosPrivate = useAxiosPrivate();
 
   return useQuery({
@@ -35,7 +35,7 @@ export const useUsers = (filters: UserFilters = {}) => {
       );
       return response.data;
     },
-    enabled: true,
+    enabled: options?.enabled ?? true,
   });
 };
 
