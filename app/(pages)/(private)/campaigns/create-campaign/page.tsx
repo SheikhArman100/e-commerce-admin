@@ -17,6 +17,13 @@ import {
 } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import TextInput from '@/components/input/TextInput';
 import TextAreaInput from '@/components/input/TextAreaInput';
 import DateInput from '@/components/input/DateInput';
@@ -41,14 +48,15 @@ export default function CreateCampaignPage() {
       title: '',
       slug: '',
       description: '',
+      discountType: 'PERCENTAGE',
       discountDefault: 0,
       startDate: '',
       endDate: '',
-      isActive: true,
     },
   });
 
   const title = watch('title');
+  const discountType = watch('discountType');
 
   // Auto-generate slug from title
   React.useEffect(() => {
@@ -66,10 +74,11 @@ export default function CreateCampaignPage() {
     formData.append('title', values.title);
     formData.append('slug', values.slug);
     if (values.description) formData.append('description', values.description);
+    formData.append('discountType', values.discountType ?? 'PERCENTAGE');
     formData.append('discountDefault', values.discountDefault.toString());
     formData.append('startDate', values.startDate);
     formData.append('endDate', values.endDate);
-    formData.append('isActive', values.isActive.toString());
+    // Campaigns are always created inactive — activation happens via update
     
     if (selectedFile) {
       formData.append('file', selectedFile);
@@ -136,8 +145,28 @@ export default function CreateCampaignPage() {
                     className="md:col-span-2"
                   />
 
+                  <div className="space-y-2">
+                    <Label>Discount Type</Label>
+                    <Controller
+                      name="discountType"
+                      control={control}
+                      render={({ field }) => (
+                        <Select value={field.value} onValueChange={field.onChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Discount type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="PERCENTAGE">Percentage (%)</SelectItem>
+                            <SelectItem value="FIXED">Fixed Amount (৳)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                    {errors.discountType && <p className="text-xs text-red-500">{errors.discountType.message}</p>}
+                  </div>
+
                   <TextInput
-                    label="Default Discount (%)"
+                    label={discountType === 'FIXED' ? 'Default Discount (৳ off)' : 'Default Discount (%)'}
                     type="number"
                     placeholder="0"
                     name="discountDefault"
@@ -145,18 +174,10 @@ export default function CreateCampaignPage() {
                     errors={errors.discountDefault?.message}
                   />
 
-                  <div className="space-y-2">
-                    <Label>Status</Label>
-                    <div className="flex items-center space-x-2 pt-2">
-                      <Controller
-                        name="isActive"
-                        control={control}
-                        render={({ field }) => (
-                          <Switch checked={field.value} onCheckedChange={field.onChange} />
-                        )}
-                      />
-                      <Label className="text-sm font-normal">Active</Label>
-                    </div>
+                  <div className="space-y-2 sm:col-span-2 rounded-md border border-blue-200 bg-blue-50 p-3 text-xs text-blue-800 leading-relaxed">
+                    <strong>Note:</strong> new campaigns are created <strong>inactive</strong>. Use
+                    "Edit Campaign" afterwards to activate it — only one campaign can be active at a
+                    time. The date range below is shown to customers as the campaign's schedule.
                   </div>
                 </div>
               </CardContent>

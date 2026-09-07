@@ -7,6 +7,7 @@ import {
   CouponFilters,
   CouponListResponse,
   CouponResponse,
+  CouponRedemptionsResponse,
 } from '@/types/coupon.types';
 
 export const useCoupons = (filters: CouponFilters = {}, options?: { enabled?: boolean }) => {
@@ -52,6 +53,24 @@ export const useCoupon = (id: string) => {
       return response.data.data;
     },
     enabled: !!id && id !== 'create-coupon',
+  });
+};
+
+/**
+ * Redemption history for a coupon — who used it and when (admin only).
+ */
+export const useCouponRedemptions = (id: string) => {
+  const axiosPrivate = useAxiosPrivate();
+
+  return useQuery({
+    queryKey: ['coupon-redemptions', id],
+    queryFn: async () => {
+      const response = await axiosPrivate.get<CouponRedemptionsResponse>(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/coupon/${id}/redemptions`
+      );
+      return response.data.data;
+    },
+    enabled: !!id,
   });
 };
 

@@ -2,15 +2,54 @@
 
 import React from 'react';
 import { useParams, useRouter } from 'next/navigation';
-import { useCoupon, useDeleteCoupon } from '@/hooks/useCoupons';
+import { useCoupon, useCouponRedemptions, useDeleteCoupon } from '@/hooks/useCoupons';
 import { ScreenLoader } from '@/components/screen-loader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, Edit, Trash2, Calendar, Ticket, DollarSign, Percent, User, Clock, AlertTriangle, Hourglass } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Calendar, Ticket, DollarSign, Percent, User, Clock, AlertTriangle, Hourglass, ShoppingBag, Loader2 } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { formatDateTime } from '@/lib/helpers';
 import { Badge } from '@/components/ui/badge';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { toast } from 'sonner';
+import { CouponUserInfo } from '@/types/coupon.types';
+
+/** Avatar (profile image or fallback icon) linking to the user's profile */
+function CustomerCell({ user }: { user?: CouponUserInfo }) {
+  const imagePath = user?.detail?.image?.path;
+  return (
+    <Link href={`/users/${user?.id ?? ''}`} className="flex items-center gap-3 min-w-0 group">
+      <div className="relative w-9 h-9 rounded-full overflow-hidden bg-muted shrink-0">
+        {imagePath ? (
+          <Image
+            src={`${process.env.NEXT_PUBLIC_IMAGE_URL}/${imagePath}`}
+            alt={user?.name || 'User'}
+            fill
+            className="object-cover"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+            <User className="w-4 h-4" />
+          </div>
+        )}
+      </div>
+      <div className="min-w-0">
+        <p className="text-sm font-medium truncate group-hover:text-blue-600 transition-colors">
+          {user?.name ?? `User #${user?.id ?? '?'}`}
+        </p>
+        <p className="text-xs text-muted-foreground truncate">{user?.email ?? '—'}</p>
+      </div>
+    </Link>
+  );
+}
 
 export default function CouponDetailsPage() {
   const params = useParams();
@@ -18,6 +57,7 @@ export default function CouponDetailsPage() {
   const couponId = params.couponId as string;
 
   const { data: coupon, isLoading, error } = useCoupon(couponId);
+  const { data: redemptions, isLoading: isLoadingRedemptions } = useCouponRedemptions(couponId);
   const deleteCouponMutation = useDeleteCoupon();
 
   const handleDelete = async () => {
@@ -166,18 +206,15 @@ export default function CouponDetailsPage() {
                 </p>
               </div>
 
-              {/* Allow-list for SPECIFIC_USERS coupons */}
+              {/* Allow-list for SPECIFIC_USERS coupons — with profile data */}
               {coupon.targetType === 'SPECIFIC_USERS' && (coupon.targetUsers?.length ?? 0) > 0 && (
                 <div className="space-y-2 sm:col-span-2">
                   <p className="text-sm font-medium text-muted-foreground">Targeted Customers</p>
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                     {coupon.targetUsers!.map((t) => (
-                      <Link key={t.userId} href={`/users/${t.userId}`}>
-                        <Badge variant="outline" className="hover:bg-muted">
-                          <User className="w-3 h-3 mr-1" />
-                          User #{t.userId}
-                        </Badge>
-                      </Link>
+                      <div key={t.userId} className="rounded-md border p-2 hover:bg-muted/50 transition-colors">
+                        <CustomerCell user={t.user} />
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -258,6 +295,69 @@ export default function CouponDetailsPage() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Redemption History — who used this coupon and when */}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between border-b pb-4">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <ShoppingBag className="w-5 h-5 text-gray-500" />
+              Redemption History
+            </CardTitle>
+            <CardDescription>
+              Customers who have used this coupon
+              {redemptions && redemptions.length > 0 ? ` (${redemptions.length})` : ''}
+            </CardDescription>
+          </div>
+        </CardHeader>
+        <CardContent className="pt-6">
+          {isLoadingRedemptions ? (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground py-4">
+              <Loader2 className="w-4 h-4 animate-spin" /> Loading redemptions...
+            </div>
+          ) : !redemptions || redemptions.length === 0 ? (
+            <div className="text-center py-8 text-muted-foreground text-sm">
+              No redemptions yet — this coupon hasn&apos;t been used by any customer.
+            </div>
+          ) : (
+            <div className="rounded-md border overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/50">
+                    <TableHead>Customer</TableHead>
+                    <TableHead>User ID</TableHead>
+                    <TableHead>Redeemed At</TableHead>
+                    <TableHead className="text-right">Order</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {redemptions.map((r) => (
+                    <TableRow key={r.id}>
+                      <TableCell>
+                        <CustomerCell user={r.user} />
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground font-mono">
+                        #{r.userId}
+                      </TableCell>
+                      <TableCell className="text-sm">
+                        {formatDateTime(r.createdAt)}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <Link
+                          href={`/orders/${r.orderId}`}
+                          className="text-blue-600 hover:underline text-sm"
+                        >
+                          Order #{r.orderId}
+                        </Link>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

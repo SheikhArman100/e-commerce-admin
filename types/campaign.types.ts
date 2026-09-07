@@ -4,6 +4,7 @@ export interface ICampaign {
   slug: string;
   description?: string;
   bannerImage?: string;
+  discountType: 'PERCENTAGE' | 'FIXED';
   discountDefault: number;
   startDate: string;
   endDate: string;
@@ -58,6 +59,7 @@ export interface CreateCampaignRequest {
   slug: string;
   description?: string;
   file?: File;
+  discountType: 'PERCENTAGE' | 'FIXED';
   discountDefault: number;
   startDate: string;
   endDate: string;
@@ -69,6 +71,7 @@ export interface UpdateCampaignRequest {
   slug?: string;
   description?: string;
   file?: File;
+  discountType?: 'PERCENTAGE' | 'FIXED';
   discountDefault?: number;
   startDate?: string;
   endDate?: string;

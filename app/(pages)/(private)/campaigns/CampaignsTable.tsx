@@ -14,9 +14,10 @@ import {
 import { ICampaign, CampaignFilters } from '@/types/campaign.types';
 import PaginationTable from '@/components/PaginationTable';
 import { Button } from '@/components/ui/button';
-import { Loader2, ChevronUp, ChevronDown, Eye, Edit, Megaphone as CampaignIcon } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Loader2, ChevronUp, ChevronDown, Eye, Pencil, Megaphone as CampaignIcon } from 'lucide-react';
 import { formatDateTime, formatDate } from '@/lib/helpers';
-import { useCampaigns, useDeleteCampaign } from '@/hooks/useCampaigns';
+import { useCampaigns } from '@/hooks/useCampaigns';
 import Image from 'next/image';
 import DeleteCampaignModal from './DeleteCampaignModal';
 
@@ -55,7 +56,6 @@ export default function CampaignsTable() {
   }), [page, limit, searchTerm, isActive, startDate, endDate, sortBy, sortOrder]);
 
   const { data: campaignsData, isLoading, error } = useCampaigns(filters);
-  const deleteMutation = useDeleteCampaign();
 
   const renderSkeletonRow = (index: number) => (
     <TableRow key={`skeleton-${index}`}>
@@ -72,6 +72,9 @@ export default function CampaignsTable() {
         <div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div>
       </TableCell>
       <TableCell>
+        <div className="h-4 w-16 bg-gray-200 rounded animate-pulse"></div>
+      </TableCell>
+      <TableCell>
         <div className="h-4 w-24 bg-gray-200 rounded animate-pulse"></div>
       </TableCell>
       <TableCell>
@@ -83,14 +86,14 @@ export default function CampaignsTable() {
     </TableRow>
   );
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'ACTIVE':
-        return 'bg-green-400 ';
-      case 'INACTIVE':
-      default:
-        return 'bg-gray-400 ';
-    }
+  /**
+   * Lifecycle status — liveness is purely the isActive flag (dates are
+   * display-only schedule info). Only ONE campaign can be active at a time.
+   */
+  const getLifecycle = (campaign: ICampaign) => {
+    return campaign.isActive
+      ? { label: 'Active', dot: 'bg-green-400', badge: 'bg-green-100 text-green-700 border-green-200' }
+      : { label: 'Inactive', dot: 'bg-gray-400', badge: 'bg-gray-100 text-gray-700 border-gray-200' };
   };
 
   const handleLimitChange = (newLimit: number) => {
@@ -146,6 +149,7 @@ export default function CampaignsTable() {
                 </div>
               </TableHead>
               <TableHead className="w-[150px]">Default Disc.</TableHead>
+              <TableHead className="w-[90px] text-center">Products</TableHead>
               <TableHead
                 className="cursor-pointer select-none hover:bg-muted/50 transition-colors w-[150px]"
                 onClick={() => handleSort('isActive')}
@@ -194,7 +198,7 @@ export default function CampaignsTable() {
                   </div>
                 </div>
               </TableHead>
-              <TableHead className="w-[120px] text-right">Actions</TableHead>
+              <TableHead className="w-[100px]">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -233,17 +237,25 @@ export default function CampaignsTable() {
                       </div>
                     </TableCell>
                     <TableCell className="font-bold text-blue-700">
-                      {campaign.discountDefault}%
+                      {campaign.discountType === 'FIXED'
+                        ? `৳${campaign.discountDefault}`
+                        : `${campaign.discountDefault}%`}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <Badge variant="secondary">
+                        {campaign._count?.products ?? 0}
+                      </Badge>
                     </TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`w-2 h-2 rounded-full ${getStatusColor(campaign.isActive ? 'ACTIVE' : 'INACTIVE')}`}
-                        ></span>
-                        <span className="text-sm text-muted-foreground">
-                          {campaign.isActive ? 'Active' : 'Inactive'}
-                        </span>
-                      </div>
+                      {(() => {
+                        const lifecycle = getLifecycle(campaign);
+                        return (
+                          <Badge variant="outline" className={`gap-1.5 ${lifecycle.badge}`}>
+                            <span className={`w-1.5 h-1.5 rounded-full ${lifecycle.dot}`} />
+                            {lifecycle.label}
+                          </Badge>
+                        );
+                      })()}
                     </TableCell>
                     <TableCell className="text-sm">
                       <div className="flex flex-col">
@@ -264,19 +276,18 @@ export default function CampaignsTable() {
                         </span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        <Button asChild variant="ghost" size="icon" className="h-8 w-8">
-                          <Link href={`/campaigns/${campaign.id}`}>
-                            <Eye className="w-4 h-4 text-blue-600" />
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        <Button variant="outline" size="sm" asChild>
+                          <Link href={`/campaigns/${campaign.id}`} title="View campaign">
+                            <Eye className="w-4 h-4" />
                           </Link>
                         </Button>
-                        <Button asChild variant="ghost" size="icon" className="h-8 w-8">
-                          <Link href={`/campaigns/${campaign.id}/update-campaign`}>
-                            <Edit className="w-4 h-4 text-amber-600" />
+                        <Button variant="outline" size="sm" asChild>
+                          <Link href={`/campaigns/${campaign.id}/update-campaign`} title="Edit campaign">
+                            <Pencil className="w-4 h-4" />
                           </Link>
                         </Button>
-                        <DeleteCampaignModal campaign={campaign} />
                       </div>
                     </TableCell>
                   </TableRow>
@@ -284,7 +295,7 @@ export default function CampaignsTable() {
               : (
                 <TableRow>
                   <TableCell
-                    colSpan={7}
+                    colSpan={8}
                     className="text-center py-8 text-muted-foreground h-80"
                   >
                     No campaigns found

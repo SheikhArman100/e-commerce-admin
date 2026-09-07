@@ -6,7 +6,7 @@ import { useCampaign, useRemoveProductFromCampaign } from '@/hooks/useCampaigns'
 import { ScreenLoader } from '@/components/screen-loader';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { ArrowLeft, Edit, Trash2, Calendar, Megaphone, Percent, Package, ExternalLink } from 'lucide-react';
+import { ArrowLeft, Edit, Trash2, Calendar, Megaphone, Percent, Package, ExternalLink, DollarSign, Clock, Hourglass } from 'lucide-react';
 import Link from 'next/link';
 import { Badge } from '@/components/ui/badge';
 import Image from 'next/image';
@@ -26,6 +26,16 @@ export default function CampaignDetailsPage() {
 
   const { data: campaign, isLoading, error } = useCampaign(campaignId);
   const removeProductMutation = useRemoveProductFromCampaign();
+
+  /**
+   * Lifecycle status — liveness is purely the isActive flag (dates are
+   * display-only schedule info). Only ONE campaign can be active at a time.
+   */
+  const getLifecycle = () => {
+    return campaign?.isActive
+      ? { label: 'Active', dot: 'bg-green-400', badge: 'bg-green-100 text-green-700 border-green-200' }
+      : { label: 'Inactive', dot: 'bg-gray-400', badge: 'bg-gray-100 text-gray-700 border-gray-200' };
+  };
 
   const handleRemoveProduct = async (productId: number, productName: string) => {
     if (window.confirm(`Remove "${productName}" from this campaign?`)) {
@@ -116,11 +126,21 @@ export default function CampaignDetailsPage() {
             <CardContent className="space-y-6">
               <div className="flex items-start gap-4">
                 <div className="p-2 bg-blue-50 rounded-lg">
-                  <Percent className="w-5 h-5 text-blue-600" />
+                  {campaign.discountType === 'FIXED' ? (
+                    <DollarSign className="w-5 h-5 text-blue-600" />
+                  ) : (
+                    <Percent className="w-5 h-5 text-blue-600" />
+                  )}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">Default Discount</p>
-                  <p className="text-2xl font-bold text-blue-700">{campaign.discountDefault}%</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    Default Discount {campaign.discountType === 'FIXED' ? '(Fixed Amount)' : '(Percentage)'}
+                  </p>
+                  <p className="text-2xl font-bold text-blue-700">
+                    {campaign.discountType === 'FIXED'
+                      ? `৳${campaign.discountDefault}`
+                      : `${campaign.discountDefault}%`}
+                  </p>
                 </div>
               </div>
 
@@ -135,10 +155,39 @@ export default function CampaignDetailsPage() {
               </div>
 
               <div className="pt-4 border-t">
-                <p className="text-sm font-medium text-muted-foreground mb-2">Internal Status</p>
-                <Badge className={`px-4 py-1 font-bold ${campaign.isActive ? 'bg-green-100 text-green-700 border-green-200' : 'bg-gray-100 text-gray-700 border-gray-200'}`}>
-                  {campaign.isActive ? 'ACTIVE' : 'INACTIVE'}
-                </Badge>
+                <p className="text-sm font-medium text-muted-foreground mb-2">Lifecycle Status</p>
+                {(() => {
+                  const lifecycle = getLifecycle();
+                  return (
+                    <div className="space-y-2">
+                      <Badge className={`px-4 py-1 font-bold gap-1.5 ${lifecycle.badge}`}>
+                        <span className={`w-1.5 h-1.5 rounded-full ${lifecycle.dot}`} />
+                        {lifecycle.label.toUpperCase()}
+                      </Badge>
+                      {campaign.isActive ? (
+                        (() => {
+                          const daysLeft = Math.ceil(
+                            (new Date(campaign.endDate).getTime() - Date.now()) / (24 * 60 * 60 * 1000)
+                          );
+                          // Schedule info only — dates don't drive campaign liveness
+                          return daysLeft >= 0 ? (
+                            <p className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Hourglass className="w-3 h-3" /> Scheduled to end in {daysLeft} day{daysLeft === 1 ? '' : 's'}
+                            </p>
+                          ) : (
+                            <p className="text-xs text-muted-foreground flex items-center gap-1">
+                              <Clock className="w-3 h-3" /> Schedule window has passed
+                            </p>
+                          );
+                        })()
+                      ) : (
+                        <p className="text-xs text-muted-foreground">
+                          Activate via Edit — only one campaign can be active at a time
+                        </p>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
             </CardContent>
           </Card>
@@ -177,7 +226,11 @@ export default function CampaignDetailsPage() {
                       const originalPrice = product?.flavors?.[0]?.price || product?.flavors?.[0]?.sizes?.[0]?.price || 0;
                       
                       const discount = assoc.customDiscountPercentage ?? campaign.discountDefault;
-                      const finalPrice = originalPrice - (originalPrice * discount / 100);
+                      // PERCENTAGE → % off; FIXED → flat ৳ off (custom % overrides
+                      // don't apply to FIXED campaigns, matching the backend)
+                      const finalPrice = campaign.discountType === 'FIXED'
+                        ? Math.max(originalPrice - discount, 0)
+                        : originalPrice - (originalPrice * discount / 100);
 
                       return (
                         <TableRow key={assoc.id}>
@@ -203,7 +256,9 @@ export default function CampaignDetailsPage() {
                           </TableCell>
                           <TableCell>
                             <Badge variant="secondary" className={assoc.customDiscountPercentage ? 'bg-amber-100 text-amber-700 hover:bg-amber-100' : 'bg-blue-100 text-blue-700 hover:bg-blue-100'}>
-                              {discount}% {assoc.customDiscountPercentage ? '(Custom)' : '(Default)'}
+                              {campaign.discountType === 'FIXED'
+                                ? `${discount} ৳ ${assoc.customDiscountPercentage ? '(Custom)' : '(Default)'}`
+                                : `${discount}% ${assoc.customDiscountPercentage ? '(Custom)' : '(Default)'}`}
                             </Badge>
                           </TableCell>
                           <TableCell className="font-bold text-blue-600">

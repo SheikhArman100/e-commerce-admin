@@ -20,6 +20,13 @@ import { Label } from '@/components/ui/label';
 import TextInput from '@/components/input/TextInput';
 import TextAreaInput from '@/components/input/TextAreaInput';
 import DateInput from '@/components/input/DateInput';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import Link from 'next/link';
 import FileUpload from '@/components/input/FileUpload';
 import { ScreenLoader } from '@/components/screen-loader';
@@ -39,10 +46,16 @@ export default function UpdateCampaignPage() {
     handleSubmit,
     control,
     reset,
+    watch,
     formState: { errors, isDirty },
   } = useForm<UpdateCampaignFormData>({
     resolver: zodResolver(updateCampaignSchema as any),
+    defaultValues: {
+      discountType: 'PERCENTAGE',
+    },
   });
+
+  const discountType = watch('discountType');
 
   React.useEffect(() => {
     if (campaign) {
@@ -50,6 +63,7 @@ export default function UpdateCampaignPage() {
         title: campaign.title,
         slug: campaign.slug,
         description: campaign.description,
+        discountType: campaign.discountType ?? 'PERCENTAGE',
         discountDefault: campaign.discountDefault,
         startDate: campaign.startDate ? new Date(campaign.startDate).toISOString().split('T')[0] : '',
         endDate: campaign.endDate ? new Date(campaign.endDate).toISOString().split('T')[0] : '',
@@ -63,6 +77,7 @@ export default function UpdateCampaignPage() {
     if (values.title) formData.append('title', values.title);
     if (values.slug) formData.append('slug', values.slug);
     if (values.description !== undefined) formData.append('description', values.description);
+    if (values.discountType !== undefined) formData.append('discountType', values.discountType);
     if (values.discountDefault !== undefined) formData.append('discountDefault', values.discountDefault.toString());
     if (values.startDate) formData.append('startDate', values.startDate);
     if (values.endDate) formData.append('endDate', values.endDate);
@@ -147,8 +162,31 @@ export default function UpdateCampaignPage() {
                     className="md:col-span-2"
                   />
 
+                  <div className="space-y-2">
+                    <Label>Discount Type</Label>
+                    <Controller
+                      name="discountType"
+                      control={control}
+                      render={({ field }) => (
+                        // key forces a remount when reset() fills the value —
+                        // otherwise Radix Select keeps its initially-empty
+                        // trigger and never shows the existing discount type
+                        <Select key={field.value} value={field.value} onValueChange={field.onChange}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Discount type" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="PERCENTAGE">Percentage (%)</SelectItem>
+                            <SelectItem value="FIXED">Fixed Amount (৳)</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                    {errors.discountType && <p className="text-xs text-red-500">{errors.discountType.message}</p>}
+                  </div>
+
                   <TextInput
-                    label="Default Discount (%)"
+                    label={discountType === 'FIXED' ? 'Default Discount (৳ off)' : 'Default Discount (%)'}
                     type="number"
                     placeholder="0"
                     name="discountDefault"
@@ -168,6 +206,10 @@ export default function UpdateCampaignPage() {
                       />
                       <Label className="text-sm font-normal">Active</Label>
                     </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      Only one campaign can be active at a time — activation will be
+                      rejected while another campaign is still active.
+                    </p>
                   </div>
                 </div>
               </CardContent>

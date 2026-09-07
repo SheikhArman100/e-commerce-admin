@@ -1,5 +1,31 @@
 export type CouponTargetType = 'ALL' | 'NEW_USERS' | 'INACTIVE_USERS' | 'SPECIFIC_USERS';
 
+/** Customer info embedded in target users / redemptions */
+export interface CouponUserInfo {
+  id: number;
+  name: string;
+  email: string;
+  detail?: {
+    image?: { path?: string } | null;
+  } | null;
+}
+
+/** Allow-list entry for SPECIFIC_USERS coupons — with resolved profile */
+export interface CouponTargetUser {
+  userId: number;
+  user?: CouponUserInfo;
+}
+
+/** A recorded use of a coupon (one per order) — with resolved profile */
+export interface CouponRedemption {
+  id: number;
+  couponId: number;
+  userId: number;
+  orderId: number;
+  createdAt: string;
+  user?: CouponUserInfo;
+}
+
 export interface ICoupon {
   id: number;
   code: string;
@@ -11,7 +37,7 @@ export interface ICoupon {
   expiryDate: string;
   targetType: CouponTargetType;
   inactiveDays?: number;
-  targetUsers?: { userId: number }[];
+  targetUsers?: CouponTargetUser[];
   usageLimit?: number;
   limitPerUser?: number;
   usedCount: number;
@@ -32,7 +58,7 @@ export interface Coupon {
   expiryDate: string;
   targetType: CouponTargetType;
   inactiveDays?: number;
-  targetUsers?: { userId: number }[];
+  targetUsers?: CouponTargetUser[];
   usageLimit?: number;
   limitPerUser?: number;
   usedCount: number;
@@ -75,6 +101,13 @@ export interface CouponListResponse {
 
 export interface CouponResponse {
   data: ICoupon;
+  message: string;
+  statusCode: number;
+  success: boolean;
+}
+
+export interface CouponRedemptionsResponse {
+  data: CouponRedemption[];
   message: string;
   statusCode: number;
   success: boolean;
