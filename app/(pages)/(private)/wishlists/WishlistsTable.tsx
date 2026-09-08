@@ -214,7 +214,7 @@ export default function WishlistsTable() {
                             <Eye className="w-4 h-4" />
                           </Link>
                         </Button>
-                        <DeleteWishlistModal wishlist={wishlist} />
+                        {/* <DeleteWishlistModal wishlist={wishlist} /> */}
                       </div>
                     </TableCell>
                   </TableRow>

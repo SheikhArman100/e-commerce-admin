@@ -119,12 +119,18 @@ export default function CartDetailPage() {
     });
   };
 
+  // Use the discounted salesPrice when the backend provides one (campaign
+  // pricing), falling back to the base price otherwise.
   const calculateItemTotal = (item: any) => {
-    return item.productFlavorSize.price * item.quantity;
+    const unitPrice = item.salesPrice ?? item.productFlavorSize.price;
+    return unitPrice * item.quantity;
   };
 
   const calculateCartTotal = () => {
-    return cart.items.reduce((total, item) => total + calculateItemTotal(item), 0);
+    return (
+      cart.totals?.totalAmount ??
+      cart.items.reduce((total, item) => total + calculateItemTotal(item), 0)
+    );
   };
 
   return (
@@ -184,7 +190,21 @@ export default function CartDetailPage() {
                         </p>
                         
                         <div className="flex items-center gap-4 mt-2 text-sm">
-                          <span>Price: ${item.productFlavorSize.price.toFixed(2)}</span>
+                          <span>
+                            {item.salesPrice &&
+                            item.salesPrice !== item.productFlavorSize.price ? (
+                              <>
+                                <span className="line-through text-muted-foreground">
+                                  ৳{item.productFlavorSize.price.toFixed(2)}
+                                </span>{' '}
+                                <span className="font-medium">
+                                  ৳{item.salesPrice.toFixed(2)}
+                                </span>
+                              </>
+                            ) : (
+                              <span>৳{item.productFlavorSize.price.toFixed(2)}</span>
+                            )}
+                          </span>
                           <span>Stock: {item.productFlavorSize.stock}</span>
                         </div>
                         {/* {item.productFlavorSize.productFlavor?.flavor?.color && (
@@ -265,7 +285,7 @@ export default function CartDetailPage() {
                        Modified:  {formatDateTime(item.updatedAt)}
                       </span>
                       <span className="font-medium">
-                        Total: ${calculateItemTotal(item).toFixed(2)}
+                        Total: ৳{calculateItemTotal(item).toFixed(2)}
                       </span>
                     </div>
                   </div>
@@ -337,11 +357,13 @@ export default function CartDetailPage() {
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span>Total Items:</span>
-                  <span className="font-medium">{cart.items.length}</span>
+                  <span className="font-medium">
+                    {cart.totals?.totalItems ?? cart.items.length}
+                  </span>
                 </div>
                 <div className="flex justify-between">
                   <span>Total Amount:</span>
-                  <span className="font-medium text-lg">${calculateCartTotal().toFixed(2)}</span>
+                  <span className="font-medium text-lg">৳{calculateCartTotal().toFixed(2)}</span>
                 </div>
 
                 <div>

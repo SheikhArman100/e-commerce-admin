@@ -128,10 +128,15 @@ export default function CartsTable() {
   const carts: ICart[] = cartsData?.data || [];
   const totalCount = cartsData?.meta?.count || 0;
 
-  // Calculate total amount for a cart by summing item prices
+  // Calculate total amount for a cart. Prefer the backend-provided discounted
+  // total when available; otherwise fall back to summing per-item prices
+  // (using the discounted salesPrice if present).
   const calculateCartTotal = (cart: ICart): number => {
+    if (cart.totals?.totalAmount !== undefined) return cart.totals.totalAmount;
+
     return cart.items.reduce((total, item) => {
-      return total + (item.productFlavorSize.price * item.quantity);
+      const unitPrice = item.salesPrice ?? item.productFlavorSize.price;
+      return total + (unitPrice * item.quantity);
     }, 0);
   };
 
@@ -214,7 +219,7 @@ export default function CartsTable() {
                   </TableCell>
                   <TableCell>
                     <span className="font-medium">
-                      ${calculateCartTotal(cart).toFixed(2)}
+                      ৳{calculateCartTotal(cart).toFixed(2)}
                     </span>
                   </TableCell>
 

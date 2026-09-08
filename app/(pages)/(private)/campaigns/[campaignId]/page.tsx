@@ -20,6 +20,58 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
+// ---------------------------------------------------------------------------
+// Price-range helpers
+//
+// A product can expose prices two ways: quantity-based flavors carry a direct
+// `price`, while packaged flavors expose `sizes[].price`. The "original price
+// range" spans the min..max across every variant, and the "final price range"
+// applies the campaign discount to each variant's price.
+//   - FIXED:      base − discountDefault (flat ৳ off; the custom % override
+//                 does NOT apply to FIXED campaigns)
+//   - PERCENTAGE: base × (1 − (customDiscountPercentage ?? discountDefault) / 100)
+// ---------------------------------------------------------------------------
+const computePriceRange = (
+  flavors: any,
+  discountType: 'PERCENTAGE' | 'FIXED',
+  discountDefault: number,
+  customDiscountPercentage?: number,
+) => {
+  const prices: number[] = [];
+
+  (flavors || []).forEach((flavor: any) => {
+    if (flavor.price != null) {
+      const p = Number(flavor.price);
+      if (!isNaN(p)) prices.push(p);
+    }
+    (flavor.sizes || []).forEach((size: any) => {
+      const p = Number(size.price);
+      if (!isNaN(p)) prices.push(p);
+    });
+  });
+
+  if (prices.length === 0) return null;
+
+  const toFinal = (base: number) =>
+    discountType === 'FIXED'
+      ? Math.max(base - discountDefault, 0)
+      : base * (1 - (customDiscountPercentage ?? discountDefault) / 100);
+
+  const finals = prices.map(toFinal);
+
+  return {
+    originalMin: Math.min(...prices),
+    originalMax: Math.max(...prices),
+    finalMin: Math.min(...finals),
+    finalMax: Math.max(...finals),
+  };
+};
+
+const formatPrice = (n: number) => `৳${n.toLocaleString()}`;
+
+const formatPriceRange = (min: number, max: number) =>
+  min === max ? formatPrice(min) : `${formatPrice(min)} – ${formatPrice(max)}`;
+
 export default function CampaignDetailsPage() {
   const params = useParams();
   const campaignId = params.campaignId as string;
@@ -212,9 +264,9 @@ export default function CampaignDetailsPage() {
                   <TableRow className="bg-muted/50">
                     <TableHead className="w-[80px]">Product</TableHead>
                     <TableHead>Name</TableHead>
-                    <TableHead>Original Price</TableHead>
+                    <TableHead>Original Price Range</TableHead>
                     <TableHead>Campaign Discount</TableHead>
-                    <TableHead>Final Price</TableHead>
+                    <TableHead>Final Price Range</TableHead>
                     <TableHead className="text-right w-[100px]">Action</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -223,14 +275,12 @@ export default function CampaignDetailsPage() {
                     campaign.products.map((assoc) => {
                       const product = assoc.product;
                       const thumbnail = product?.flavors?.[0]?.images?.[0]?.path;
-                      const originalPrice = product?.flavors?.[0]?.price || product?.flavors?.[0]?.sizes?.[0]?.price || 0;
-                      
-                      const discount = assoc.customDiscountPercentage ?? campaign.discountDefault;
-                      // PERCENTAGE → % off; FIXED → flat ৳ off (custom % overrides
-                      // don't apply to FIXED campaigns, matching the backend)
-                      const finalPrice = campaign.discountType === 'FIXED'
-                        ? Math.max(originalPrice - discount, 0)
-                        : originalPrice - (originalPrice * discount / 100);
+                      const priceRange = computePriceRange(
+                        product?.flavors,
+                        campaign.discountType,
+                        campaign.discountDefault,
+                        assoc.customDiscountPercentage,
+                      );
 
                       return (
                         <TableRow key={assoc.id}>
@@ -251,18 +301,20 @@ export default function CampaignDetailsPage() {
                               </Link>
                             </div>
                           </TableCell>
-                          <TableCell className="text-muted-foreground line-through">
-                            ৳{originalPrice.toLocaleString()}
+                          <TableCell>
+                            <span className="text-muted-foreground line-through">
+                              {priceRange ? formatPriceRange(priceRange.originalMin, priceRange.originalMax) : 'N/A'}
+                            </span>
                           </TableCell>
                           <TableCell>
                             <Badge variant="secondary" className={assoc.customDiscountPercentage ? 'bg-amber-100 text-amber-700 hover:bg-amber-100' : 'bg-blue-100 text-blue-700 hover:bg-blue-100'}>
                               {campaign.discountType === 'FIXED'
-                                ? `${discount} ৳ ${assoc.customDiscountPercentage ? '(Custom)' : '(Default)'}`
-                                : `${discount}% ${assoc.customDiscountPercentage ? '(Custom)' : '(Default)'}`}
+                                ? `৳${campaign.discountDefault} off`
+                                : `${assoc.customDiscountPercentage ?? campaign.discountDefault}% ${assoc.customDiscountPercentage ? '(Custom)' : '(Default)'}`}
                             </Badge>
                           </TableCell>
                           <TableCell className="font-bold text-blue-600">
-                            ৳{finalPrice.toLocaleString()}
+                            {priceRange ? formatPriceRange(priceRange.finalMin, priceRange.finalMax) : 'N/A'}
                           </TableCell>
                           <TableCell className="text-right">
                             <Button 

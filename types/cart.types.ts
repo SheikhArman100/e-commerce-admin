@@ -59,6 +59,15 @@ export interface ICartItem {
       name: string;
     };
   };
+  // Discount-aware pricing returned by the backend (campaign pricing)
+  originalPrice?: number;
+  salesPrice?: number;
+  activeCampaign?: {
+    id: number;
+    title: string;
+    discountDefault: number;
+    discountType: string;
+  } | null;
   productFlavorSize: {
     id: number;
     productId: number;

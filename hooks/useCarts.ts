@@ -61,7 +61,7 @@ export const useSingleCart = () => {
     queryKey: ['single-cart'],
     queryFn: async (): Promise<ICart> => {
       const response = await axiosPrivate.get<{ data: ICart; message: string; statusCode: number; success: boolean }>(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/cart/single-cart`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/cart/user`
       );
       return response.data.data;
     },
