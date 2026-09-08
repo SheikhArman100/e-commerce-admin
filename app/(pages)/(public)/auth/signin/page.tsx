@@ -91,14 +91,14 @@ export default function SignIn() {
       <div className="w-full max-w-md space-y-6 ">
         {/* <div className="text-center space-y-2">
           <h1 className="text-2xl sm:text-3xl font-bold">Welcome Back</h1>
-          <p className="text-sm sm:text-base text-muted-foreground">Sign in to your CDR Central Dashboard</p>
+          <p className="text-sm sm:text-base text-muted-foreground">Sign in to your E-commerce Central Dashboard</p>
         </div> */}
 
         <Card className="py-8">
           <CardHeader className="space-y-1 py-3 flex flex-col">
             <CardTitle className="text-xl sm:text-2xl">Welcome Back</CardTitle>
             <CardDescription className="text-sm">
-              Sign in to your CDR Central Dashboard
+              Sign in to your E-commerce Central Dashboard
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4 py-6">
