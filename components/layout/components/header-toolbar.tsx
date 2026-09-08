@@ -17,8 +17,18 @@ import {
   Sun,
   User,
 } from 'lucide-react';
-import { toAbsoluteUrl } from '@/lib/helpers';
+import { toAbsoluteUrl, formatDateTime } from '@/lib/helpers';
 import useUserInfo from '@/hooks/useUserInfo';
+import {
+  useMarkAllNotificationsAsRead,
+  useMarkNotificationAsRead,
+  useNotifications,
+  useNotificationSocket,
+  useUnreadNotificationCount,
+} from '@/hooks/useNotifications';
+import { INotification } from '@/types/notification.types';
+import { useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import {
   Avatar,
   AvatarFallback,
@@ -26,6 +36,7 @@ import {
   AvatarIndicator,
   AvatarStatus,
 } from '@/components/ui/avatar';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -46,8 +57,22 @@ import ProfileImage from '@/components/ProfileImage';
 export function HeaderToolbar() {
   const { isMobile } = useLayout();
   const router = useRouter();
+  const queryClient = useQueryClient();
   const { data, isPending } = useUserInfo();
   const user = data?.data;
+
+  // Realtime notifications (admin-only)
+  const { data: recentData } = useNotifications({ page: 1, limit: 5 });
+  const { data: unreadCount = 0 } = useUnreadNotificationCount();
+  const markAllAsReadMutation = useMarkAllNotificationsAsRead();
+  const markAsReadMutation = useMarkNotificationAsRead();
+  const recentNotifications: INotification[] = recentData?.data || [];
+
+  // Socket: on a new push, refresh counts/lists and show a toast
+  useNotificationSocket((notification) => {
+    queryClient.invalidateQueries({ queryKey: ['notifications'], refetchType: 'all' });
+    toast.info(notification.title, { description: notification.body });
+  });
   // const { theme, setTheme } = useTheme();
 
   const handleInputChange = () => {};
@@ -69,8 +94,13 @@ export function HeaderToolbar() {
       {/* Notifications Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button mode="icon" variant="outline">
+          <Button mode="icon" variant="outline" className="relative">
             <Bell />
+            {unreadCount > 0 && (
+              <span className="absolute -top-1 -end-1 min-w-4 h-4 px-1 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center">
+                {unreadCount > 99 ? '99+' : unreadCount}
+              </span>
+            )}
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -80,61 +110,72 @@ export function HeaderToolbar() {
           sideOffset={11}
         >
           <div className="flex items-center justify-between px-3 py-2 border-b">
-            <span className="text-sm font-semibold">Notifications</span>
-            <Button variant="ghost" size="sm">
+            <span className="text-sm font-semibold">
+              Notifications
+              {unreadCount > 0 && (
+                <Badge variant="secondary" className="ml-2">
+                  {unreadCount} new
+                </Badge>
+              )}
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              disabled={markAllAsReadMutation.isPending || unreadCount === 0}
+              onClick={() => markAllAsReadMutation.mutate()}
+            >
               Mark all read
             </Button>
           </div>
 
-          <DropdownMenuItem className="flex flex-col items-start p-3">
-            <div className="flex items-start gap-3 w-full">
-              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">Notification 1</p>
-                <p className="text-xs text-muted-foreground">
-                  Description for notification 1.
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  2 minutes ago
-                </p>
-              </div>
+          {recentNotifications.length > 0 ? (
+            recentNotifications.map((notification) => (
+              <DropdownMenuItem
+                key={notification.id}
+                className="flex flex-col items-start p-3 cursor-pointer"
+                onClick={() => {
+                  if (!notification.isRead) {
+                    markAsReadMutation.mutate(notification.id);
+                  }
+                  if (notification.link) {
+                    router.push(notification.link);
+                  }
+                }}
+              >
+                <div className="flex items-start gap-3 w-full">
+                  <div
+                    className={`w-2 h-2 rounded-full mt-2 flex-shrink-0 ${
+                      notification.isRead ? 'bg-gray-300' : 'bg-blue-500'
+                    }`}
+                  ></div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">
+                      {notification.title}
+                    </p>
+                    <p className="text-xs text-muted-foreground line-clamp-2">
+                      {notification.body}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {formatDateTime(notification.createdAt)}
+                    </p>
+                  </div>
+                </div>
+              </DropdownMenuItem>
+            ))
+          ) : (
+            <div className="px-3 py-8 text-center text-sm text-muted-foreground">
+              No notifications yet
             </div>
-          </DropdownMenuItem>
-          <DropdownMenuItem className="flex flex-col items-start p-3">
-            <div className="flex items-start gap-3 w-full">
-              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">Notification 2</p>
-                <p className="text-xs text-muted-foreground">
-                  Description for notification 2.
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  5 minutes ago
-                </p>
-              </div>
-            </div>
-          </DropdownMenuItem>
-          <DropdownMenuItem className="flex flex-col items-start p-3">
-            <div className="flex items-start gap-3 w-full">
-              <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 flex-shrink-0"></div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">Notification 3</p>
-                <p className="text-xs text-muted-foreground">
-                  Description for notification 3.
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  10 minutes ago
-                </p>
-              </div>
-            </div>
-          </DropdownMenuItem>
+          )}
 
           <DropdownMenuSeparator />
 
-          <DropdownMenuItem className="text-center">
-            <span className="text-sm text-muted-foreground">
-              View all notifications
-            </span>
+          <DropdownMenuItem className="text-center" asChild>
+            <Link href="/notifications" className="cursor-pointer">
+              <span className="text-sm text-muted-foreground">
+                View all notifications
+              </span>
+            </Link>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
