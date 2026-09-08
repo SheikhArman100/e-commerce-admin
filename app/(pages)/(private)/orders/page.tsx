@@ -42,7 +42,7 @@ export default function OrdersPage() {
               <div className="flex flex-col sm:flex-row flex-wrap gap-4 flex-1">
                 <SearchFilter
                   paramName="searchTerm"
-                  placeholder="Search orders by customer"
+                  placeholder="Search orders by customer's name, email, or order number"
                 />
                 <StatusFilter
                   filters={orderStatusFilters}

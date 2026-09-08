@@ -33,7 +33,7 @@ export default function WishlistsPage() {
           <div className="flex flex-col gap-4 mb-6">
             <SearchFilter
                   paramName="searchTerm"
-                  placeholder="Search wishlists by product"
+                  placeholder="Search wishlists by product's title"
                 />
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">

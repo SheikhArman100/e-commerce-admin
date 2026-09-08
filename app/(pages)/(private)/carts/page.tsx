@@ -25,12 +25,13 @@ export default function CartsPage() {
         <CardContent>
           {/* Filters */}
           <div className="flex flex-col gap-4 mb-6">
+            <SearchFilter
+                  paramName="searchTerm"
+                  placeholder="Search carts by user's name or email"
+                />
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
-                <SearchFilter
-                  paramName="searchTerm"
-                  placeholder="Search carts by user's name"
-                />
+                
                 <ProductFilter
                   paramName="productId"
                   placeholder="Filter by product"

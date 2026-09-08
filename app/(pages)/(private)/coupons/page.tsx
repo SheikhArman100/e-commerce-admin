@@ -55,7 +55,7 @@ export default function CouponsPage() {
           <div className="flex flex-col gap-4 mb-6 pt-6">
             <SearchFilter
               paramName="searchTerm"
-              placeholder="Search coupons by code"
+              placeholder="Search coupons by code or description"
             />
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">

@@ -28,7 +28,7 @@ export default function NotificationsPage() {
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <SearchFilter
                 paramName="searchTerm"
-                placeholder="Search notifications"
+                placeholder="Search notifications by title or body"
               />
               <ClearAllFiltersButton />
             </div>

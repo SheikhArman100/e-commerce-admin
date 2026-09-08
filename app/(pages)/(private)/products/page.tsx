@@ -52,12 +52,13 @@ export default function ProductsPage() {
         <CardContent>
           {/* Filters */}
           <div className="flex flex-col gap-4 mb-6">
+            <SearchFilter
+                  paramName="searchTerm"
+                  placeholder="Search products by title or description"
+                />
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
-                <SearchFilter
-                  paramName="searchTerm"
-                  placeholder="Search products by title"
-                />
+                
                 <CategoryFilter placeholder="Filter by category" />
                 <StatusFilter
                   filters={activeStatusFilters}

@@ -52,12 +52,12 @@ export default function FlavorsPage() {
         <CardContent>
           {/* Filters */}
           <div className="flex flex-col gap-4 mb-6">
-            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-              <div className="flex flex-col sm:flex-row gap-4 flex-1">
-                <SearchFilter
+            <SearchFilter
                   paramName="searchTerm"
                   placeholder="Search flavors by name"
                 />
+            <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+              <div className="flex flex-col sm:flex-row gap-4 flex-1">
                 <StatusFilter
                   filters={activeStatusFilters}
                   paramName="isActive"

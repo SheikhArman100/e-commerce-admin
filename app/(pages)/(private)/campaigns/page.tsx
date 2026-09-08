@@ -44,7 +44,7 @@ export default function CampaignsPage() {
               <div className="flex flex-col sm:flex-row flex-wrap gap-4 flex-1">
                 <SearchFilter
                   paramName="searchTerm"
-                  placeholder="Search by title, slug..."
+                  placeholder="Search by title, slug or description"
                 />
                 <StatusFilter
                   filters={campaignStatusFilters}

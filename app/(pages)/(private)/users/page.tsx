@@ -66,12 +66,13 @@ export default function UsersPage() {
         <CardContent>
           {/* Filters */}
           <div className="flex flex-col gap-4 mb-6">
+            <SearchFilter
+                  paramName="searchTerm"
+                  placeholder="Search users by name,email, or phone number"
+                />
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
               <div className="flex flex-col sm:flex-row gap-4 flex-1">
-                <SearchFilter
-                  paramName="searchTerm"
-                  placeholder="Search users by name"
-                />
+                
                 <StatusFilter
                   filters={verificationFilters}
                   paramName="isVerified"
