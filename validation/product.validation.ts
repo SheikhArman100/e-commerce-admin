@@ -90,6 +90,7 @@ export const createProductSchema = z.object({
   description: descriptionValidator,
   categoryId: categoryIdValidator,
   isActive: z.string().optional().default('true'),
+  isFeatured: z.string().optional().default('false'),
   flavors: z
     .array(flavorSchema)
     .min(1, 'At least one flavor is required')
@@ -102,6 +103,7 @@ export const updateProductSchema = z.object({
   description: descriptionValidator.optional(),
   categoryId: categoryIdValidator.optional(),
   isActive: z.string().optional(),
+  isFeatured: z.string().optional(),
   flavors: z
     .array(
       z.object({

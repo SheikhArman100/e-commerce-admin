@@ -26,6 +26,11 @@ const stockFilters = [
   { value: 'false', label: 'Out of Stock', color: '#ef4444' },
 ];
 
+const featuredFilters = [
+  { value: 'true', label: 'Featured', color: '#f59e0b' },
+  { value: 'false', label: 'Not Featured', color: '#6b7280' },
+];
+
 export default function ProductsPage() {
 
   return (
@@ -69,6 +74,11 @@ export default function ProductsPage() {
                   filters={stockFilters}
                   paramName="inStock"
                   placeholder="Filter by stock"
+                />
+                <StatusFilter
+                  filters={featuredFilters}
+                  paramName="isFeatured"
+                  placeholder="Filter by featured"
                 />
               </div>
               <ClearAllFiltersButton />

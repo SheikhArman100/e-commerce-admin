@@ -5,6 +5,7 @@ export interface IProduct {
   slug: string;
   description: string;
   isActive: boolean;
+  isFeatured: boolean;
   createdAt: string;
   updatedAt: string;
   category: {
@@ -51,6 +52,7 @@ export interface Product {
   slug: string;
   description: string;
   isActive: boolean;
+  isFeatured: boolean;
   createdAt: string;
   updatedAt: string;
   category: {
@@ -90,6 +92,7 @@ export interface CreateProductRequest {
   description: string;
   categoryId: string;
   isActive?: string;
+  isFeatured?: boolean;
   flavors: Array<{
     flavorId: string;
     soldByQuantity?: boolean; // true for quantity-based, false/undefined for size-based
@@ -112,6 +115,7 @@ export interface IUpdateProductInterface {
   description?: string;
   categoryId?: string;
   isActive?: boolean;
+  isFeatured?: boolean;
 
   // ===== Flavor operations =====
   flavors?: {
@@ -208,6 +212,7 @@ export interface ProductFilters {
   searchTerm?: string;
   title?: string;
   isActive?: string;
+  isFeatured?: string;
   categoryId?: string;
   categoryName?: string;
   minPrice?: string;

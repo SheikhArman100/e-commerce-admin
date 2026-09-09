@@ -35,6 +35,7 @@ export default function ProductsTable() {
   const limit = parseInt(searchParams.get('limit') || '10');
   const searchTerm = searchParams.get('searchTerm') || '';
   const isActive = searchParams.get('isActive') || '';
+  const isFeatured = searchParams.get('isFeatured') || '';
   const inStock = searchParams.get('inStock') || '';
   const categoryId = searchParams.get('categoryId') || '';
 
@@ -50,12 +51,13 @@ export default function ProductsTable() {
       limit,
       ...(searchTerm && { searchTerm }),
       ...(isActive && isActive !== 'all' && { isActive }),
+      ...(isFeatured && isFeatured !== 'all' && { isFeatured }),
       ...(inStock && inStock !== 'all' && { inStock }),
       ...(categoryId && categoryId !== 'all' && { categoryId }),
       sortBy,
       sortOrder,
     }),
-    [page, limit, searchTerm, isActive, inStock, categoryId, sortBy, sortOrder],
+    [page, limit, searchTerm, isActive, isFeatured, inStock, categoryId, sortBy, sortOrder],
   );
 
   const { data: productsData, isLoading, error } = useProducts(filters);
@@ -290,12 +292,19 @@ export default function ProductsTable() {
                           )}
                         </Avatar>
                         <div className="min-w-0 flex-1">
-                          <Link
-                            href={`/products/${product.id}`}
-                            className="font-medium hover:text-blue-800 hover:underline block truncate"
-                          >
-                            {product.title}
-                          </Link>
+                          <div className="flex items-center gap-2">
+                            <Link
+                              href={`/products/${product.id}`}
+                              className="font-medium hover:text-blue-800 hover:underline block truncate"
+                            >
+                              {product.title}
+                            </Link>
+                            {product.isFeatured && (
+                              <Badge className="bg-amber-100 text-amber-700 hover:bg-amber-100 text-xs">
+                                Featured
+                              </Badge>
+                            )}
+                          </div>
                           <p className="text-sm text-muted-foreground truncate">
                             {product.slug}
                           </p>

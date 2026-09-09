@@ -23,6 +23,7 @@ export const useProducts = (filters: ProductFilters = {}, options?: { enabled?: 
       if (filters.searchTerm) params.append('searchTerm', filters.searchTerm);
       if (filters.title) params.append('title', filters.title);
       if (filters.isActive !== undefined) params.append('isActive', filters.isActive);
+      if (filters.isFeatured !== undefined) params.append('isFeatured', filters.isFeatured);
       if (filters.categoryId) params.append('categoryId', filters.categoryId);
       if (filters.categoryName) params.append('categoryName', filters.categoryName);
       if (filters.minPrice) params.append('minPrice', filters.minPrice);
@@ -92,6 +93,9 @@ export const useCreateProduct = () => {
       if (data.isActive !== undefined) {
         formData.append('isActive', data.isActive);
       }
+      if (data.isFeatured !== undefined) {
+        formData.append('isFeatured', data.isFeatured ? 'true' : 'false');
+      }
 
       // Add flavors array as JSON string
       const flavorsData = data.flavors.map(flavor => ({
@@ -151,6 +155,9 @@ export const useUpdateProduct = () => {
       if (data.categoryId) formData.append('categoryId', data.categoryId);
       if (data.isActive !== undefined) {
         formData.append('isActive', data.isActive.toString());
+      }
+      if (data.isFeatured !== undefined) {
+        formData.append('isFeatured', data.isFeatured ? 'true' : 'false');
       }
 
       // Add flavor operations using bracket notation

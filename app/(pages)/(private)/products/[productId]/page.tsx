@@ -182,6 +182,18 @@ export default function ProductDetailPage() {
                 </Badge>
               </div>
             </div>
+
+            <div className="flex items-center gap-3">
+              <div className={`p-2 rounded-lg ${product.isFeatured ? 'bg-amber-100' : 'bg-gray-100'}`}>
+                <Package className={`w-5 h-5 ${product.isFeatured ? 'text-amber-600' : 'text-gray-400'}`} />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Featured</p>
+                <Badge className={product.isFeatured ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-800'}>
+                  {product.isFeatured ? 'Featured' : 'Not Featured'}
+                </Badge>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>

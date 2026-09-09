@@ -58,6 +58,7 @@ type UpdateProductFormData = {
   description: string;
   categoryId: string;
   isActive?: string;
+  isFeatured?: string;
   flavors: ProductFlavorForm[];
 };
 
@@ -89,6 +90,7 @@ export default function UpdateProductPage() {
       description: '',
       categoryId: '',
       isActive: 'true',
+      isFeatured: 'false',
       flavors: [],
     },
   } as any);
@@ -117,6 +119,7 @@ export default function UpdateProductPage() {
         description: product.description,
         categoryId: product.category.id.toString(),
         isActive: product.isActive ? 'true' : 'false',
+        isFeatured: (product as any).isFeatured ? 'true' : 'false',
         flavors: product.flavors.map((flavor) => {
           // Check if this is a quantity-based product
           const quantitySize = flavor.sizes?.find(size => size.size === null && size.soldByQuantity === true);
@@ -278,6 +281,9 @@ export default function UpdateProductPage() {
       }
       if (data.isActive !== (originalProductData.isActive ? 'true' : 'false')) {
         updateRequest.isActive = data.isActive === 'true';
+      }
+      if (data.isFeatured !== ((originalProductData.isFeatured ?? false) ? 'true' : 'false')) {
+        updateRequest.isFeatured = data.isFeatured === 'true';
       }
 
       // Flavor operations structure
@@ -569,6 +575,26 @@ export default function UpdateProductPage() {
                   </div>
                   <Controller
                     name="isActive"
+                    control={form.control}
+                    render={({ field }) => (
+                      <Switch
+                        checked={field.value === 'true'}
+                        onCheckedChange={(checked) => field.onChange(checked ? 'true' : 'false')}
+                      />
+                    )}
+                  />
+                </div>
+
+                {/* Featured Status */}
+                <div className="flex flex-col items-start justify-between gap-y-2">
+                  <div className="flex flex-col gap-1">
+                    <FormLabel>Featured Status</FormLabel>
+                    <p className="text-xs text-muted-foreground">
+                      Toggle to show this product in featured sections.
+                    </p>
+                  </div>
+                  <Controller
+                    name="isFeatured"
                     control={form.control}
                     render={({ field }) => (
                       <Switch

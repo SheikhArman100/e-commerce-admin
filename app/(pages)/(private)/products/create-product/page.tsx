@@ -57,6 +57,7 @@ type CreateProductFormData = {
   description: string;
   categoryId: string;
   isActive?: string;
+  isFeatured?: string;
   flavors: ProductFlavorForm[];
 };
 
@@ -74,6 +75,7 @@ export default function CreateProductPage() {
       description: '',
       categoryId: '',
       isActive: 'true',
+      isFeatured: 'false',
       flavors: [{
         flavorId: '',
         soldByQuantity: false, // Default to size-based
@@ -168,6 +170,7 @@ export default function CreateProductPage() {
         description: data.description,
         categoryId: data.categoryId,
         isActive: data.isActive,
+        isFeatured: data.isFeatured === 'true',
         flavors: data.flavors.map((flavor, flavorIndex) => {
           console.log(`Processing flavor ${flavorIndex}:`, flavor);
           return {
@@ -302,6 +305,26 @@ export default function CreateProductPage() {
                   </div>
                   <Controller
                     name="isActive"
+                    control={form.control}
+                    render={({ field }) => (
+                      <Switch
+                        checked={field.value === 'true'}
+                        onCheckedChange={(checked) => field.onChange(checked ? 'true' : 'false')}
+                      />
+                    )}
+                  />
+                </div>
+
+                {/* Featured Status */}
+                <div className="flex flex-col items-start justify-between gap-y-2">
+                  <div className="flex flex-col gap-1">
+                    <FormLabel>Featured Status</FormLabel>
+                    <p className="text-xs text-muted-foreground">
+                      Toggle to show this product in featured sections.
+                    </p>
+                  </div>
+                  <Controller
+                    name="isFeatured"
                     control={form.control}
                     render={({ field }) => (
                       <Switch
