@@ -248,7 +248,14 @@ export default function UpdateCouponPage() {
                     name="targetType"
                     control={control}
                     render={({ field }) => (
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      // key forces a remount when reset() fills the value —
+                      // otherwise Radix Select keeps its initially-empty
+                      // trigger and never shows the existing target audience
+                      <Select
+                        key={field.value}
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Who can use this coupon?" />
                         </SelectTrigger>
