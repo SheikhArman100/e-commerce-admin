@@ -46,12 +46,60 @@ export const updateUserSchema = z.object({
   isActive: z.boolean().optional(),
 });
 
+// Optional text field: empty string / whitespace-only means "not provided"
+// (form inputs always submit strings — a plain `.optional()` still rejects
+// `""` against `.min(5)`, which is why address/city/road wrongly showed
+// "must" errors even though the backend treats them as optional).
+// NOTE: `.optional().refine(...)` (not `z.preprocess`) is used on purpose —
+// preprocess widens the input type to `unknown` and breaks the
+// `zodResolver` generic in the update-profile form.
+const optionalText = (
+  min: number,
+  max: number,
+  minMessage: string,
+  maxMessage: string
+) =>
+  z
+    .string()
+    .trim()
+    .max(max, maxMessage)
+    .optional()
+    .refine((val) => !val || val.length >= min, {
+      message: minMessage,
+    });
+
 export const updateUserProfileSchema = z.object({
   name: nameValidator('Name').optional(),
-  phoneNumber: bangladeshiPhoneValidator.optional(),
-  address: z.string().min(5, 'Address must be at least 5 characters').max(200, 'Address must not exceed 200 characters').optional(),
-  city: z.string().min(2, 'City must be at least 2 characters').max(50, 'City must not exceed 50 characters').optional(),
-  road: z.string().min(2, 'Road must be at least 2 characters').max(100, 'Road must not exceed 100 characters').optional(),
+
+  phoneNumber: z
+    .string()
+    .trim()
+    .optional()
+    .refine(
+      (val) => !val || /^(?:\+?88)?01[3-9]\d{8}$/.test(val),
+      'Please enter a valid Bangladeshi phone number (e.g., 017******** or +88017********)'
+    ),
+
+  address: optionalText(
+    5,
+    200,
+    'Address must be at least 5 characters',
+    'Address must not exceed 200 characters'
+  ),
+
+  city: optionalText(
+    2,
+    50,
+    'City must be at least 2 characters',
+    'City must not exceed 50 characters'
+  ),
+
+  road: optionalText(
+    2,
+    100,
+    'Road must be at least 2 characters',
+    'Road must not exceed 100 characters'
+  ),
 });
 
 export const userFiltersSchema = z.object({

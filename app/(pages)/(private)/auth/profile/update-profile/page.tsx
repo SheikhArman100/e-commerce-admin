@@ -9,6 +9,7 @@ import { Loader2, Save, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { useUserProfile, useUpdateUserProfile } from '@/hooks/useUsers';
 import { updateUserProfileSchema } from '@/validation/user.validation';
+import { UpdateUserRequest } from '@/types/user.types';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -41,7 +42,7 @@ export default function UpdateProfilePage() {
     handleSubmit,
     reset,
     control,
-    formState: { errors, isDirty },
+    formState: { errors, isDirty, dirtyFields },
   } = useForm<UpdateProfileFormData>({
     resolver: zodResolver(updateUserProfileSchema),
     defaultValues: {
@@ -68,10 +69,28 @@ export default function UpdateProfilePage() {
 
   const handleUpdateProfile = async (data: UpdateProfileFormData) => {
     try {
-      const updateData = {
-        ...data,
-        file: selectedFile || undefined,
-      };
+      // Only ship the fields the user actually edited. react-hook-form marks
+      // them in `dirtyFields` (compared against the values seeded by `reset`),
+      // so a photo-only edit sends nothing but the image — previously every
+      // field was re-sent (name/phoneNumber/...) on every save.
+      const updateData: Partial<UpdateUserRequest> = {};
+
+      (Object.keys(dirtyFields) as Array<keyof UpdateProfileFormData>).forEach(
+        (field) => {
+          const value = data[field];
+          if (value === undefined || value === null) return;
+
+          const trimmed = typeof value === 'string' ? value.trim() : value;
+          // Blank optional fields are omitted (the API rejects empty strings
+          // for address/city/road).
+          if (trimmed === '') return;
+
+          updateData[field] = trimmed;
+        },
+      );
+
+      if (selectedFile) updateData.file = selectedFile;
+
       await updateProfileMutation.mutateAsync(updateData);
       toast.success('Profile updated successfully!');
       router.push('/auth/profile');
