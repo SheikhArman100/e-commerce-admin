@@ -11,6 +11,8 @@ node_modules
 dist
 dist-ssr
 
+.env*.local
+
 .next
 .env.production
 .env.development
