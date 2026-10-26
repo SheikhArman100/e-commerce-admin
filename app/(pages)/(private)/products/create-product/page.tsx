@@ -44,7 +44,7 @@ import CategorySelect from '@/components/input/CategorySelect';
 import FlavorSelect from '@/components/input/FlavorSelect';
 import SizeSelect from '@/components/input/SizeSelect';
 
-import { createProductSchema } from '@/validation/product.validation';
+import { createProductSchema, PRODUCT_IMAGE_DIMENSIONS } from '@/validation/product.validation';
 import { useCreateProduct } from '@/hooks/useProducts';
 import { useCategories } from '@/hooks/useCategories';
 import { useFlavors } from '@/hooks/useFlavors';
@@ -454,12 +454,15 @@ export default function CreateProductPage() {
                               setFlavorImages(newFlavorImages);
                             }}
                             isMultiple={true}
-                            accept="image/*"
+                            accept="image/jpeg,image/png,image/webp"
                             maxSize={5}
+                            requiredDimensions={PRODUCT_IMAGE_DIMENSIONS}
                             placeholder="Upload product images"
                           />
                           <p className="text-xs text-muted-foreground">
-                            Upload multiple images(max 5) for this flavor variant (JPG, PNG, WebP up to 5MB each)
+                            Upload up to 5 images for this flavor variant. Every image must be
+                            exactly {PRODUCT_IMAGE_DIMENSIONS.width} × {PRODUCT_IMAGE_DIMENSIONS.height} px
+                            (square JPG, PNG or WebP, up to 5MB) — anything else is rejected.
                           </p>
                         </div>
 

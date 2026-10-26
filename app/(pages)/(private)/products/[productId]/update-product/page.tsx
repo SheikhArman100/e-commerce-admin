@@ -44,7 +44,7 @@ import CategorySelect from '@/components/input/CategorySelect';
 import FlavorSelect from '@/components/input/FlavorSelect';
 import SizeSelect from '@/components/input/SizeSelect';
 
-import { updateProductSchema } from '@/validation/product.validation';
+import { updateProductSchema, PRODUCT_IMAGE_DIMENSIONS } from '@/validation/product.validation';
 import { useProduct, useUpdateProduct } from '@/hooks/useProducts';
 import { useCategories } from '@/hooks/useCategories';
 import { useFlavors } from '@/hooks/useFlavors';
@@ -772,12 +772,15 @@ export default function UpdateProductPage() {
                               setFlavorImages(newFlavorImages);
                             }}
                             isMultiple={true}
-                            accept="image/*"
+                            accept="image/jpeg,image/png,image/webp"
                             maxSize={5}
+                            requiredDimensions={PRODUCT_IMAGE_DIMENSIONS}
                             placeholder="Upload new product images"
                           />
                           <p className="text-xs text-muted-foreground">
-                            Upload new images to add to this flavor (optional). Leave empty to keep existing images.
+                            Every new image must be exactly {PRODUCT_IMAGE_DIMENSIONS.width} × {PRODUCT_IMAGE_DIMENSIONS.height} px
+                            (square JPG, PNG or WebP, up to 5MB) — anything else is rejected.
+                            Leave empty to keep existing images.
                           </p>
                         </div>
 

@@ -4,6 +4,12 @@ import React, { useState, useRef } from 'react';
 import { Upload, X, FileImage } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
+
+interface RequiredDimensions {
+  width: number;
+  height: number;
+}
 
 interface FileUploadProps {
   value?: File | File[] | null;
@@ -15,7 +21,62 @@ interface FileUploadProps {
   disabled?: boolean;
   error?: string;
   isMultiple?: boolean;
+  /**
+   * When set, every image must match these pixel dimensions exactly.
+   * Non-conforming files are rejected at selection time and the admin sees
+   * the required vs. actual size in the error toast.
+   */
+  requiredDimensions?: RequiredDimensions;
 }
+
+type ImageDimensions = { width: number; height: number };
+
+/** Reads an image file's intrinsic pixel size via the browser decoder. */
+const readImageDimensions = (file: File): Promise<ImageDimensions> =>
+  new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      resolve({ width: img.naturalWidth, height: img.naturalHeight });
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error('Could not read image dimensions'));
+    };
+    img.src = url;
+  });
+
+/** Small overlay badge showing an image's pixel size against the required rule. */
+const DimensionBadge = ({
+  file,
+  dimensions,
+  requiredDimensions,
+}: {
+  file?: File;
+  dimensions: Record<string, ImageDimensions>;
+  requiredDimensions?: RequiredDimensions;
+}) => {
+  if (!file || !requiredDimensions) return null;
+
+  const dims = dimensions[`${file.name}-${file.size}`];
+  if (!dims) return null;
+
+  const matches =
+    dims.width === requiredDimensions.width &&
+    dims.height === requiredDimensions.height;
+
+  return (
+    <span
+      className={`absolute bottom-1 left-1 rounded px-1 py-0.5 text-[10px] font-semibold leading-none text-white ${
+        matches ? 'bg-green-600/90' : 'bg-red-600/90'
+      }`}
+    >
+      {dims.width} × {dims.height}
+      {matches ? ' ✓' : ' ✕'}
+    </span>
+  );
+};
 
 export default function FileUpload({
   value,
@@ -27,10 +88,14 @@ export default function FileUpload({
   disabled = false,
   error,
   isMultiple = false,
+  requiredDimensions,
 }: FileUploadProps) {
   const [dragOver, setDragOver] = useState(false);
   const [previews, setPreviews] = useState<string[]>([]);
+  const [dimensions, setDimensions] = useState<Record<string, ImageDimensions>>({});
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const dimensionKey = (file: File) => `${file.name}-${file.size}`;
 
   // Create previews when files change
   React.useEffect(() => {
@@ -54,23 +119,46 @@ export default function FileUpload({
     };
   }, [value, isMultiple]);
 
-  const validateFile = (file: File): boolean => {
+  const validateFile = async (file: File): Promise<File | null> => {
     // Validate file size
     if (file.size > maxSize * 1024 * 1024) {
-      alert(`File size must be less than ${maxSize}MB`);
-      return false;
+      toast.error(`"${file.name}" is too large — file size must be less than ${maxSize}MB`);
+      return null;
     }
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
-      alert('Please select an image file');
-      return false;
+      toast.error(`"${file.name}" is not an image file`);
+      return null;
     }
 
-    return true;
+    // Validate pixel dimensions (e.g. product images must be exactly 1000×1000)
+    if (requiredDimensions) {
+      let dims: ImageDimensions;
+      try {
+        dims = await readImageDimensions(file);
+      } catch {
+        toast.error(`"${file.name}" could not be read as an image`);
+        return null;
+      }
+
+      setDimensions((prev) => ({ ...prev, [dimensionKey(file)]: dims }));
+
+      if (
+        dims.width !== requiredDimensions.width ||
+        dims.height !== requiredDimensions.height
+      ) {
+        toast.error(
+          `"${file.name}" is ${dims.width} × ${dims.height} px — it must be exactly ${requiredDimensions.width} × ${requiredDimensions.height} px`,
+        );
+        return null;
+      }
+    }
+
+    return file;
   };
 
-  const handleFileSelect = (files: FileList | null) => {
+  const handleFileSelect = async (files: FileList | null) => {
     if (!files || files.length === 0) {
       onChange?.(isMultiple ? [] : null);
       return;
@@ -79,9 +167,9 @@ export default function FileUpload({
     const validFiles: File[] = [];
 
     for (let i = 0; i < files.length; i++) {
-      const file = files[i];
-      if (validateFile(file)) {
-        validFiles.push(file);
+      const validFile = await validateFile(files[i]);
+      if (validFile) {
+        validFiles.push(validFile);
       }
     }
 
@@ -164,6 +252,11 @@ export default function FileUpload({
                         alt={`Preview ${index + 1}`}
                         className="w-full h-full object-cover rounded-lg border"
                       />
+                      <DimensionBadge
+                        file={file instanceof File ? file : undefined}
+                        dimensions={dimensions}
+                        requiredDimensions={requiredDimensions}
+                      />
                       {!disabled && (
                         <Button
                           type="button"
@@ -189,6 +282,11 @@ export default function FileUpload({
                     src={previews[0]}
                     alt="Preview"
                     className="w-24 h-24 object-cover rounded-lg aspect-square"
+                  />
+                  <DimensionBadge
+                    file={value instanceof File ? value : undefined}
+                    dimensions={dimensions}
+                    requiredDimensions={requiredDimensions}
                   />
                   {!disabled && (
                     <Button
@@ -223,6 +321,11 @@ export default function FileUpload({
             <FileImage className="h-8 w-8 text-muted-foreground" />
             <div>
               <p className="text-sm font-medium">{placeholder}</p>
+              {requiredDimensions && (
+                <p className="text-xs font-semibold text-primary">
+                  Required: exactly {requiredDimensions.width} × {requiredDimensions.height} px (square)
+                </p>
+              )}
               <p className="text-xs text-muted-foreground">
                 Supports: JPG, PNG, GIF up to {maxSize}MB {isMultiple && '(multiple files allowed)'}
               </p>

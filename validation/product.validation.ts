@@ -1,5 +1,12 @@
 import { z } from 'zod';
 
+// Fixed square size every product image must have. The storefront renders
+// product photos only in square containers (card thumbnail 112/160px and the
+// product gallery's aspect-square hero), so any non-square upload shows
+// letterboxed and inconsistent across the grid. Admins must upload images at
+// exactly this size; the FileUpload component rejects everything else.
+export const PRODUCT_IMAGE_DIMENSIONS = { width: 1000, height: 1000 } as const;
+
 // Reusable validators
 const titleValidator = z
   .string()
